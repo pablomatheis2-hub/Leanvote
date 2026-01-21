@@ -140,7 +140,7 @@ export default async function PublicRoadmapPage({ params }: PageProps) {
             Product Roadmap
           </h1>
           <p className="text-lg text-zinc-500 max-w-md mx-auto leading-relaxed">
-            See what's coming next for {boardOwner.board_name || "our product"}.
+            See what&apos;s coming next for {boardOwner.board_name || "our product"}.
           </p>
         </header>
 

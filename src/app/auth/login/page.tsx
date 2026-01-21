@@ -91,7 +91,7 @@ function LoginForm() {
               <span className="text-sm text-gray-600">Join 500+ teams</span>
             </div>
             <p className="text-gray-700 text-sm leading-relaxed">
-              "LeanVote helped us prioritize what our customers actually want. Our feature adoption increased by 40%."
+              &ldquo;LeanVote helped us prioritize what our customers actually want. Our feature adoption increased by 40%.&rdquo;
             </p>
           </div>
         </div>

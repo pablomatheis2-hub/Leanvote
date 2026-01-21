@@ -48,7 +48,7 @@ export default async function DashboardSettingsPage() {
         </div>
 
         {/* Subscription */}
-        <SubscriptionCard profile={profile} accessStatus={accessStatus} />
+        <SubscriptionCard accessStatus={accessStatus} />
       </div>
     </div>
   );

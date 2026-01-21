@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { CreatePostDialog } from "@/components/create-post-dialog";
 import { DashboardPostList } from "@/components/dashboard/post-list";
-import { ExternalLink, Copy } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { CopyButton } from "@/components/copy-button";
 import type { PostWithDetails, Profile } from "@/types/database";

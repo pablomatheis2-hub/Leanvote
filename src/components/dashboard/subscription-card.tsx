@@ -3,14 +3,13 @@
 import { useState } from "react";
 import { Check, Zap, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { Profile, AccessStatus } from "@/types/database";
+import type { AccessStatus } from "@/types/database";
 
 interface SubscriptionCardProps {
-  profile: Profile;
   accessStatus: AccessStatus;
 }
 
-export function SubscriptionCard({ profile, accessStatus }: SubscriptionCardProps) {
+export function SubscriptionCard({ accessStatus }: SubscriptionCardProps) {
   const [loading, setLoading] = useState(false);
 
   const handleUpgrade = async () => {

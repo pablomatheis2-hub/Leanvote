@@ -3,13 +3,8 @@
 import { useState } from "react";
 import { Lock, Check, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { Profile } from "@/types/database";
 
-interface PaywallGateProps {
-  profile: Profile;
-}
-
-export function PaywallGate({ profile }: PaywallGateProps) {
+export function PaywallGate() {
   const [loading, setLoading] = useState(false);
 
   const handleUpgrade = async () => {

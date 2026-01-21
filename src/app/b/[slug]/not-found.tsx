@@ -10,7 +10,7 @@ export default function NotFound() {
       </div>
       <h1 className="text-2xl font-semibold text-zinc-900 mb-2">Board not found</h1>
       <p className="text-zinc-500 mb-8 text-center max-w-md">
-        The feedback board you're looking for doesn't exist or may have been removed.
+        The feedback board you&apos;re looking for doesn&apos;t exist or may have been removed.
       </p>
       <Link href="/">
         <Button className="bg-[#f97352] hover:bg-[#e8634a] text-white">

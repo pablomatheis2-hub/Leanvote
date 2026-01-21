@@ -90,7 +90,7 @@ export default function OnboardingPage() {
               Vote & Give Feedback
             </h3>
             <p className="text-sm text-zinc-500">
-              I want to vote and submit feedback on someone else's board.
+              I want to vote and submit feedback on someone else&apos;s board.
             </p>
             {choice === "voter" && (
               <div className="mt-4 flex items-center gap-2 text-sm text-[#f97352] font-medium">
