@@ -237,6 +237,10 @@ function LoginForm() {
               {isSignUp ? "Sign in" : "Sign up"}
             </button>
           </p>
+
+          <p className="text-center text-xs text-emerald-600 mt-4 bg-emerald-50 py-2 px-3 rounded-lg">
+            ✓ Voting and submitting feedback is always free
+          </p>
         </div>
       </div>
     </div>

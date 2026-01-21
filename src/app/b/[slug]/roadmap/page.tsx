@@ -130,10 +130,10 @@ export default async function PublicRoadmapPage({ params }: PageProps) {
 
       <main className="max-w-6xl mx-auto px-6 py-12">
         <header className="text-center mb-12">
-          <h1 className="text-4xl font-semibold text-zinc-900 tracking-tight mb-4">
+          <h1 className="text-3xl font-semibold text-zinc-900 tracking-tight mb-3">
             Product Roadmap
           </h1>
-          <p className="text-lg text-zinc-500 max-w-md mx-auto leading-relaxed">
+          <p className="text-lg text-zinc-500 max-w-md mx-auto">
             See what&apos;s coming next for {boardOwner.board_name || "our product"}.
           </p>
         </header>

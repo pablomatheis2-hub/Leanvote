@@ -157,12 +157,12 @@ export default async function PublicChangelogPage({ params }: PageProps) {
         profile={currentUserProfile} 
       />
 
-      <main className="max-w-2xl mx-auto px-6 py-16">
-        <header className="text-center mb-16">
-          <h1 className="text-4xl font-semibold text-zinc-900 tracking-tight mb-4">
+      <main className="max-w-2xl mx-auto px-6 py-12">
+        <header className="text-center mb-12">
+          <h1 className="text-3xl font-semibold text-zinc-900 tracking-tight mb-3">
             Changelog
           </h1>
-          <p className="text-lg text-zinc-500 max-w-md mx-auto leading-relaxed">
+          <p className="text-lg text-zinc-500 max-w-md mx-auto">
             New updates and improvements to {boardOwner.board_name || "our product"}.
           </p>
         </header>
@@ -229,7 +229,7 @@ export default async function PublicChangelogPage({ params }: PageProps) {
         )}
       </main>
 
-      <footer className="border-t border-zinc-100 py-8 mt-16">
+      <footer className="border-t border-zinc-100 py-8 mt-12">
         <p className="text-center text-sm text-zinc-400">
           Have a feature request?{" "}
           <a href={`/b/${slug}`} className="text-zinc-600 hover:text-zinc-900 underline underline-offset-2">

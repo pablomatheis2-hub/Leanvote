@@ -118,6 +118,6 @@ export async function getUserRedirect(intendedRedirect?: string): Promise<string
     return intendedRedirect;
   }
 
-  // Admin users go to dashboard, voters go to find-board page
-  return profile.user_type === "admin" ? "/dashboard" : "/find-board";
+  // Admin users go to dashboard, voters go to LeanVote's public board as default
+  return profile.user_type === "admin" ? "/dashboard" : "/b/leanvote";
 }

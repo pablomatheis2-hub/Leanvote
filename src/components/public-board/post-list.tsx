@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronUp, Plus } from "lucide-react";
+import { ChevronUp, Plus, MessageCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -267,8 +267,13 @@ export function PublicPostList({ posts, userVotes, isLoggedIn, boardOwnerId, slu
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <h3 className="font-medium text-zinc-900">{post.title}</h3>
+                    <div className="flex-1">
+                      <Link 
+                        href={`/b/${slug}/post/${post.id}`}
+                        className="font-medium text-zinc-900 hover:text-[#f97352] transition-colors"
+                      >
+                        {post.title}
+                      </Link>
                       {post.description && (
                         <p className="text-sm text-zinc-500 mt-1 line-clamp-2">{post.description}</p>
                       )}
@@ -281,6 +286,14 @@ export function PublicPostList({ posts, userVotes, isLoggedIn, boardOwnerId, slu
                         </Badge>
                       </div>
                     </div>
+                    <Link 
+                      href={`/b/${slug}/post/${post.id}`}
+                      className="flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-600 transition-colors"
+                      title="View comments"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      <span>Comments</span>
+                    </Link>
                   </div>
                 </div>
               </div>

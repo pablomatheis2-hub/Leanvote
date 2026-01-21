@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MessageSquare, LayoutDashboard, Map, Settings, ExternalLink } from "lucide-react";
+import { MessageSquare, LayoutDashboard, Map, Settings, ExternalLink, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -71,6 +71,14 @@ export function DashboardNav({ user, profile, accessStatus }: DashboardNavProps)
         </div>
 
         <div className="flex items-center gap-4">
+          <Link
+            href="/docs"
+            target="_blank"
+            className="flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-900"
+          >
+            <BookOpen className="w-4 h-4" />
+            Docs
+          </Link>
           {profile.board_slug && (
             <Link
               href={`/b/${profile.board_slug}`}

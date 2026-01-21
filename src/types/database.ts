@@ -41,6 +41,21 @@ export interface Vote {
   created_at: string;
 }
 
+export interface Comment {
+  id: string;
+  post_id: string;
+  user_id: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CommentWithAuthor extends Comment {
+  author_name: string | null;
+  author_avatar: string | null;
+  is_board_owner: boolean;
+}
+
 export interface PostWithDetails extends Post {
   author_name: string | null;
   author_avatar: string | null;

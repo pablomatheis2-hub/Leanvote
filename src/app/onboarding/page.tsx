@@ -124,12 +124,18 @@ function OnboardingForm() {
               <button
                 onClick={() => setChoice("voter")}
                 className={cn(
-                  "p-6 rounded-2xl border-2 text-left transition-all",
+                  "p-6 rounded-2xl border-2 text-left transition-all relative overflow-hidden",
                   choice === "voter"
                     ? "border-[#f97352] bg-[#fff5f2]"
                     : "border-zinc-200 bg-white hover:border-zinc-300"
                 )}
               >
+                <div className="absolute top-3 right-3">
+                  <span className="inline-flex items-center gap-1 px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full">
+                    <Check className="w-3 h-3" />
+                    100% Free
+                  </span>
+                </div>
                 <div className={cn(
                   "w-12 h-12 rounded-xl flex items-center justify-center mb-4",
                   choice === "voter" ? "bg-[#f97352]" : "bg-zinc-100"
@@ -143,9 +149,9 @@ function OnboardingForm() {
                   I want to vote and submit feedback on someone else&apos;s board.
                 </p>
                 {choice === "voter" && (
-                  <div className="mt-4 flex items-center gap-2 text-sm text-[#f97352] font-medium">
+                  <div className="mt-4 flex items-center gap-2 text-sm text-emerald-600 font-medium">
                     <Check className="w-4 h-4" />
-                    Free forever
+                    Free forever — no payment required
                   </div>
                 )}
               </button>

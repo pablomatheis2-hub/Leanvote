@@ -28,6 +28,12 @@ export default function LandingPage() {
           
           <div className="flex items-center gap-6">
             <Link 
+              href="/docs" 
+              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              Docs
+            </Link>
+            <Link 
               href="/auth/login" 
               className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
             >
@@ -99,6 +105,12 @@ export default function LandingPage() {
               <span>Setup in minutes</span>
             </div>
           </div>
+
+          {/* Free voting note */}
+          <div className="mt-8 inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 rounded-full text-emerald-700 text-sm">
+            <Check className="w-4 h-4" />
+            <span><strong>Voting is always free</strong> — only pay if you create your own board</span>
+          </div>
         </div>
       </section>
 
@@ -136,8 +148,8 @@ export default function LandingPage() {
                 description: "Share your roadmap to keep customers informed and engaged.",
               },
               {
-                title: "Shareable Links",
-                description: "Get a unique URL for your board to share with your users.",
+                title: "Embeddable Widget",
+                description: "Add a feedback button to your site with a simple code snippet.",
               },
               {
                 title: "Changelog",
@@ -219,6 +231,9 @@ export default function LandingPage() {
             </h2>
             <p className="text-lg text-gray-500">
               One price, lifetime access. No subscriptions.
+            </p>
+            <p className="text-sm text-emerald-600 mt-3 font-medium">
+              ✓ Voting and submitting feedback is always free
             </p>
           </div>
           

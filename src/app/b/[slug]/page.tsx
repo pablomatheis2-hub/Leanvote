@@ -128,14 +128,14 @@ export default async function PublicBoardPage({ params }: PageProps) {
       />
       
       <main className="max-w-3xl mx-auto px-6 py-12">
-        <div className="mb-10">
-          <h1 className="font-heading text-3xl font-semibold text-zinc-900 tracking-tight">
+        <header className="text-center mb-12">
+          <h1 className="text-3xl font-semibold text-zinc-900 tracking-tight mb-3">
             {boardOwner.company_name || boardOwner.board_name || "Feedback Board"}
           </h1>
-          <p className="mt-2 text-zinc-500">
+          <p className="text-lg text-zinc-500 max-w-md mx-auto">
             {boardOwner.company_description || "Share your ideas, report bugs, and vote on what matters most."}
           </p>
-        </div>
+        </header>
 
         <PublicPostList 
           posts={posts} 

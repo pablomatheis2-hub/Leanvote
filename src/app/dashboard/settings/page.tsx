@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { SettingsForm } from "@/components/dashboard/settings-form";
 import { SubscriptionCard } from "@/components/dashboard/subscription-card";
+import { WidgetSettings } from "@/components/dashboard/widget-settings";
 import { getAccessStatus } from "@/lib/access";
 import type { Profile } from "@/types/database";
 
@@ -45,6 +46,14 @@ export default async function DashboardSettingsPage() {
             Board Settings
           </h2>
           <SettingsForm profile={profile} />
+        </div>
+
+        {/* Widget Embed */}
+        <div className="bg-white rounded-xl border border-zinc-200 p-6">
+          <h2 className="text-lg font-semibold text-zinc-900 mb-4">
+            Embed Widget
+          </h2>
+          <WidgetSettings profile={profile} />
         </div>
 
         {/* Subscription */}

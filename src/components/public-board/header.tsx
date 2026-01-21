@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,6 +26,8 @@ interface PublicBoardHeaderProps {
 
 export function PublicBoardHeader({ boardOwner, user, profile }: PublicBoardHeaderProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const isWidget = searchParams.get("widget") === "true";
   const slug = boardOwner.board_slug;
   
   const initials = profile?.full_name
@@ -34,17 +36,57 @@ export function PublicBoardHeader({ boardOwner, user, profile }: PublicBoardHead
     .join("")
     .toUpperCase() || user?.email?.[0].toUpperCase() || "?";
 
+  // Add widget=true to links when in widget mode
+  const getHref = (path: string) => isWidget ? `${path}?widget=true` : path;
+
   const navItems = [
     { href: `/b/${slug}`, label: "Feedback" },
     { href: `/b/${slug}/roadmap`, label: "Roadmap" },
     { href: `/b/${slug}/changelog`, label: "Changelog" },
   ];
 
+  // Compact header for widget mode
+  if (isWidget) {
+    return (
+      <header className="border-b border-zinc-200 bg-white sticky top-0 z-50">
+        <div className="px-4 h-12 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-lg bg-[#f97352] flex items-center justify-center">
+                <MessageSquare className="w-3 h-3 text-white" />
+              </div>
+              <span className="font-heading font-semibold text-sm text-zinc-900">
+                {boardOwner.company_name || boardOwner.board_name || "Feedback"}
+              </span>
+            </div>
+          </div>
+
+          {user ? (
+            <div className="flex items-center gap-2">
+              <Avatar className="h-7 w-7">
+                <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.full_name || "User"} />
+                <AvatarFallback className="bg-[#fff5f2] text-[#f97352] text-xs font-medium">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+            </div>
+          ) : (
+            <Link href={`/auth/login?redirect=/b/${slug}?widget=true`}>
+              <Button size="sm" className="h-7 text-xs bg-[#f97352] hover:bg-[#e8634a] text-white">
+                Sign in
+              </Button>
+            </Link>
+          )}
+        </div>
+      </header>
+    );
+  }
+
   return (
     <header className="border-b border-zinc-200 bg-white sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         <div className="flex items-center gap-8">
-          <Link href={`/b/${slug}`} className="flex items-center gap-2.5">
+          <Link href={getHref(`/b/${slug}`)} className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-[#f97352] flex items-center justify-center">
               <MessageSquare className="w-4 h-4 text-white" />
             </div>
@@ -57,7 +99,7 @@ export function PublicBoardHeader({ boardOwner, user, profile }: PublicBoardHead
             {navItems.map((item) => (
               <Link
                 key={item.href}
-                href={item.href}
+                href={getHref(item.href)}
                 className={cn(
                   "px-3 py-1.5 text-sm font-medium rounded-lg transition-colors",
                   pathname === item.href
