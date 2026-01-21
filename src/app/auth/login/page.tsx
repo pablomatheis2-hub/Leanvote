@@ -81,19 +81,36 @@ function LoginForm() {
             </p>
           </div>
           
-          {/* Testimonial or stats */}
+          {/* Testimonial */}
           <div className="mt-8 p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/80 max-w-md">
-            <div className="flex items-center gap-4 mb-3">
-              <div className="flex -space-x-2">
-                {[...Array(4)].map((_, i) => (
-                  <div key={i} className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 border-2 border-white" />
-                ))}
+            <div className="flex items-start gap-4">
+              <img 
+                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face" 
+                alt="Marcus Chen"
+                className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm flex-shrink-0"
+              />
+              <div>
+                <p className="text-gray-700 text-sm leading-relaxed mb-3">
+                  &ldquo;Set up our feedback board in 10 minutes. Our beta users immediately started voting and we shipped the #1 request within a week.&rdquo;
+                </p>
+                <div className="flex items-center gap-3">
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Marcus Chen</p>
+                    <p className="text-xs text-gray-500">Indie Maker</p>
+                  </div>
+                </div>
               </div>
-              <span className="text-sm text-gray-600">Join 500+ teams</span>
             </div>
-            <p className="text-gray-700 text-sm leading-relaxed">
-              &ldquo;LeanVote helped us prioritize what our customers actually want. Our feature adoption increased by 40%.&rdquo;
-            </p>
+            
+            <div className="mt-5 pt-4 border-t border-gray-200/50 flex items-center gap-3">
+              <div className="flex -space-x-2">
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&h=60&fit=crop&crop=face" alt="" className="w-7 h-7 rounded-full border-2 border-white object-cover" />
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop&crop=face" alt="" className="w-7 h-7 rounded-full border-2 border-white object-cover" />
+                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=60&h=60&fit=crop&crop=face" alt="" className="w-7 h-7 rounded-full border-2 border-white object-cover" />
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&h=60&fit=crop&crop=face" alt="" className="w-7 h-7 rounded-full border-2 border-white object-cover" />
+              </div>
+              <span className="text-xs text-gray-600">Join 500+ makers &amp; founders</span>
+            </div>
           </div>
         </div>
       </div>

@@ -176,6 +176,104 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Testimonials */}
+      <section id="testimonials" className="py-24 px-6">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="font-heading font-bold text-3xl md:text-4xl text-gray-900 tracking-tight mb-4">
+              Loved by product teams
+            </h2>
+            <p className="text-lg text-gray-500 max-w-lg mx-auto">
+              See what teams are saying about LeanVote.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                quote: "We used to guess what to build next. Now our users tell us exactly what they need, and we can actually prioritize based on votes.",
+                name: "Sarah Mitchell",
+                role: "Founder, Tidyforms",
+                image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&h=120&fit=crop&crop=face",
+              },
+              {
+                quote: "Set up our feedback board in 10 minutes. Our beta users immediately started voting and we shipped the #1 request within a week.",
+                name: "Marcus Chen",
+                role: "Indie Maker",
+                image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&crop=face",
+              },
+              {
+                quote: "The public roadmap reduced our support tickets by half. Users stopped asking 'when will X be ready?' because they can see it themselves.",
+                name: "Emily Rodriguez",
+                role: "Co-founder, Stackwise",
+                image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&h=120&fit=crop&crop=face",
+              },
+              {
+                quote: "Finally a feedback tool that doesn't try to do everything. Simple voting, clean UI, and it just works. Exactly what I needed.",
+                name: "James Park",
+                role: "Solo Founder",
+                image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=face",
+              },
+              {
+                quote: "Feedback used to get lost in Slack threads and email. Now everything is in one place and my users actually enjoy submitting ideas.",
+                name: "Priya Sharma",
+                role: "Product Manager, Flowbase",
+                image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&h=120&fit=crop&crop=face",
+              },
+              {
+                quote: "Love the changelog feature. Every time we ship something users requested, they get notified. Great for building trust with our community.",
+                name: "Tom Anderson",
+                role: "Founder, Devkit",
+                image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&h=120&fit=crop&crop=face",
+              },
+            ].map((testimonial, i) => (
+              <div 
+                key={i} 
+                className="bg-white rounded-2xl p-6 border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300"
+              >
+                <div className="flex items-center gap-1 mb-4">
+                  {[...Array(5)].map((_, j) => (
+                    <svg key={j} className="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-gray-600 text-sm leading-relaxed mb-5">
+                  &ldquo;{testimonial.quote}&rdquo;
+                </p>
+                <div className="flex items-center gap-3">
+                  <img 
+                    src={testimonial.image} 
+                    alt={testimonial.name}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">{testimonial.name}</p>
+                    <p className="text-xs text-gray-500">{testimonial.role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          {/* Stats */}
+          <div className="mt-16 grid grid-cols-3 gap-8 max-w-2xl mx-auto text-center">
+            <div>
+              <p className="text-3xl font-bold text-gray-900">500+</p>
+              <p className="text-sm text-gray-500">Feedback boards</p>
+            </div>
+            <div>
+              <p className="text-3xl font-bold text-gray-900">12k+</p>
+              <p className="text-sm text-gray-500">Feature requests</p>
+            </div>
+            <div>
+              <p className="text-3xl font-bold text-gray-900">98%</p>
+              <p className="text-sm text-gray-500">Happy customers</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* How it Works */}
       <section id="how-it-works" className="py-24 px-6">
         <div className="max-w-4xl mx-auto">
