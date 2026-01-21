@@ -35,7 +35,7 @@ export async function getComments(postId: string): Promise<CommentWithAuthor[]> 
   }
 
   // Get unique user IDs from comments
-  const userIds = [...new Set(comments.map(c => c.user_id))];
+  const userIds = Array.from(new Set(comments.map(c => c.user_id)));
 
   // Fetch profiles for all comment authors
   const { data: profiles } = await supabase
