@@ -50,7 +50,7 @@ function OnboardingForm() {
           setLoading(false);
           return;
         }
-        router.push(redirectTo || "/find-board");
+        router.push(redirectTo || "/b/leanvote");
       } catch {
         setError("Something went wrong. Please try again.");
         setLoading(false);

@@ -123,6 +123,10 @@ export function KanbanBoard({ initialPosts }: KanbanBoardProps) {
     if (result.error) {
       setError(result.error);
     } else {
+      // Add the new post to local state for instant display
+      if (result.post) {
+        setPosts((current) => [result.post as PostWithDetails, ...current]);
+      }
       setDialogOpen(false);
       setCategory("");
     }

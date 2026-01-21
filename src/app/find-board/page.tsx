@@ -47,7 +47,7 @@ export default function FindBoardPage() {
     <div className="min-h-screen bg-gradient-to-br from-zinc-50 via-white to-orange-50/30">
       {/* Header */}
       <header className="border-b border-zinc-200 bg-white/80 backdrop-blur-sm">
-        <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-[#f97352] flex items-center justify-center">
               <MessageSquare className="w-4 h-4 text-white" />

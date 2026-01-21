@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { BoardSwitcher } from "./board-switcher";
 import { signOut } from "@/lib/actions/auth";
 import { cn } from "@/lib/utils";
 import type { User } from "@supabase/supabase-js";
@@ -68,6 +69,13 @@ export function PublicBoardHeader({ boardOwner, user, profile }: PublicBoardHead
               </Link>
             ))}
           </nav>
+
+          <div className="h-6 w-px bg-zinc-200" />
+          
+          <BoardSwitcher 
+            currentBoardName={boardOwner.company_name || boardOwner.board_name || "Feedback"}
+            currentSlug={slug || ""}
+          />
         </div>
 
         {user ? (

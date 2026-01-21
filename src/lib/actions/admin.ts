@@ -77,14 +77,23 @@ export async function createRoadmapItem(formData: FormData) {
   }
 
   // Create the roadmap item (admin creates for their own board)
-  const { error } = await supabase.from("posts").insert({
+  const { data: newPost, error } = await supabase.from("posts").insert({
     user_id: user.id,
     board_owner_id: user.id,
     title: title.trim(),
     description: description?.trim() || null,
     category,
     status: status || "Planned",
-  });
+  }).select(`
+    *,
+    profiles:user_id (
+      full_name,
+      avatar_url
+    ),
+    votes (
+      id
+    )
+  `).single();
 
   if (error) {
     return { error: error.message };
@@ -94,7 +103,16 @@ export async function createRoadmapItem(formData: FormData) {
   if (profile?.board_slug) {
     revalidatePath(`/b/${profile.board_slug}`);
   }
-  return { success: true };
+  
+  // Return the created post with proper formatting
+  const formattedPost = {
+    ...newPost,
+    author_name: newPost.profiles?.full_name || profile?.full_name || null,
+    author_avatar: newPost.profiles?.avatar_url || null,
+    vote_count: newPost.votes?.length || 0,
+  };
+  
+  return { success: true, post: formattedPost };
 }
 
 export async function updateBoardSettings(formData: FormData) {
