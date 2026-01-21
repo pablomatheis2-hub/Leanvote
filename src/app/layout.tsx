@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Outfit, DM_Sans } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-heading",
+  display: "swap",
+});
+
+const dmSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -19,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-sans`}>{children}</body>
+      <body className={`${outfit.variable} ${dmSans.variable} font-sans antialiased`}>{children}</body>
     </html>
   );
 }

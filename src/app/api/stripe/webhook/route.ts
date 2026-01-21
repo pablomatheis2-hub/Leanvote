@@ -1,4 +1,3 @@
-import Stripe from "stripe";
 import { stripe } from "@/lib/stripe/server";
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
@@ -31,64 +30,61 @@ export async function POST(request: NextRequest) {
       case "checkout.session.completed": {
         const session = event.data.object;
         const userId = session.metadata?.user_id || session.client_reference_id;
-        const pricingMode = session.metadata?.pricing_mode || "lifetime";
 
         if (!userId) {
           console.error("No user ID in session");
           break;
         }
 
+        // Create purchase record
         await supabaseAdmin.from("purchases").insert({
           user_id: userId,
           stripe_customer_id: session.customer as string,
-          stripe_subscription_id: session.subscription as string | null,
-          plan_type: pricingMode,
+          stripe_payment_intent_id: session.payment_intent as string,
+          plan_type: "lifetime",
           status: "active",
           amount: session.amount_total,
           currency: session.currency,
         });
 
-        // Optionally make user an admin after purchase
-        // await supabaseAdmin.from("profiles").update({ is_admin: true }).eq("id", userId);
-
-        break;
-      }
-
-      case "customer.subscription.updated": {
-        const subscription = event.data.object;
-        
+        // Grant lifetime access to user
         await supabaseAdmin
-          .from("purchases")
-          .update({
-            status: subscription.status === "active" ? "active" : "inactive",
-          })
-          .eq("stripe_subscription_id", subscription.id);
+          .from("profiles")
+          .update({ has_lifetime_access: true })
+          .eq("id", userId);
 
+        console.log(`Granted lifetime access to user ${userId}`);
         break;
       }
 
-      case "customer.subscription.deleted": {
-        const subscription = event.data.object;
+      case "charge.refunded": {
+        const charge = event.data.object;
+        const paymentIntentId = charge.payment_intent as string;
 
-        await supabaseAdmin
-          .from("purchases")
-          .update({ status: "canceled" })
-          .eq("stripe_subscription_id", subscription.id);
-
-        break;
-      }
-
-      case "invoice.payment_failed": {
-        const invoice = event.data.object as Stripe.Invoice & { subscription?: string | Stripe.Subscription | null };
-        const subscriptionId = invoice.subscription;
-
-        if (subscriptionId) {
-          await supabaseAdmin
+        if (paymentIntentId) {
+          // Find the purchase and revoke access
+          const { data: purchase } = await supabaseAdmin
             .from("purchases")
-            .update({ status: "past_due" })
-            .eq("stripe_subscription_id", typeof subscriptionId === "string" ? subscriptionId : subscriptionId.id);
-        }
+            .select("user_id")
+            .eq("stripe_payment_intent_id", paymentIntentId)
+            .single();
 
+          if (purchase) {
+            // Update purchase status
+            await supabaseAdmin
+              .from("purchases")
+              .update({ status: "refunded" })
+              .eq("stripe_payment_intent_id", paymentIntentId);
+
+            // Revoke lifetime access
+            await supabaseAdmin
+              .from("profiles")
+              .update({ has_lifetime_access: false })
+              .eq("id", purchase.user_id);
+
+            console.log(`Revoked lifetime access for user ${purchase.user_id} due to refund`);
+          }
+        }
         break;
       }
     }

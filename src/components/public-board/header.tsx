@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,77 +17,56 @@ import { cn } from "@/lib/utils";
 import type { User } from "@supabase/supabase-js";
 import type { Profile } from "@/types/database";
 
-interface HeaderProps {
+interface PublicBoardHeaderProps {
+  boardOwner: Profile;
   user: User | null;
   profile: Profile | null;
 }
 
-export function Header({ user, profile }: HeaderProps) {
+export function PublicBoardHeader({ boardOwner, user, profile }: PublicBoardHeaderProps) {
   const pathname = usePathname();
+  const slug = boardOwner.board_slug;
+  
   const initials = profile?.full_name
     ?.split(" ")
     .map((n) => n[0])
     .join("")
     .toUpperCase() || user?.email?.[0].toUpperCase() || "?";
 
+  const navItems = [
+    { href: `/b/${slug}`, label: "Feedback" },
+    { href: `/b/${slug}/roadmap`, label: "Roadmap" },
+    { href: `/b/${slug}/changelog`, label: "Changelog" },
+  ];
+
   return (
-    <header className="border-b border-zinc-200 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+    <header className="border-b border-zinc-200 bg-white sticky top-0 z-50">
+      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         <div className="flex items-center gap-8">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-zinc-900 flex items-center justify-center">
-              <svg
-                className="w-5 h-5 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                />
-              </svg>
+          <Link href={`/b/${slug}`} className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-[#f97352] flex items-center justify-center">
+              <MessageSquare className="w-4 h-4 text-white" />
             </div>
-            <span className="font-semibold text-zinc-900 tracking-tight">LeanVote</span>
+            <span className="font-heading font-bold text-xl text-zinc-900">
+              {boardOwner.board_name || "Feedback"}
+            </span>
           </Link>
+          
           <nav className="flex items-center gap-1">
-            <Link
-              href="/"
-              className={cn(
-                "px-3 py-1.5 text-sm font-medium rounded-md transition-colors",
-                pathname === "/"
-                  ? "bg-zinc-100 text-zinc-900"
-                  : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50"
-              )}
-            >
-              Feedback
-            </Link>
-            <Link
-              href="/changelog"
-              className={cn(
-                "px-3 py-1.5 text-sm font-medium rounded-md transition-colors",
-                pathname === "/changelog"
-                  ? "bg-zinc-100 text-zinc-900"
-                  : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50"
-              )}
-            >
-              Changelog
-            </Link>
-            {profile?.is_admin && (
+            {navItems.map((item) => (
               <Link
-                href="/roadmap"
+                key={item.href}
+                href={item.href}
                 className={cn(
-                  "px-3 py-1.5 text-sm font-medium rounded-md transition-colors",
-                  pathname === "/roadmap"
+                  "px-3 py-1.5 text-sm font-medium rounded-lg transition-colors",
+                  pathname === item.href
                     ? "bg-zinc-100 text-zinc-900"
                     : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50"
                 )}
               >
-                Roadmap
+                {item.label}
               </Link>
-            )}
+            ))}
           </nav>
         </div>
 
@@ -96,7 +76,7 @@ export function Header({ user, profile }: HeaderProps) {
               <Button variant="ghost" className="relative h-9 w-9 rounded-full">
                 <Avatar className="h-9 w-9">
                   <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.full_name || "User"} />
-                  <AvatarFallback className="bg-zinc-100 text-zinc-600 text-sm">
+                  <AvatarFallback className="bg-[#fff5f2] text-[#f97352] text-sm font-medium">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
@@ -112,6 +92,25 @@ export function Header({ user, profile }: HeaderProps) {
                 </div>
               </div>
               <DropdownMenuSeparator />
+              {profile?.user_type === "admin" ? (
+                <>
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard" className="cursor-pointer">
+                      My Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                </>
+              ) : (
+                <>
+                  <DropdownMenuItem asChild>
+                    <Link href="/upgrade" className="cursor-pointer">
+                      Create Your Own Board
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                </>
+              )}
               <DropdownMenuItem asChild>
                 <form action={signOut}>
                   <button type="submit" className="w-full text-left cursor-pointer">
@@ -122,9 +121,9 @@ export function Header({ user, profile }: HeaderProps) {
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <Link href="/auth/login">
-            <Button className="bg-zinc-900 hover:bg-zinc-800 text-white">
-              Log in
+          <Link href={`/auth/login?redirect=/b/${slug}`}>
+            <Button className="bg-[#f97352] hover:bg-[#e8634a] text-white">
+              Sign in to vote
             </Button>
           </Link>
         )}
