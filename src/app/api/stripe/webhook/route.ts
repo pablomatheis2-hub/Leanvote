@@ -1,3 +1,4 @@
+import Stripe from "stripe";
 import { stripe } from "@/lib/stripe/server";
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
@@ -78,13 +79,14 @@ export async function POST(request: NextRequest) {
       }
 
       case "invoice.payment_failed": {
-        const invoice = event.data.object;
+        const invoice = event.data.object as Stripe.Invoice & { subscription?: string | Stripe.Subscription | null };
+        const subscriptionId = invoice.subscription;
 
-        if (invoice.subscription) {
+        if (subscriptionId) {
           await supabaseAdmin
             .from("purchases")
             .update({ status: "past_due" })
-            .eq("stripe_subscription_id", invoice.subscription as string);
+            .eq("stripe_subscription_id", typeof subscriptionId === "string" ? subscriptionId : subscriptionId.id);
         }
 
         break;
