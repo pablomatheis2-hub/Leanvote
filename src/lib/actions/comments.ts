@@ -18,15 +18,10 @@ export async function getComments(postId: string): Promise<CommentWithAuthor[]> 
     return [];
   }
 
+  // Fetch comments
   const { data: comments, error } = await supabase
     .from("comments")
-    .select(`
-      *,
-      profiles:user_id (
-        full_name,
-        avatar_url
-      )
-    `)
+    .select("*")
     .eq("post_id", postId)
     .order("created_at", { ascending: true });
 
@@ -35,12 +30,33 @@ export async function getComments(postId: string): Promise<CommentWithAuthor[]> 
     return [];
   }
 
-  return (comments || []).map((comment) => ({
-    ...comment,
-    author_name: comment.profiles?.full_name || null,
-    author_avatar: comment.profiles?.avatar_url || null,
-    is_board_owner: comment.user_id === post.board_owner_id,
-  }));
+  if (!comments || comments.length === 0) {
+    return [];
+  }
+
+  // Get unique user IDs from comments
+  const userIds = [...new Set(comments.map(c => c.user_id))];
+
+  // Fetch profiles for all comment authors
+  const { data: profiles } = await supabase
+    .from("profiles")
+    .select("id, full_name, avatar_url")
+    .in("id", userIds);
+
+  // Create a map for quick lookup
+  const profileMap = new Map(
+    (profiles || []).map(p => [p.id, { full_name: p.full_name, avatar_url: p.avatar_url }])
+  );
+
+  return comments.map((comment) => {
+    const profile = profileMap.get(comment.user_id);
+    return {
+      ...comment,
+      author_name: profile?.full_name || null,
+      author_avatar: profile?.avatar_url || null,
+      is_board_owner: comment.user_id === post.board_owner_id,
+    };
+  });
 }
 
 export async function addComment(postId: string, content: string) {
