@@ -11,8 +11,8 @@ export async function GET(request: NextRequest) {
   const redirectUrl = `${siteUrl}${next}`;
 
   if (code) {
-    // Create the response object first so we can attach cookies to it
-    const response = NextResponse.redirect(redirectUrl);
+    // Store cookies to set them on the response later
+    const cookiesToSet: { name: string; value: string; options: Record<string, unknown> }[] = [];
 
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -22,13 +22,9 @@ export async function GET(request: NextRequest) {
           getAll() {
             return request.cookies.getAll();
           },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              response.cookies.set(name, value, {
-                ...options,
-                sameSite: "lax",
-                secure: process.env.NODE_ENV === "production",
-              });
+          setAll(cookies) {
+            cookies.forEach((cookie) => {
+              cookiesToSet.push(cookie);
             });
           },
         },
@@ -41,6 +37,22 @@ export async function GET(request: NextRequest) {
       console.error("Auth callback error:", error.message);
       return NextResponse.redirect(`${siteUrl}/auth/login?error=${encodeURIComponent(error.message)}`);
     }
+
+    // Create response and attach all cookies
+    const response = NextResponse.redirect(redirectUrl);
+    
+    cookiesToSet.forEach(({ name, value, options }) => {
+      response.cookies.set(name, value, {
+        path: "/",
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 60 * 60 * 24 * 365, // 1 year
+        ...options,
+      });
+    });
+
+    console.log("Setting cookies:", cookiesToSet.map(c => c.name));
 
     return response;
   }
