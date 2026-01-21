@@ -10,12 +10,9 @@ export async function GET(request: NextRequest) {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin;
   const redirectUrl = `${siteUrl}${next}`;
 
-  console.log("Auth callback - code:", code ? "present" : "missing");
-  console.log("Auth callback - request cookies:", request.cookies.getAll().map(c => c.name));
-
   if (code) {
     // Store cookies to set them on the response later
-    const cookiesToSet: { name: string; value: string; options: Record<string, unknown> }[] = [];
+    const cookiesToSet: Map<string, { name: string; value: string; options: Record<string, unknown> }> = new Map();
 
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -23,35 +20,31 @@ export async function GET(request: NextRequest) {
       {
         cookies: {
           getAll() {
-            const cookies = request.cookies.getAll();
-            console.log("Supabase getAll called, returning:", cookies.map(c => c.name));
-            return cookies;
+            return request.cookies.getAll();
           },
           setAll(cookies) {
-            console.log("Supabase setAll called with:", cookies.map(c => c.name));
             cookies.forEach((cookie) => {
-              cookiesToSet.push(cookie);
+              cookiesToSet.set(cookie.name, cookie);
             });
           },
         },
       }
     );
 
-    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-
-    console.log("Exchange result - error:", error?.message || "none");
-    console.log("Exchange result - session:", data?.session ? "present" : "missing");
-    console.log("Exchange result - user:", data?.user?.email || "none");
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (error) {
       console.error("Auth callback error:", error.message);
       return NextResponse.redirect(`${siteUrl}/auth/login?error=${encodeURIComponent(error.message)}`);
     }
 
+    // Force a session read to trigger setAll with the auth tokens
+    await supabase.auth.getUser();
+
     // Create response and attach all cookies
     const response = NextResponse.redirect(redirectUrl);
     
-    console.log("Cookies to set:", cookiesToSet.map(c => c.name));
+    console.log("Final cookies to set:", Array.from(cookiesToSet.keys()));
     
     cookiesToSet.forEach(({ name, value, options }) => {
       response.cookies.set(name, value, {
