@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { toggleVote } from "@/lib/actions/posts";
 import { cn } from "@/lib/utils";
 
@@ -18,7 +17,6 @@ export function VoteButtonServer({
   initialHasVoted,
   isLoggedIn,
 }: VoteButtonServerProps) {
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [optimisticVoteCount, setOptimisticVoteCount] = useState(initialVoteCount);
   const [optimisticHasVoted, setOptimisticHasVoted] = useState(initialHasVoted);

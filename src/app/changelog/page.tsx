@@ -157,7 +157,7 @@ export default async function ChangelogPage() {
                   {group.month}
                 </h2>
                 <div className="space-y-8">
-                  {group.posts.map((post, index) => (
+                  {group.posts.map((post) => (
                     <article
                       key={post.id}
                       className="relative pl-8 border-l-2 border-zinc-200"

@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { PostCard } from "./post-card";
 import { CreatePostDialog } from "./create-post-dialog";
-import { Button } from "@/components/ui/button";
 import type { PostWithDetails } from "@/types/database";
 import { cn } from "@/lib/utils";
 

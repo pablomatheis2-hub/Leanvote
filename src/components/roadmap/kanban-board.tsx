@@ -24,7 +24,7 @@ const ROADMAP_STATUSES: Status[] = ["Planned", "In Progress", "Complete"];
 export function KanbanBoard({ initialPosts }: KanbanBoardProps) {
   const [posts, setPosts] = useState(initialPosts);
   const [activePost, setActivePost] = useState<PostWithDetails | null>(null);
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
