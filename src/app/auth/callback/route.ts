@@ -52,8 +52,8 @@ export async function GET(request: NextRequest) {
       } else if (profile.user_type === "admin") {
         redirectUrl = "/dashboard";
       } else {
-        // Voters go to LeanVote's public board as default
-        redirectUrl = "/b/leanvote";
+        // Voters go to find-board page to search for feedback boards
+        redirectUrl = "/find-board";
       }
     } else {
       // New user needs onboarding - pass along the redirect if it's a board

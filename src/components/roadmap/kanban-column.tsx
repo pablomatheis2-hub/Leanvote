@@ -11,6 +11,7 @@ interface KanbanColumnProps {
   status: Status;
   posts: PostWithDetails[];
   onAddCard?: () => void;
+  onDeleteCard?: (postId: string) => void;
 }
 
 const columnConfig: Record<Status, { title: string; color: string; bg: string; border: string }> = {
@@ -20,7 +21,7 @@ const columnConfig: Record<Status, { title: string; color: string; bg: string; b
   Complete: { title: "Complete", color: "text-green-700", bg: "bg-green-50/50", border: "border-green-200" },
 };
 
-export function KanbanColumn({ status, posts, onAddCard }: KanbanColumnProps) {
+export function KanbanColumn({ status, posts, onAddCard, onDeleteCard }: KanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: status,
   });
@@ -49,7 +50,9 @@ export function KanbanColumn({ status, posts, onAddCard }: KanbanColumnProps) {
         </div>
       </div>
       <div className="flex-1 p-3 space-y-3 overflow-y-auto">
-        {posts.map((post) => <KanbanCard key={post.id} post={post} />)}
+        {posts.map((post) => (
+          <KanbanCard key={post.id} post={post} onDelete={onDeleteCard} />
+        ))}
         
         {/* Add Card button */}
         {onAddCard && (

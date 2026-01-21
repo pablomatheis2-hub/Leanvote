@@ -59,6 +59,10 @@ export function KanbanBoard({ initialPosts }: KanbanBoardProps) {
   const getPostsByStatus = (status: Status) =>
     posts.filter((post) => post.status === status);
 
+  const handleDeleteCard = (postId: string) => {
+    setPosts((current) => current.filter((p) => p.id !== postId));
+  };
+
   const handleDragStart = (event: DragStartEvent) => {
     const post = posts.find((p) => p.id === event.active.id);
     setActivePost(post || null);
@@ -146,6 +150,7 @@ export function KanbanBoard({ initialPosts }: KanbanBoardProps) {
               status={status}
               posts={getPostsByStatus(status)}
               onAddCard={() => handleAddCard(status)}
+              onDeleteCard={handleDeleteCard}
             />
           ))}
         </div>
