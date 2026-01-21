@@ -52,10 +52,15 @@ export async function GET(request: NextRequest) {
       } else if (profile.user_type === "admin") {
         redirectUrl = "/dashboard";
       } else {
-        redirectUrl = "/";
+        // Voters go to find-board page
+        redirectUrl = "/find-board";
+      }
+    } else {
+      // New user needs onboarding - pass along the redirect if it's a board
+      if (next && next.startsWith("/b/")) {
+        redirectUrl = `/onboarding?redirect=${encodeURIComponent(next)}`;
       }
     }
-    // else: new user, go to onboarding
   }
 
   // Build redirect response with auth cookies

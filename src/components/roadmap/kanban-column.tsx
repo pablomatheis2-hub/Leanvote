@@ -1,13 +1,16 @@
 "use client";
 
 import { useDroppable } from "@dnd-kit/core";
+import { Plus } from "lucide-react";
 import { KanbanCard } from "./kanban-card";
+import { Button } from "@/components/ui/button";
 import type { PostWithDetails, Status } from "@/types/database";
 import { cn } from "@/lib/utils";
 
 interface KanbanColumnProps {
   status: Status;
   posts: PostWithDetails[];
+  onAddCard?: () => void;
 }
 
 const columnConfig: Record<Status, { title: string; color: string; bg: string; border: string }> = {
@@ -17,7 +20,7 @@ const columnConfig: Record<Status, { title: string; color: string; bg: string; b
   Complete: { title: "Complete", color: "text-green-700", bg: "bg-green-50/50", border: "border-green-200" },
 };
 
-export function KanbanColumn({ status, posts }: KanbanColumnProps) {
+export function KanbanColumn({ status, posts, onAddCard }: KanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: status,
   });
@@ -46,12 +49,18 @@ export function KanbanColumn({ status, posts }: KanbanColumnProps) {
         </div>
       </div>
       <div className="flex-1 p-3 space-y-3 overflow-y-auto">
-        {posts.length === 0 ? (
-          <div className="flex items-center justify-center h-24 text-sm text-zinc-400 border-2 border-dashed border-zinc-200 rounded-lg">
-            No items
-          </div>
-        ) : (
-          posts.map((post) => <KanbanCard key={post.id} post={post} />)
+        {posts.map((post) => <KanbanCard key={post.id} post={post} />)}
+        
+        {/* Add Card button */}
+        {onAddCard && (
+          <Button
+            variant="ghost"
+            onClick={onAddCard}
+            className="w-full h-10 border-2 border-dashed border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50 text-zinc-500 hover:text-zinc-600 gap-1.5"
+          >
+            <Plus className="w-4 h-4" />
+            Add Card
+          </Button>
         )}
       </div>
     </div>

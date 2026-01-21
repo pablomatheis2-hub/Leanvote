@@ -48,7 +48,7 @@ export function PublicBoardHeader({ boardOwner, user, profile }: PublicBoardHead
               <MessageSquare className="w-4 h-4 text-white" />
             </div>
             <span className="font-heading font-bold text-xl text-zinc-900">
-              {boardOwner.board_name || "Feedback"}
+              {boardOwner.company_name || boardOwner.board_name || "Feedback"}
             </span>
           </Link>
           

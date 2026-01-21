@@ -27,7 +27,11 @@ export async function completeOnboardingAsVoter() {
   return { success: true };
 }
 
-export async function completeOnboardingAsAdmin() {
+export async function completeOnboardingAsAdmin(
+  companyName: string,
+  companyUrl: string | null,
+  companyDescription: string | null
+) {
   const supabase = await createClient();
   
   const { data: { user } } = await supabase.auth.getUser();
@@ -35,16 +39,12 @@ export async function completeOnboardingAsAdmin() {
     return { error: "You must be logged in" };
   }
 
-  // Get current profile to build board slug
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("full_name")
-    .eq("id", user.id)
-    .single();
+  if (!companyName?.trim()) {
+    return { error: "Company name is required" };
+  }
 
-  // Generate board slug
-  const slugBase = profile?.full_name || user.email?.split("@")[0] || "board";
-  const baseSlug = slugBase.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  // Generate board slug from company name
+  const baseSlug = companyName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   
   // Check for slug uniqueness and append number if needed
   let finalSlug = baseSlug;
@@ -66,9 +66,17 @@ export async function completeOnboardingAsAdmin() {
     counter++;
   }
 
-  const boardName = (profile?.full_name || user.email?.split("@")[0] || "My") + "'s Feedback";
+  // Board name is the company name + Feedback
+  const boardName = companyName.trim() + " Feedback";
   const trialEndsAt = new Date();
   trialEndsAt.setDate(trialEndsAt.getDate() + 7);
+
+  // Normalize company URL for searching
+  let normalizedUrl = companyUrl;
+  if (normalizedUrl) {
+    // Remove protocol and www for consistent storage
+    normalizedUrl = normalizedUrl.replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/$/, "");
+  }
 
   const { error } = await supabase
     .from("profiles")
@@ -76,6 +84,9 @@ export async function completeOnboardingAsAdmin() {
       user_type: "admin",
       board_slug: finalSlug,
       board_name: boardName,
+      company_name: companyName.trim(),
+      company_url: normalizedUrl || null,
+      company_description: companyDescription?.trim() || null,
       trial_ends_at: trialEndsAt.toISOString(),
       onboarding_completed: true,
     })

@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/server";
-import { CreatePostDialog } from "@/components/create-post-dialog";
 import { DashboardPostList } from "@/components/dashboard/post-list";
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
@@ -72,10 +71,9 @@ export default async function DashboardPage() {
             Feedback Board
           </h1>
           <p className="text-zinc-500 mt-1">
-            Manage feedback and feature requests from your users
+            Manage feedback and feature requests submitted by your users
           </p>
         </div>
-        <CreatePostDialog />
       </div>
 
       {/* Public link card */}

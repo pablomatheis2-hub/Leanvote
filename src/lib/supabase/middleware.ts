@@ -36,13 +36,15 @@ export async function updateSession(request: NextRequest) {
       .single();
 
     // Redirect to onboarding if not completed (except if already on onboarding)
-    if (profile && !profile.onboarding_completed && pathname !== "/onboarding") {
-      return NextResponse.redirect(new URL("/onboarding", request.url));
+    if (profile && !profile.onboarding_completed && !pathname.startsWith("/onboarding")) {
+      // Preserve the intended destination (e.g., a board the user wanted to visit)
+      const redirectParam = pathname.startsWith("/b/") ? `?redirect=${encodeURIComponent(pathname)}` : "";
+      return NextResponse.redirect(new URL(`/onboarding${redirectParam}`, request.url));
     }
 
     // Prevent completed users from accessing onboarding
-    if (profile && profile.onboarding_completed && pathname === "/onboarding") {
-      const redirectTo = profile.user_type === "admin" ? "/dashboard" : "/";
+    if (profile && profile.onboarding_completed && pathname.startsWith("/onboarding")) {
+      const redirectTo = profile.user_type === "admin" ? "/dashboard" : "/find-board";
       return NextResponse.redirect(new URL(redirectTo, request.url));
     }
 

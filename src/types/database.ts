@@ -10,6 +10,11 @@ export interface Profile {
   user_type: UserType;
   board_slug: string | null;
   board_name: string | null;
+  // Company information (for admins)
+  company_name: string | null;
+  company_url: string | null;
+  company_description: string | null;
+  // Trial and subscription
   trial_ends_at: string | null;
   has_lifetime_access: boolean;
   onboarding_completed: boolean;

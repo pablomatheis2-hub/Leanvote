@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
-import type { Status } from "@/types/database";
+import type { Status, Category } from "@/types/database";
 import { getAccessStatus } from "@/lib/access";
 
 export async function updatePostStatus(postId: string, newStatus: Status) {
@@ -37,6 +37,60 @@ export async function updatePostStatus(postId: string, newStatus: Status) {
   }
 
   revalidatePath("/dashboard");
+  if (profile?.board_slug) {
+    revalidatePath(`/b/${profile.board_slug}`);
+  }
+  return { success: true };
+}
+
+export async function createRoadmapItem(formData: FormData) {
+  const supabase = await createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return { error: "Unauthorized" };
+  }
+
+  // Check access
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+
+  const accessStatus = getAccessStatus(profile);
+  if (!accessStatus.hasAccess) {
+    return { error: "Your trial has expired. Please upgrade to continue." };
+  }
+
+  const title = formData.get("title") as string;
+  const description = formData.get("description") as string;
+  const category = formData.get("category") as Category;
+  const status = formData.get("status") as Status;
+
+  if (!title?.trim()) {
+    return { error: "Title is required" };
+  }
+
+  if (!category) {
+    return { error: "Category is required" };
+  }
+
+  // Create the roadmap item (admin creates for their own board)
+  const { error } = await supabase.from("posts").insert({
+    user_id: user.id,
+    board_owner_id: user.id,
+    title: title.trim(),
+    description: description?.trim() || null,
+    category,
+    status: status || "Planned",
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/dashboard/roadmap");
   if (profile?.board_slug) {
     revalidatePath(`/b/${profile.board_slug}`);
   }

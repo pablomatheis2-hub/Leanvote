@@ -3,12 +3,17 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
-export async function signInWithGitHub() {
+export async function signInWithGitHub(redirectTo?: string) {
   const supabase = await createClient();
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const callbackUrl = redirectTo 
+    ? `${siteUrl}/auth/callback?next=${encodeURIComponent(redirectTo)}`
+    : `${siteUrl}/auth/callback`;
+    
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "github",
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/auth/callback`,
+      redirectTo: callbackUrl,
     },
   });
 
@@ -21,12 +26,17 @@ export async function signInWithGitHub() {
   }
 }
 
-export async function signInWithGoogle() {
+export async function signInWithGoogle(redirectTo?: string) {
   const supabase = await createClient();
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const callbackUrl = redirectTo 
+    ? `${siteUrl}/auth/callback?next=${encodeURIComponent(redirectTo)}`
+    : `${siteUrl}/auth/callback`;
+    
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/auth/callback`,
+      redirectTo: callbackUrl,
     },
   });
 
@@ -79,4 +89,35 @@ export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect("/");
+}
+
+export async function getUserRedirect(intendedRedirect?: string): Promise<string> {
+  const supabase = await createClient();
+  
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return "/";
+  }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("onboarding_completed, user_type")
+    .eq("id", user.id)
+    .single();
+
+  if (!profile?.onboarding_completed) {
+    // Pass the redirect to onboarding if it's a board
+    if (intendedRedirect?.startsWith("/b/")) {
+      return `/onboarding?redirect=${encodeURIComponent(intendedRedirect)}`;
+    }
+    return "/onboarding";
+  }
+
+  // If there's an intended redirect (e.g., a board), use it
+  if (intendedRedirect) {
+    return intendedRedirect;
+  }
+
+  // Admin users go to dashboard, voters go to find-board page
+  return profile.user_type === "admin" ? "/dashboard" : "/find-board";
 }
