@@ -10,6 +10,9 @@ export async function GET(request: NextRequest) {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin;
   const redirectUrl = `${siteUrl}${next}`;
 
+  console.log("Auth callback - code:", code ? "present" : "missing");
+  console.log("Auth callback - request cookies:", request.cookies.getAll().map(c => c.name));
+
   if (code) {
     // Store cookies to set them on the response later
     const cookiesToSet: { name: string; value: string; options: Record<string, unknown> }[] = [];
@@ -20,9 +23,12 @@ export async function GET(request: NextRequest) {
       {
         cookies: {
           getAll() {
-            return request.cookies.getAll();
+            const cookies = request.cookies.getAll();
+            console.log("Supabase getAll called, returning:", cookies.map(c => c.name));
+            return cookies;
           },
           setAll(cookies) {
+            console.log("Supabase setAll called with:", cookies.map(c => c.name));
             cookies.forEach((cookie) => {
               cookiesToSet.push(cookie);
             });
@@ -31,7 +37,11 @@ export async function GET(request: NextRequest) {
       }
     );
 
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+
+    console.log("Exchange result - error:", error?.message || "none");
+    console.log("Exchange result - session:", data?.session ? "present" : "missing");
+    console.log("Exchange result - user:", data?.user?.email || "none");
 
     if (error) {
       console.error("Auth callback error:", error.message);
@@ -40,6 +50,8 @@ export async function GET(request: NextRequest) {
 
     // Create response and attach all cookies
     const response = NextResponse.redirect(redirectUrl);
+    
+    console.log("Cookies to set:", cookiesToSet.map(c => c.name));
     
     cookiesToSet.forEach(({ name, value, options }) => {
       response.cookies.set(name, value, {
@@ -51,8 +63,6 @@ export async function GET(request: NextRequest) {
         ...options,
       });
     });
-
-    console.log("Setting cookies:", cookiesToSet.map(c => c.name));
 
     return response;
   }
