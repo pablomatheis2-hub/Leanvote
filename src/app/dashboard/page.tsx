@@ -117,7 +117,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Posts List */}
-      <DashboardPostList posts={posts} />
+      <DashboardPostList posts={posts} boardSlug={profile?.board_slug || ""} />
     </div>
   );
 }

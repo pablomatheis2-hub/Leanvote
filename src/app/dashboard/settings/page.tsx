@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { SettingsForm } from "@/components/dashboard/settings-form";
+import { ProfileSettingsForm } from "@/components/dashboard/profile-settings-form";
 import { SubscriptionCard } from "@/components/dashboard/subscription-card";
 import { WidgetSettings } from "@/components/dashboard/widget-settings";
 import { getAccessStatus } from "@/lib/access";
@@ -40,6 +41,17 @@ export default async function DashboardSettingsPage() {
       </div>
 
       <div className="space-y-8">
+        {/* Profile Settings */}
+        <div className="bg-white rounded-xl border border-zinc-200 p-6">
+          <h2 className="text-lg font-semibold text-zinc-900 mb-1">
+            Your Profile
+          </h2>
+          <p className="text-sm text-zinc-500 mb-4">
+            Customize how you appear when commenting on posts
+          </p>
+          <ProfileSettingsForm profile={profile} />
+        </div>
+
         {/* Board Settings */}
         <div className="bg-white rounded-xl border border-zinc-200 p-6">
           <h2 className="text-lg font-semibold text-zinc-900 mb-4">

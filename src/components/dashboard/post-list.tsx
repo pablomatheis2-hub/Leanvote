@@ -1,13 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronUp, Trash2, MoreHorizontal } from "lucide-react";
+import Link from "next/link";
+import { ChevronUp, Trash2, MoreHorizontal, ExternalLink, MessageCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -23,6 +25,7 @@ import type { PostWithDetails, Status, Category } from "@/types/database";
 
 interface DashboardPostListProps {
   posts: PostWithDetails[];
+  boardSlug: string;
 }
 
 const statusStyles: Record<Status, string> = {
@@ -38,7 +41,7 @@ const categoryStyles: Record<Category, string> = {
   Integration: "bg-cyan-50 text-cyan-700 border-cyan-200",
 };
 
-export function DashboardPostList({ posts }: DashboardPostListProps) {
+export function DashboardPostList({ posts, boardSlug }: DashboardPostListProps) {
   const [filter, setFilter] = useState<Status | "all">("all");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -102,7 +105,12 @@ export function DashboardPostList({ posts }: DashboardPostListProps) {
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h3 className="font-medium text-zinc-900">{post.title}</h3>
+                    <Link 
+                      href={`/b/${boardSlug}/post/${post.id}`}
+                      className="font-medium text-zinc-900 hover:text-[#f97352] transition-colors"
+                    >
+                      {post.title}
+                    </Link>
                     {post.description && (
                       <p className="text-sm text-zinc-500 mt-1 line-clamp-2">{post.description}</p>
                     )}
@@ -142,6 +150,19 @@ export function DashboardPostList({ posts }: DashboardPostListProps) {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
+                        <DropdownMenuItem asChild className="cursor-pointer">
+                          <Link href={`/b/${boardSlug}/post/${post.id}`}>
+                            <MessageCircle className="w-4 h-4 mr-2" />
+                            View & Comment
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild className="cursor-pointer">
+                          <Link href={`/b/${boardSlug}/post/${post.id}`} target="_blank">
+                            <ExternalLink className="w-4 h-4 mr-2" />
+                            Open in New Tab
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem
                           onClick={() => handleDelete(post.id)}
                           className="text-red-600 focus:text-red-600 cursor-pointer"
