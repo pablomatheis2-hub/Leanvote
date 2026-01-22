@@ -114,19 +114,35 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!boardOwner) {
     return {
       title: "Board Not Found - LeanVote",
+      robots: { index: false, follow: false },
     };
   }
 
-  const title = `Changelog - ${boardOwner.board_name || "Feedback Board"}`;
-  const description = `See all the features and improvements shipped for ${boardOwner.board_name || "this product"}.`;
+  const boardName = boardOwner.board_name || boardOwner.company_name || "Product";
+  const title = `${boardName} Changelog & Release Notes`;
+  const description = `See all the features, bug fixes, and improvements shipped for ${boardName}. Stay updated on the latest releases.`;
 
   return {
     title,
     description,
+    alternates: {
+      canonical: `/b/${slug}/changelog`,
+    },
     openGraph: {
-      title,
+      title: `${boardName} Changelog & Release Notes`,
       description,
+      url: `/b/${slug}/changelog`,
       type: "website",
+      siteName: "LeanVote",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${boardName} Changelog & Release Notes`,
+      description,
+    },
+    robots: {
+      index: true,
+      follow: true,
     },
   };
 }

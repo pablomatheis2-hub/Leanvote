@@ -1,0 +1,23 @@
+# https://www.robotstxt.org/robotstxt.html
+
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Disallow private/auth routes
+Disallow: /dashboard
+Disallow: /dashboard/*
+Disallow: /onboarding
+Disallow: /auth/*
+Disallow: /api/*
+Disallow: /upgrade
+Disallow: /post/*
+
+# Allow public board pages
+Allow: /b/*
+
+# Sitemap location
+Sitemap: https://leanvote.app/sitemap.xml
+
+# Crawl delay for polite crawling
+Crawl-delay: 1

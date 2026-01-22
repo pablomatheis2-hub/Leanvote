@@ -4,6 +4,7 @@ import Link from "next/link";
 import { MessageSquare, ArrowRight, Check, Zap } from "lucide-react";
 import { Typewriter } from "@/components/typewriter";
 import { DashboardPreview } from "@/components/dashboard-preview";
+import { FAQSchema, landingPageFAQs } from "@/components/seo/faq-schema";
 
 const rotatingTexts = [
   "Collect feedback",
@@ -16,6 +17,7 @@ const rotatingTexts = [
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white">
+      <FAQSchema faqs={landingPageFAQs} />
       {/* Navigation */}
       <nav className="border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -43,7 +45,7 @@ export default function LandingPage() {
               href="/auth/login"
               className="text-sm font-medium bg-[#f97352] text-white px-4 py-2 rounded-lg hover:bg-[#e8634a] transition-colors"
             >
-              Get Started Free
+              Create Free Board
             </Link>
           </div>
         </div>
@@ -52,11 +54,6 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="pt-24 pb-20 px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-50 rounded-full text-amber-700 text-sm font-medium mb-6">
-            <Zap className="w-4 h-4" />
-            7-day free trial, then $49 lifetime access
-          </div>
-          
           <h1 className="font-heading font-bold text-5xl md:text-6xl text-gray-900 leading-[1.15] tracking-tight mb-6">
             <Typewriter
               texts={rotatingTexts}
@@ -74,20 +71,17 @@ export default function LandingPage() {
           </p>
           
           {/* CTA */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+          <div className="flex flex-col items-center gap-3 mb-12">
             <Link 
               href="/auth/login"
-              className="group flex items-center gap-2 bg-[#f97352] text-white font-medium px-6 py-3 rounded-lg hover:bg-[#e8634a] transition-colors"
+              className="group flex items-center gap-2 bg-[#f97352] text-white font-semibold text-lg px-8 py-4 rounded-xl hover:bg-[#e8634a] transition-all hover:scale-[1.02] shadow-lg shadow-[#f97352]/25"
             >
-              Start your free trial
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              Create Free Board
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
             </Link>
-            <Link 
-              href="#how-it-works"
-              className="text-gray-600 hover:text-gray-900 font-medium px-6 py-3 transition-colors"
-            >
-              See how it works
-            </Link>
+            <p className="text-sm text-gray-500">
+              No credit card required. Upgrade to Lifetime later.
+            </p>
           </div>
           
           {/* Quick benefits */}
@@ -118,6 +112,83 @@ export default function LandingPage() {
       <section className="pb-24 px-6">
         <div className="max-w-4xl mx-auto">
           <DashboardPreview />
+        </div>
+      </section>
+
+      {/* Why Switch - Comparison Table */}
+      <section className="py-20 px-6 bg-gradient-to-b from-gray-50 to-white">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="font-heading font-bold text-3xl md:text-4xl text-gray-900 tracking-tight mb-4">
+              Why switch?
+            </h2>
+            <p className="text-lg text-gray-500">
+              See how LeanVote compares to monthly subscription tools.
+            </p>
+          </div>
+          
+          <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-100">
+                  <th className="text-left p-5 text-sm font-semibold text-gray-900 bg-gray-50">Feature</th>
+                  <th className="text-center p-5 text-sm font-semibold text-gray-500 bg-gray-50">Canny, Upvoty, etc.</th>
+                  <th className="text-center p-5 text-sm font-semibold text-[#f97352] bg-[#fff8f6]">LeanVote</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                <tr>
+                  <td className="p-5 text-gray-700 font-medium">Pricing</td>
+                  <td className="p-5 text-center">
+                    <span className="text-gray-500">$49–$400/month</span>
+                  </td>
+                  <td className="p-5 text-center bg-[#fffcfb]">
+                    <span className="text-emerald-600 font-bold text-lg">$49 once</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="p-5 text-gray-700 font-medium">Users</td>
+                  <td className="p-5 text-center">
+                    <span className="text-gray-500">Limited by plan</span>
+                  </td>
+                  <td className="p-5 text-center bg-[#fffcfb]">
+                    <span className="text-gray-900 font-semibold">Unlimited</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="p-5 text-gray-700 font-medium">Complexity</td>
+                  <td className="p-5 text-center">
+                    <span className="text-gray-500">High (dozens of features)</span>
+                  </td>
+                  <td className="p-5 text-center bg-[#fffcfb]">
+                    <span className="text-gray-900 font-semibold">Simple</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="p-5 text-gray-700 font-medium">Setup time</td>
+                  <td className="p-5 text-center">
+                    <span className="text-gray-500">30+ minutes</span>
+                  </td>
+                  <td className="p-5 text-center bg-[#fffcfb]">
+                    <span className="text-gray-900 font-semibold">2 minutes</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="p-5 text-gray-700 font-medium">Cost after 1 year</td>
+                  <td className="p-5 text-center">
+                    <span className="text-red-500 font-semibold">$588+</span>
+                  </td>
+                  <td className="p-5 text-center bg-[#fffcfb]">
+                    <span className="text-emerald-600 font-bold">$49</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <p className="text-center text-sm text-gray-500 mt-6">
+            Stop paying rent. Own your feedback board forever.
+          </p>
         </div>
       </section>
 
@@ -366,10 +437,13 @@ export default function LandingPage() {
             
             <Link 
               href="/auth/login"
-              className="block w-full bg-[#f97352] text-white font-semibold py-3 rounded-lg hover:bg-[#e8634a] transition-colors"
+              className="block w-full bg-[#f97352] text-white font-semibold py-4 rounded-xl hover:bg-[#e8634a] transition-colors text-lg"
             >
-              Start Free Trial
+              Create Free Board
             </Link>
+            <p className="text-sm text-gray-500 mt-3">
+              Start free, upgrade when ready
+            </p>
           </div>
         </div>
       </section>
@@ -381,15 +455,20 @@ export default function LandingPage() {
             Ready to get started?
           </h2>
           <p className="text-lg text-gray-400 mb-8">
-            Start collecting feedback from your users today with a 7-day free trial.
+            Create your feedback board in minutes. Upgrade to Lifetime whenever you&apos;re ready.
           </p>
-          <Link 
-            href="/auth/login"
-            className="inline-flex items-center gap-2 bg-[#f97352] text-white font-medium px-6 py-3 rounded-lg hover:bg-[#e8634a] transition-colors"
-          >
-            Get started for free
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+          <div className="flex flex-col items-center gap-3">
+            <Link 
+              href="/auth/login"
+              className="inline-flex items-center gap-2 bg-[#f97352] text-white font-semibold text-lg px-8 py-4 rounded-xl hover:bg-[#e8634a] transition-all hover:scale-[1.02]"
+            >
+              Create Free Board
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+            <p className="text-sm text-gray-500">
+              No credit card required
+            </p>
+          </div>
         </div>
       </section>
 
