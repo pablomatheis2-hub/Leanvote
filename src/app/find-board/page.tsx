@@ -113,15 +113,6 @@ export default function FindBoardPage() {
             Check out our official board
           </Link>
         </p>
-
-        <div className="mt-10 text-center">
-          <p className="text-sm text-zinc-400">
-            Want to create your own feedback board?{" "}
-            <Link href="/upgrade" className="text-[#f97352] font-medium hover:underline">
-              Upgrade to Admin
-            </Link>
-          </p>
-        </div>
       </main>
     </div>
   );
