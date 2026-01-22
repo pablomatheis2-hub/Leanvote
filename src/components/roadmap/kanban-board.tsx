@@ -166,16 +166,17 @@ export function KanbanBoard({ initialPosts }: KanbanBoardProps) {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-xl font-semibold text-zinc-900">
-              Add Roadmap Item
+            <DialogTitle className="text-xl font-semibold text-foreground">
+              Add New Roadmap Item
             </DialogTitle>
             <DialogDescription>
-              Add a new item to your roadmap in the &quot;{selectedStatus}&quot; column.
+              Create a new item in the &quot;{selectedStatus}&quot; column. This is for items you want to add 
+              directly—to add user feedback to your roadmap, use the Feedback Board instead.
             </DialogDescription>
           </DialogHeader>
           <form action={handleSubmit} className="space-y-5 mt-2">
             <div className="space-y-2">
-              <label htmlFor="title" className="text-sm font-medium text-zinc-700">
+              <label htmlFor="title" className="text-sm font-medium text-foreground">
                 Title
               </label>
               <Input
@@ -187,7 +188,7 @@ export function KanbanBoard({ initialPosts }: KanbanBoardProps) {
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="description" className="text-sm font-medium text-zinc-700">
+              <label htmlFor="description" className="text-sm font-medium text-foreground">
                 Description
               </label>
               <Textarea
@@ -198,7 +199,7 @@ export function KanbanBoard({ initialPosts }: KanbanBoardProps) {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-zinc-700">Category</label>
+              <label className="text-sm font-medium text-foreground">Category</label>
               <Select value={category} onValueChange={(v) => setCategory(v as Category)}>
                 <SelectTrigger className="h-11">
                   <SelectValue placeholder="Select a category" />
@@ -211,7 +212,7 @@ export function KanbanBoard({ initialPosts }: KanbanBoardProps) {
               </Select>
             </div>
             {error && (
-              <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md">{error}</p>
+              <p className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/50 px-3 py-2 rounded-md">{error}</p>
             )}
             <div className="flex justify-end gap-3 pt-2">
               <Button
@@ -225,7 +226,7 @@ export function KanbanBoard({ initialPosts }: KanbanBoardProps) {
               <Button
                 type="submit"
                 disabled={loading || !category}
-                className="bg-[#f97352] hover:bg-[#e8634a] text-white min-w-[100px]"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground min-w-[100px]"
               >
                 {loading ? "Adding..." : "Add Item"}
               </Button>

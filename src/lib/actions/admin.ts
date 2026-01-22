@@ -43,6 +43,59 @@ export async function updatePostStatus(postId: string, newStatus: Status) {
   return { success: true };
 }
 
+export async function promoteToRoadmap(
+  postId: string,
+  newStatus: Status,
+  title: string,
+  description: string | null
+) {
+  const supabase = await createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return { error: "Unauthorized" };
+  }
+
+  // Check access
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+
+  const accessStatus = getAccessStatus(profile);
+  if (!accessStatus.hasAccess) {
+    return { error: "Your trial has expired. Please upgrade to continue." };
+  }
+
+  if (!title?.trim()) {
+    return { error: "Title is required" };
+  }
+
+  // Update the post with new status, title, and description
+  const { error } = await supabase
+    .from("posts")
+    .update({
+      status: newStatus,
+      title: title.trim(),
+      description: description?.trim() || null,
+    })
+    .eq("id", postId)
+    .eq("board_owner_id", user.id);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/roadmap");
+  if (profile?.board_slug) {
+    revalidatePath(`/b/${profile.board_slug}`);
+    revalidatePath(`/b/${profile.board_slug}/roadmap`);
+  }
+  return { success: true };
+}
+
 export async function createRoadmapItem(formData: FormData) {
   const supabase = await createClient();
 
@@ -198,9 +251,9 @@ export async function updateProfile(formData: FormData) {
       return { error: "Image size must be less than 2MB" };
     }
 
-    // Generate unique filename
+    // Generate unique filename in user's folder
     const fileExt = avatarFile.name.split(".").pop();
-    const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+    const fileName = `${user.id}/${Date.now()}.${fileExt}`;
 
     // Upload to Supabase Storage
     const { error: uploadError } = await supabase.storage

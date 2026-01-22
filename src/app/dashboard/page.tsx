@@ -34,6 +34,7 @@ async function getPosts(boardOwnerId: string): Promise<PostWithDetails[]> {
       )
     `)
     .eq("board_owner_id", boardOwnerId)
+    .eq("status", "Open")
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -67,24 +68,24 @@ export default async function DashboardPage() {
       {/* Header */}
       <div className="flex items-start justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-semibold text-zinc-900 tracking-tight">
+          <h1 className="text-2xl font-semibold text-foreground tracking-tight">
             Feedback Board
           </h1>
-          <p className="text-zinc-500 mt-1">
+          <p className="text-muted-foreground mt-1">
             Manage feedback and feature requests submitted by your users
           </p>
         </div>
       </div>
 
       {/* Public link card */}
-      <div className="bg-white rounded-xl border border-zinc-200 p-4 mb-8">
+      <div className="bg-card rounded-xl border border-border p-4 mb-8">
         <div className="flex items-center justify-between">
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-zinc-900 mb-1">
+            <p className="text-sm font-medium text-foreground mb-1">
               Share your feedback board
             </p>
             <div className="flex items-center gap-2">
-              <code className="text-sm text-zinc-500 bg-zinc-100 px-2 py-1 rounded truncate">
+              <code className="text-sm text-muted-foreground bg-muted px-2 py-1 rounded truncate">
                 {publicUrl}
               </code>
               <CopyButton text={publicUrl} />
@@ -93,7 +94,7 @@ export default async function DashboardPage() {
           <Link
             href={`/b/${profile?.board_slug}`}
             target="_blank"
-            className="ml-4 flex items-center gap-1.5 text-sm text-[#f97352] hover:text-[#e8634a] font-medium"
+            className="ml-4 flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 font-medium"
           >
             <ExternalLink className="w-4 h-4" />
             Preview
@@ -102,18 +103,9 @@ export default async function DashboardPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-4 mb-8">
-        {[
-          { label: "Total Posts", value: posts.length },
-          { label: "Open", value: posts.filter(p => p.status === "Open").length },
-          { label: "In Progress", value: posts.filter(p => p.status === "Planned" || p.status === "In Progress").length },
-          { label: "Completed", value: posts.filter(p => p.status === "Complete").length },
-        ].map((stat) => (
-          <div key={stat.label} className="bg-white rounded-xl border border-zinc-200 p-4">
-            <p className="text-sm text-zinc-500">{stat.label}</p>
-            <p className="text-2xl font-semibold text-zinc-900 mt-1">{stat.value}</p>
-          </div>
-        ))}
+      <div className="bg-card rounded-xl border border-border p-4 mb-8">
+        <p className="text-sm text-muted-foreground">Open Feedback</p>
+        <p className="text-2xl font-semibold text-foreground mt-1">{posts.length}</p>
       </div>
 
       {/* Posts List */}

@@ -5,6 +5,7 @@ import { MessageSquare, ArrowRight, Check, Zap } from "lucide-react";
 import { Typewriter } from "@/components/typewriter";
 import { DashboardPreview } from "@/components/dashboard-preview";
 import { FAQSchema, landingPageFAQs } from "@/components/seo/faq-schema";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const rotatingTexts = [
   "Collect feedback",
@@ -16,34 +17,35 @@ const rotatingTexts = [
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <FAQSchema faqs={landingPageFAQs} />
       {/* Navigation */}
-      <nav className="border-b border-gray-100">
+      <nav className="border-b border-border">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#f97352] flex items-center justify-center">
-              <MessageSquare className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center">
+              <MessageSquare className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="font-heading font-bold text-xl text-gray-900">LeanVote</span>
+            <span className="font-heading font-bold text-xl text-foreground">LeanVote</span>
           </Link>
           
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
             <Link 
               href="/docs" 
-              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Docs
             </Link>
             <Link 
               href="/auth/login" 
-              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Sign In
             </Link>
+            <ThemeToggle />
             <Link 
               href="/auth/login"
-              className="text-sm font-medium bg-[#f97352] text-white px-4 py-2 rounded-lg hover:bg-[#e8634a] transition-colors"
+              className="text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
             >
               Create Free Board
             </Link>
@@ -54,10 +56,10 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="pt-24 pb-20 px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <h1 className="font-heading font-bold text-5xl md:text-6xl text-gray-900 leading-[1.15] tracking-tight mb-6">
+          <h1 className="font-heading font-bold text-5xl md:text-6xl text-foreground leading-[1.15] tracking-tight mb-6">
             <Typewriter
               texts={rotatingTexts}
-              className="text-[#f97352] text-accent-underline"
+              className="text-primary text-accent-underline"
               typingSpeed={70}
               deletingSpeed={40}
               pauseDuration={2500}
@@ -66,7 +68,7 @@ export default function LandingPage() {
             from your users.
           </h1>
           
-          <p className="text-lg md:text-xl text-gray-500 max-w-xl mx-auto mb-10 leading-relaxed">
+          <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto mb-10 leading-relaxed">
             A simple feedback board where your customers can share ideas, report bugs, and vote on what matters most.
           </p>
           
@@ -74,34 +76,34 @@ export default function LandingPage() {
           <div className="flex flex-col items-center gap-3 mb-12">
             <Link 
               href="/auth/login"
-              className="group flex items-center gap-2 bg-[#f97352] text-white font-semibold text-lg px-8 py-4 rounded-xl hover:bg-[#e8634a] transition-all hover:scale-[1.02] shadow-lg shadow-[#f97352]/25"
+              className="group flex items-center gap-2 bg-primary text-primary-foreground font-semibold text-lg px-8 py-4 rounded-xl hover:bg-primary/90 transition-all hover:scale-[1.02] shadow-lg shadow-primary/25"
             >
               Create Free Board
               <ArrowRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
             </Link>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted-foreground">
               No credit card required. Upgrade to Lifetime later.
             </p>
           </div>
           
           {/* Quick benefits */}
-          <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-500">
+          <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
-              <Check className="w-4 h-4 text-[#f97352]" />
+              <Check className="w-4 h-4 text-primary" />
               <span>7-day free trial</span>
             </div>
             <div className="flex items-center gap-2">
-              <Check className="w-4 h-4 text-[#f97352]" />
+              <Check className="w-4 h-4 text-primary" />
               <span>No credit card required</span>
             </div>
             <div className="flex items-center gap-2">
-              <Check className="w-4 h-4 text-[#f97352]" />
+              <Check className="w-4 h-4 text-primary" />
               <span>Setup in minutes</span>
             </div>
           </div>
 
           {/* Free voting note */}
-          <div className="mt-8 inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 rounded-full text-emerald-700 text-sm">
+          <div className="mt-8 inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-950/50 rounded-full text-emerald-700 dark:text-emerald-400 text-sm">
             <Check className="w-4 h-4" />
             <span><strong>Voting is always free</strong> — only pay if you create your own board</span>
           </div>
@@ -116,90 +118,90 @@ export default function LandingPage() {
       </section>
 
       {/* Why Switch - Comparison Table */}
-      <section className="py-20 px-6 bg-gradient-to-b from-gray-50 to-white">
+      <section className="py-20 px-6 bg-gradient-to-b from-muted/50 to-background">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="font-heading font-bold text-3xl md:text-4xl text-gray-900 tracking-tight mb-4">
+            <h2 className="font-heading font-bold text-3xl md:text-4xl text-foreground tracking-tight mb-4">
               Why switch?
             </h2>
-            <p className="text-lg text-gray-500">
+            <p className="text-lg text-muted-foreground">
               See how LeanVote compares to monthly subscription tools.
             </p>
           </div>
           
-          <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+          <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-sm">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="text-left p-5 text-sm font-semibold text-gray-900 bg-gray-50">Feature</th>
-                  <th className="text-center p-5 text-sm font-semibold text-gray-500 bg-gray-50">Canny, Upvoty, etc.</th>
-                  <th className="text-center p-5 text-sm font-semibold text-[#f97352] bg-[#fff8f6]">LeanVote</th>
+                <tr className="border-b border-border">
+                  <th className="text-left p-5 text-sm font-semibold text-foreground bg-muted/50">Feature</th>
+                  <th className="text-center p-5 text-sm font-semibold text-muted-foreground bg-muted/50">Canny, Upvoty, etc.</th>
+                  <th className="text-center p-5 text-sm font-semibold text-primary bg-secondary">LeanVote</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-border">
                 <tr>
-                  <td className="p-5 text-gray-700 font-medium">Pricing</td>
+                  <td className="p-5 text-foreground/80 font-medium">Pricing</td>
                   <td className="p-5 text-center">
-                    <span className="text-gray-500">$49–$400/month</span>
+                    <span className="text-muted-foreground">$49–$400/month</span>
                   </td>
-                  <td className="p-5 text-center bg-[#fffcfb]">
-                    <span className="text-emerald-600 font-bold text-lg">$49 once</span>
+                  <td className="p-5 text-center bg-secondary/50">
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold text-lg">$49 once</span>
                   </td>
                 </tr>
                 <tr>
-                  <td className="p-5 text-gray-700 font-medium">Users</td>
+                  <td className="p-5 text-foreground/80 font-medium">Users</td>
                   <td className="p-5 text-center">
-                    <span className="text-gray-500">Limited by plan</span>
+                    <span className="text-muted-foreground">Limited by plan</span>
                   </td>
-                  <td className="p-5 text-center bg-[#fffcfb]">
-                    <span className="text-gray-900 font-semibold">Unlimited</span>
+                  <td className="p-5 text-center bg-secondary/50">
+                    <span className="text-foreground font-semibold">Unlimited</span>
                   </td>
                 </tr>
                 <tr>
-                  <td className="p-5 text-gray-700 font-medium">Complexity</td>
+                  <td className="p-5 text-foreground/80 font-medium">Complexity</td>
                   <td className="p-5 text-center">
-                    <span className="text-gray-500">High (dozens of features)</span>
+                    <span className="text-muted-foreground">High (dozens of features)</span>
                   </td>
-                  <td className="p-5 text-center bg-[#fffcfb]">
-                    <span className="text-gray-900 font-semibold">Simple</span>
+                  <td className="p-5 text-center bg-secondary/50">
+                    <span className="text-foreground font-semibold">Simple</span>
                   </td>
                 </tr>
                 <tr>
-                  <td className="p-5 text-gray-700 font-medium">Setup time</td>
+                  <td className="p-5 text-foreground/80 font-medium">Setup time</td>
                   <td className="p-5 text-center">
-                    <span className="text-gray-500">30+ minutes</span>
+                    <span className="text-muted-foreground">30+ minutes</span>
                   </td>
-                  <td className="p-5 text-center bg-[#fffcfb]">
-                    <span className="text-gray-900 font-semibold">2 minutes</span>
+                  <td className="p-5 text-center bg-secondary/50">
+                    <span className="text-foreground font-semibold">2 minutes</span>
                   </td>
                 </tr>
                 <tr>
-                  <td className="p-5 text-gray-700 font-medium">Cost after 1 year</td>
+                  <td className="p-5 text-foreground/80 font-medium">Cost after 1 year</td>
                   <td className="p-5 text-center">
-                    <span className="text-red-500 font-semibold">$588+</span>
+                    <span className="text-red-500 dark:text-red-400 font-semibold">$588+</span>
                   </td>
-                  <td className="p-5 text-center bg-[#fffcfb]">
-                    <span className="text-emerald-600 font-bold">$49</span>
+                  <td className="p-5 text-center bg-secondary/50">
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">$49</span>
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
           
-          <p className="text-center text-sm text-gray-500 mt-6">
+          <p className="text-center text-sm text-muted-foreground mt-6">
             Stop paying rent. Own your feedback board forever.
           </p>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-24 px-6 bg-gray-50">
+      <section id="features" className="py-24 px-6 bg-muted/50">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="font-heading font-bold text-3xl md:text-4xl text-gray-900 tracking-tight mb-4">
+            <h2 className="font-heading font-bold text-3xl md:text-4xl text-foreground tracking-tight mb-4">
               Everything you need
             </h2>
-            <p className="text-lg text-gray-500 max-w-lg mx-auto">
+            <p className="text-lg text-muted-foreground max-w-lg mx-auto">
               Simple tools to collect, organize, and act on customer feedback.
             </p>
           </div>
@@ -231,14 +233,14 @@ export default function LandingPage() {
                 description: "Keep users informed with Open, Planned, In Progress, and Complete statuses.",
               },
             ].map((feature, i) => (
-              <div key={i} className="bg-white rounded-2xl p-8 border border-gray-100">
-                <div className="w-10 h-10 rounded-xl bg-[#fff5f2] flex items-center justify-center mb-5">
-                  <div className="w-3 h-3 rounded-full bg-[#f97352]" />
+              <div key={i} className="bg-card rounded-2xl p-8 border border-border">
+                <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center mb-5">
+                  <div className="w-3 h-3 rounded-full bg-primary" />
                 </div>
-                <h3 className="font-heading font-semibold text-lg text-gray-900 mb-2">
+                <h3 className="font-heading font-semibold text-lg text-foreground mb-2">
                   {feature.title}
                 </h3>
-                <p className="text-gray-500 leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed">
                   {feature.description}
                 </p>
               </div>
@@ -251,10 +253,10 @@ export default function LandingPage() {
       <section id="testimonials" className="py-24 px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="font-heading font-bold text-3xl md:text-4xl text-gray-900 tracking-tight mb-4">
+            <h2 className="font-heading font-bold text-3xl md:text-4xl text-foreground tracking-tight mb-4">
               Loved by product teams
             </h2>
-            <p className="text-lg text-gray-500 max-w-lg mx-auto">
+            <p className="text-lg text-muted-foreground max-w-lg mx-auto">
               See what teams are saying about LeanVote.
             </p>
           </div>
@@ -300,7 +302,7 @@ export default function LandingPage() {
             ].map((testimonial, i) => (
               <div 
                 key={i} 
-                className="bg-white rounded-2xl p-6 border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300"
+                className="bg-card rounded-2xl p-6 border border-border hover:border-primary/20 hover:shadow-lg transition-all duration-300"
               >
                 <div className="flex items-center gap-1 mb-4">
                   {[...Array(5)].map((_, j) => (
@@ -309,7 +311,7 @@ export default function LandingPage() {
                     </svg>
                   ))}
                 </div>
-                <p className="text-gray-600 text-sm leading-relaxed mb-5">
+                <p className="text-muted-foreground text-sm leading-relaxed mb-5">
                   &ldquo;{testimonial.quote}&rdquo;
                 </p>
                 <div className="flex items-center gap-3">
@@ -319,8 +321,8 @@ export default function LandingPage() {
                     className="w-10 h-10 rounded-full object-cover"
                   />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{testimonial.name}</p>
-                    <p className="text-xs text-gray-500">{testimonial.role}</p>
+                    <p className="text-sm font-medium text-foreground">{testimonial.name}</p>
+                    <p className="text-xs text-muted-foreground">{testimonial.role}</p>
                   </div>
                 </div>
               </div>
@@ -330,16 +332,16 @@ export default function LandingPage() {
           {/* Stats */}
           <div className="mt-16 grid grid-cols-3 gap-8 max-w-2xl mx-auto text-center">
             <div>
-              <p className="text-3xl font-bold text-gray-900">500+</p>
-              <p className="text-sm text-gray-500">Feedback boards</p>
+              <p className="text-3xl font-bold text-foreground">500+</p>
+              <p className="text-sm text-muted-foreground">Feedback boards</p>
             </div>
             <div>
-              <p className="text-3xl font-bold text-gray-900">12k+</p>
-              <p className="text-sm text-gray-500">Feature requests</p>
+              <p className="text-3xl font-bold text-foreground">12k+</p>
+              <p className="text-sm text-muted-foreground">Feature requests</p>
             </div>
             <div>
-              <p className="text-3xl font-bold text-gray-900">98%</p>
-              <p className="text-sm text-gray-500">Happy customers</p>
+              <p className="text-3xl font-bold text-foreground">98%</p>
+              <p className="text-sm text-muted-foreground">Happy customers</p>
             </div>
           </div>
         </div>
@@ -349,10 +351,10 @@ export default function LandingPage() {
       <section id="how-it-works" className="py-24 px-6">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="font-heading font-bold text-3xl md:text-4xl text-gray-900 tracking-tight mb-4">
+            <h2 className="font-heading font-bold text-3xl md:text-4xl text-foreground tracking-tight mb-4">
               How it works
             </h2>
-            <p className="text-lg text-gray-500">
+            <p className="text-lg text-muted-foreground">
               Get started in three simple steps.
             </p>
           </div>
@@ -376,13 +378,13 @@ export default function LandingPage() {
               },
             ].map((item, i) => (
               <div key={i} className="text-center">
-                <div className="w-12 h-12 rounded-full bg-[#f97352] text-white font-heading font-bold text-xl flex items-center justify-center mx-auto mb-5">
+                <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground font-heading font-bold text-xl flex items-center justify-center mx-auto mb-5">
                   {item.step}
                 </div>
-                <h3 className="font-heading font-semibold text-lg text-gray-900 mb-2">
+                <h3 className="font-heading font-semibold text-lg text-foreground mb-2">
                   {item.title}
                 </h3>
-                <p className="text-gray-500">
+                <p className="text-muted-foreground">
                   {item.description}
                 </p>
               </div>
@@ -392,31 +394,31 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-24 px-6 bg-gray-50">
+      <section id="pricing" className="py-24 px-6 bg-muted/50">
         <div className="max-w-lg mx-auto">
           <div className="text-center mb-12">
-            <h2 className="font-heading font-bold text-3xl md:text-4xl text-gray-900 tracking-tight mb-4">
+            <h2 className="font-heading font-bold text-3xl md:text-4xl text-foreground tracking-tight mb-4">
               Simple pricing
             </h2>
-            <p className="text-lg text-gray-500">
+            <p className="text-lg text-muted-foreground">
               One price, lifetime access. No subscriptions.
             </p>
-            <p className="text-sm text-emerald-600 mt-3 font-medium">
+            <p className="text-sm text-emerald-600 dark:text-emerald-400 mt-3 font-medium">
               ✓ Voting and submitting feedback is always free
             </p>
           </div>
           
-          <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#fff5f2] rounded-full text-[#f97352] text-sm font-medium mb-4">
+          <div className="bg-card rounded-2xl border border-border p-8 text-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-secondary rounded-full text-secondary-foreground text-sm font-medium mb-4">
               <Zap className="w-4 h-4" />
               Lifetime Deal
             </div>
             
             <div className="flex items-baseline justify-center gap-1 mb-2">
-              <span className="text-5xl font-bold text-gray-900">$49</span>
-              <span className="text-gray-500">one-time</span>
+              <span className="text-5xl font-bold text-foreground">$49</span>
+              <span className="text-muted-foreground">one-time</span>
             </div>
-            <p className="text-gray-500 mb-8">Pay once, own it forever</p>
+            <p className="text-muted-foreground mb-8">Pay once, own it forever</p>
             
             <ul className="space-y-3 text-left mb-8">
               {[
@@ -428,8 +430,8 @@ export default function LandingPage() {
                 "Custom board URL",
                 "Priority support",
               ].map((feature) => (
-                <li key={feature} className="flex items-center gap-3 text-gray-700">
-                  <Check className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                <li key={feature} className="flex items-center gap-3 text-foreground/80">
+                  <Check className="w-5 h-5 text-emerald-500 dark:text-emerald-400 flex-shrink-0" />
                   {feature}
                 </li>
               ))}
@@ -437,11 +439,11 @@ export default function LandingPage() {
             
             <Link 
               href="/auth/login"
-              className="block w-full bg-[#f97352] text-white font-semibold py-4 rounded-xl hover:bg-[#e8634a] transition-colors text-lg"
+              className="block w-full bg-primary text-primary-foreground font-semibold py-4 rounded-xl hover:bg-primary/90 transition-colors text-lg"
             >
               Create Free Board
             </Link>
-            <p className="text-sm text-gray-500 mt-3">
+            <p className="text-sm text-muted-foreground mt-3">
               Start free, upgrade when ready
             </p>
           </div>
@@ -449,23 +451,23 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-6 bg-gray-900">
+      <section className="py-24 px-6 bg-foreground dark:bg-card">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="font-heading font-bold text-3xl md:text-4xl text-white tracking-tight mb-4">
+          <h2 className="font-heading font-bold text-3xl md:text-4xl text-background dark:text-foreground tracking-tight mb-4">
             Ready to get started?
           </h2>
-          <p className="text-lg text-gray-400 mb-8">
+          <p className="text-lg text-background/60 dark:text-muted-foreground mb-8">
             Create your feedback board in minutes. Upgrade to Lifetime whenever you&apos;re ready.
           </p>
           <div className="flex flex-col items-center gap-3">
             <Link 
               href="/auth/login"
-              className="inline-flex items-center gap-2 bg-[#f97352] text-white font-semibold text-lg px-8 py-4 rounded-xl hover:bg-[#e8634a] transition-all hover:scale-[1.02]"
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold text-lg px-8 py-4 rounded-xl hover:bg-primary/90 transition-all hover:scale-[1.02]"
             >
               Create Free Board
               <ArrowRight className="w-5 h-5" />
             </Link>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-background/40 dark:text-muted-foreground">
               No credit card required
             </p>
           </div>
@@ -473,16 +475,16 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-gray-100 py-8 px-6">
+      <footer className="border-t border-border py-8 px-6">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg bg-[#f97352] flex items-center justify-center">
-              <MessageSquare className="w-3 h-3 text-white" />
+            <div className="w-6 h-6 rounded-lg bg-primary flex items-center justify-center">
+              <MessageSquare className="w-3 h-3 text-primary-foreground" />
             </div>
-            <span className="font-heading font-bold text-gray-900">LeanVote</span>
+            <span className="font-heading font-bold text-foreground">LeanVote</span>
           </div>
           
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} LeanVote
           </p>
         </div>

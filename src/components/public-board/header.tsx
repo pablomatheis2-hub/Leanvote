@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BoardSwitcher } from "./board-switcher";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { signOut } from "@/lib/actions/auth";
 import { cn } from "@/lib/utils";
 import type { User } from "@supabase/supabase-js";
@@ -48,14 +49,14 @@ export function PublicBoardHeader({ boardOwner, user, profile }: PublicBoardHead
   // Compact header for widget mode
   if (isWidget) {
     return (
-      <header className="border-b border-zinc-200 bg-white sticky top-0 z-50">
+      <header className="border-b border-border bg-background sticky top-0 z-50">
         <div className="px-4 h-12 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-lg bg-[#f97352] flex items-center justify-center">
-                <MessageSquare className="w-3 h-3 text-white" />
+              <div className="w-6 h-6 rounded-lg bg-primary flex items-center justify-center">
+                <MessageSquare className="w-3 h-3 text-primary-foreground" />
               </div>
-              <span className="font-heading font-semibold text-sm text-zinc-900">
+              <span className="font-heading font-semibold text-sm text-foreground">
                 {boardOwner.company_name || boardOwner.board_name || "Feedback"}
               </span>
             </div>
@@ -65,14 +66,14 @@ export function PublicBoardHeader({ boardOwner, user, profile }: PublicBoardHead
             <div className="flex items-center gap-2">
               <Avatar className="h-7 w-7">
                 <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.full_name || "User"} />
-                <AvatarFallback className="bg-[#fff5f2] text-[#f97352] text-xs font-medium">
+                <AvatarFallback className="bg-secondary text-secondary-foreground text-xs font-medium">
                   {initials}
                 </AvatarFallback>
               </Avatar>
             </div>
           ) : (
             <Link href={`/auth/login?redirect=/b/${slug}?widget=true`}>
-              <Button size="sm" className="h-7 text-xs bg-[#f97352] hover:bg-[#e8634a] text-white">
+              <Button size="sm" className="h-7 text-xs bg-primary hover:bg-primary/90 text-primary-foreground">
                 Sign in
               </Button>
             </Link>
@@ -83,14 +84,14 @@ export function PublicBoardHeader({ boardOwner, user, profile }: PublicBoardHead
   }
 
   return (
-    <header className="border-b border-zinc-200 bg-white sticky top-0 z-50">
+    <header className="border-b border-border bg-background sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         <div className="flex items-center gap-8">
           <Link href={getHref(`/b/${slug}`)} className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#f97352] flex items-center justify-center">
-              <MessageSquare className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center">
+              <MessageSquare className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="font-heading font-bold text-xl text-zinc-900">
+            <span className="font-heading font-bold text-xl text-foreground">
               {boardOwner.company_name || boardOwner.board_name || "Feedback"}
             </span>
           </Link>
@@ -103,8 +104,8 @@ export function PublicBoardHeader({ boardOwner, user, profile }: PublicBoardHead
                 className={cn(
                   "px-3 py-1.5 text-sm font-medium rounded-lg transition-colors",
                   pathname === item.href
-                    ? "bg-zinc-100 text-zinc-900"
-                    : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50"
+                    ? "bg-muted text-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                 )}
               >
                 {item.label}
@@ -112,7 +113,7 @@ export function PublicBoardHeader({ boardOwner, user, profile }: PublicBoardHead
             ))}
           </nav>
 
-          <div className="h-6 w-px bg-zinc-200" />
+          <div className="h-6 w-px bg-border" />
           
           <BoardSwitcher 
             currentBoardName={boardOwner.company_name || boardOwner.board_name || "Feedback"}
@@ -120,63 +121,67 @@ export function PublicBoardHeader({ boardOwner, user, profile }: PublicBoardHead
           />
         </div>
 
-        {user ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                <Avatar className="h-9 w-9">
-                  <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.full_name || "User"} />
-                  <AvatarFallback className="bg-[#fff5f2] text-[#f97352] text-sm font-medium">
-                    {initials}
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end">
-              <div className="flex items-center justify-start gap-2 p-2">
-                <div className="flex flex-col space-y-0.5 leading-none">
-                  {profile?.full_name && (
-                    <p className="font-medium text-sm text-zinc-900">{profile.full_name}</p>
-                  )}
-                  <p className="text-xs text-zinc-500">{user.email}</p>
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+                  <Avatar className="h-9 w-9">
+                    <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.full_name || "User"} />
+                    <AvatarFallback className="bg-secondary text-secondary-foreground text-sm font-medium">
+                      {initials}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end">
+                <div className="flex items-center justify-start gap-2 p-2">
+                  <div className="flex flex-col space-y-0.5 leading-none">
+                    {profile?.full_name && (
+                      <p className="font-medium text-sm text-foreground">{profile.full_name}</p>
+                    )}
+                    <p className="text-xs text-muted-foreground">{user.email}</p>
+                  </div>
                 </div>
-              </div>
-              <DropdownMenuSeparator />
-              {profile?.user_type === "admin" ? (
-                <>
-                  <DropdownMenuItem asChild>
-                    <Link href="/dashboard" className="cursor-pointer">
-                      My Dashboard
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                </>
-              ) : (
-                <>
-                  <DropdownMenuItem asChild>
-                    <Link href="/upgrade" className="cursor-pointer">
-                      Create Your Own Board
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                </>
-              )}
-              <DropdownMenuItem asChild>
-                <form action={signOut}>
-                  <button type="submit" className="w-full text-left cursor-pointer">
-                    Sign out
-                  </button>
-                </form>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : (
-          <Link href={`/auth/login?redirect=/b/${slug}`}>
-            <Button className="bg-[#f97352] hover:bg-[#e8634a] text-white">
-              Sign in to vote
-            </Button>
-          </Link>
-        )}
+                <DropdownMenuSeparator />
+                {profile?.user_type === "admin" ? (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard" className="cursor-pointer">
+                        My Dashboard
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link href="/upgrade" className="cursor-pointer">
+                        Create Your Own Board
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
+                <DropdownMenuItem asChild>
+                  <form action={signOut}>
+                    <button type="submit" className="w-full text-left cursor-pointer">
+                      Sign out
+                    </button>
+                  </form>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link href={`/auth/login?redirect=/b/${slug}`}>
+              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                Sign in to vote
+              </Button>
+            </Link>
+          )}
+        </div>
       </div>
     </header>
   );

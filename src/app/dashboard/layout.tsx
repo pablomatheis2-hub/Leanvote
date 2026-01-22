@@ -49,7 +49,7 @@ export default async function DashboardLayout({
   const accessStatus = getAccessStatus(profile);
 
   return (
-    <div className="min-h-screen bg-[#fafafa]">
+    <div className="min-h-screen bg-background">
       <DashboardNav user={user} profile={profile} accessStatus={accessStatus} />
       
       {accessStatus.isInTrial && accessStatus.daysRemaining !== null && (

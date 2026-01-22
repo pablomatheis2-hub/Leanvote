@@ -33,6 +33,35 @@
     /* Custom coral color */
     --coral: 12 90% 64%;
   }
+
+  .dark {
+    --background: 0 0% 3%;
+    --foreground: 0 0% 95%;
+    --card: 0 0% 6%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 12 90% 64%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 12 30% 12%;
+    --secondary-foreground: 12 90% 70%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 12 30% 12%;
+    --accent-foreground: 12 90% 70%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 12 90% 64%;
+    --chart-1: 12 90% 64%;
+    --chart-2: 173 58% 50%;
+    --chart-3: 197 50% 45%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    
+    --coral: 12 90% 64%;
+  }
 }
 
 @layer base {

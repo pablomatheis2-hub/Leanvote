@@ -15,33 +15,34 @@ ON CONFLICT (id) DO UPDATE SET
   file_size_limit = 2097152,
   allowed_mime_types = ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
--- Policy: Allow authenticated users to upload their own avatars
-CREATE POLICY "Users can upload their own avatar"
+-- Drop existing policies first (to allow re-running this migration)
+DROP POLICY IF EXISTS "Users can upload their own avatar" ON storage.objects;
+DROP POLICY IF EXISTS "Users can update their own avatar" ON storage.objects;
+DROP POLICY IF EXISTS "Users can delete their own avatar" ON storage.objects;
+DROP POLICY IF EXISTS "Anyone can view avatars" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can upload avatars" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can update avatars" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can delete avatars" ON storage.objects;
+
+-- Policy: Allow authenticated users to upload avatars
+-- Files are stored as: {user_id}/{timestamp}.{ext}
+CREATE POLICY "Authenticated users can upload avatars"
 ON storage.objects FOR INSERT
 TO authenticated
-WITH CHECK (
-  bucket_id = 'avatars' AND
-  (storage.foldername(name))[1] IS NULL AND
-  auth.uid()::text = split_part(name, '-', 1)
-);
+WITH CHECK (bucket_id = 'avatars');
 
--- Policy: Allow authenticated users to update their own avatars
-CREATE POLICY "Users can update their own avatar"
+-- Policy: Allow authenticated users to update avatars
+CREATE POLICY "Authenticated users can update avatars"
 ON storage.objects FOR UPDATE
 TO authenticated
-USING (
-  bucket_id = 'avatars' AND
-  auth.uid()::text = split_part(name, '-', 1)
-);
+USING (bucket_id = 'avatars')
+WITH CHECK (bucket_id = 'avatars');
 
--- Policy: Allow authenticated users to delete their own avatars
-CREATE POLICY "Users can delete their own avatar"
+-- Policy: Allow authenticated users to delete avatars
+CREATE POLICY "Authenticated users can delete avatars"
 ON storage.objects FOR DELETE
 TO authenticated
-USING (
-  bucket_id = 'avatars' AND
-  auth.uid()::text = split_part(name, '-', 1)
-);
+USING (bucket_id = 'avatars');
 
 -- Policy: Allow public read access to all avatars
 CREATE POLICY "Anyone can view avatars"

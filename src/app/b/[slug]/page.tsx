@@ -38,6 +38,7 @@ async function getPosts(boardOwnerId: string): Promise<PostWithDetails[]> {
       )
     `)
     .eq("board_owner_id", boardOwnerId)
+    .eq("status", "Open")
     .order("created_at", { ascending: false });
 
   if (error) {
