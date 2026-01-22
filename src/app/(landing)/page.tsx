@@ -79,31 +79,6 @@ export default function LandingPage() {
               Create Free Board
               <ArrowRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
             </Link>
-            <p className="text-sm text-muted-foreground">
-              No credit card required. Upgrade to Lifetime later.
-            </p>
-          </div>
-          
-          {/* Quick benefits */}
-          <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <Check className="w-4 h-4 text-primary" />
-              <span>7-day free trial</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Check className="w-4 h-4 text-primary" />
-              <span>No credit card required</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Check className="w-4 h-4 text-primary" />
-              <span>Setup in minutes</span>
-            </div>
-          </div>
-
-          {/* Free voting note */}
-          <div className="mt-8 inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 rounded-full text-emerald-700 text-sm">
-            <Check className="w-4 h-4" />
-            <span><strong>Voting is always free</strong> — only pay if you create your own board</span>
           </div>
         </div>
       </section>
