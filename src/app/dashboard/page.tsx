@@ -21,6 +21,7 @@ async function getProfile(userId: string): Promise<Profile | null> {
 async function getPosts(boardOwnerId: string): Promise<PostWithDetails[]> {
   const supabase = await createClient();
   
+  // Fetch all posts (including those promoted to roadmap) to show them with status badges
   const { data, error } = await supabase
     .from("posts")
     .select(`
@@ -34,7 +35,6 @@ async function getPosts(boardOwnerId: string): Promise<PostWithDetails[]> {
       )
     `)
     .eq("board_owner_id", boardOwnerId)
-    .eq("status", "Open")
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -103,9 +103,23 @@ export default async function DashboardPage() {
       </div>
 
       {/* Stats */}
-      <div className="bg-card rounded-xl border border-border p-4 mb-8">
-        <p className="text-sm text-muted-foreground">Open Feedback</p>
-        <p className="text-2xl font-semibold text-foreground mt-1">{posts.length}</p>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+        <div className="bg-card rounded-xl border border-border p-4">
+          <p className="text-sm text-muted-foreground">Total Feedback</p>
+          <p className="text-2xl font-semibold text-foreground mt-1">{posts.length}</p>
+        </div>
+        <div className="bg-card rounded-xl border border-border p-4">
+          <p className="text-sm text-muted-foreground">Open</p>
+          <p className="text-2xl font-semibold text-foreground mt-1">{posts.filter(p => p.status === "Open").length}</p>
+        </div>
+        <div className="bg-card rounded-xl border border-border p-4">
+          <p className="text-sm text-muted-foreground">On Roadmap</p>
+          <p className="text-2xl font-semibold text-foreground mt-1">{posts.filter(p => p.status !== "Open" && p.status !== "Complete").length}</p>
+        </div>
+        <div className="bg-card rounded-xl border border-border p-4">
+          <p className="text-sm text-muted-foreground">Complete</p>
+          <p className="text-2xl font-semibold text-foreground mt-1">{posts.filter(p => p.status === "Complete").length}</p>
+        </div>
       </div>
 
       {/* Posts List */}

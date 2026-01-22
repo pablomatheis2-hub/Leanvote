@@ -107,7 +107,14 @@ export default function FindBoardPage() {
           )}
         </form>
 
-        <div className="mt-12 text-center">
+        <p className="mt-6 text-center text-sm text-zinc-400">
+          Not sure which board to visit?{" "}
+          <Link href="/b/leanvote" className="text-[#f97352] font-medium hover:underline">
+            Check out our official board
+          </Link>
+        </p>
+
+        <div className="mt-10 text-center">
           <p className="text-sm text-zinc-400">
             Want to create your own feedback board?{" "}
             <Link href="/upgrade" className="text-[#f97352] font-medium hover:underline">

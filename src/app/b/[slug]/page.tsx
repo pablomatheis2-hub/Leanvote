@@ -25,6 +25,7 @@ async function getBoardOwner(slug: string): Promise<Profile | null> {
 async function getPosts(boardOwnerId: string): Promise<PostWithDetails[]> {
   const supabase = await createClient();
   
+  // Fetch all posts including those on the roadmap to show status badges
   const { data, error } = await supabase
     .from("posts")
     .select(`
@@ -38,7 +39,6 @@ async function getPosts(boardOwnerId: string): Promise<PostWithDetails[]> {
       )
     `)
     .eq("board_owner_id", boardOwnerId)
-    .eq("status", "Open")
     .order("created_at", { ascending: false });
 
   if (error) {

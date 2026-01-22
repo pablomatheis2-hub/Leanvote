@@ -36,10 +36,10 @@ const categoryStyles: Record<Category, string> = {
   Integration: "bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-950/50 dark:text-cyan-300 dark:border-cyan-800",
 };
 
-const statusConfig: Record<Exclude<Status, "Open">, { label: string; color: string; dot: string }> = {
-  Planned: { label: "Planned", color: "text-blue-700", dot: "bg-blue-500" },
-  "In Progress": { label: "In Progress", color: "text-amber-700", dot: "bg-amber-500" },
-  Complete: { label: "Complete", color: "text-emerald-700", dot: "bg-emerald-500" },
+const statusConfig: Record<Exclude<Status, "Open">, { label: string; color: string; dot: string; badge: string }> = {
+  Planned: { label: "Planned", color: "text-blue-700", dot: "bg-blue-500", badge: "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800" },
+  "In Progress": { label: "In Progress", color: "text-amber-700", dot: "bg-amber-500", badge: "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800" },
+  Complete: { label: "Complete", color: "text-emerald-700", dot: "bg-emerald-500", badge: "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800" },
 };
 
 export function DashboardPostList({ posts, boardSlug }: DashboardPostListProps) {
@@ -151,6 +151,13 @@ export function DashboardPostList({ posts, boardSlug }: DashboardPostListProps) 
                       <Badge variant="outline" className={`text-xs ${categoryStyles[post.category]}`}>
                         {post.category}
                       </Badge>
+                      {/* Show status badge for posts on roadmap */}
+                      {post.status !== "Open" && (
+                        <Badge variant="outline" className={`text-xs ${statusConfig[post.status].badge}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${statusConfig[post.status].dot} mr-1.5`} />
+                          {statusConfig[post.status].label}
+                        </Badge>
+                      )}
                       <span className="text-xs text-muted-foreground">
                         by {post.author_name || "Anonymous"}
                       </span>
@@ -158,35 +165,41 @@ export function DashboardPostList({ posts, boardSlug }: DashboardPostListProps) 
                   </div>
 
                   <div className="flex items-center gap-2">
-                    {/* Add to roadmap dropdown */}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button 
-                          variant="default" 
-                          size="sm" 
-                          className="h-8 text-xs gap-1.5 bg-primary hover:bg-primary/90"
-                          disabled={updatingId === post.id}
-                        >
-                          <Sparkles className="w-3.5 h-3.5" />
-                          Add to Roadmap
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48">
-                        <div className="px-2 py-1.5 text-xs text-muted-foreground">
-                          Choose a status:
-                        </div>
-                        {(["Planned", "In Progress", "Complete"] as const).map((status) => (
-                          <DropdownMenuItem
-                            key={status}
-                            onClick={() => openPromoteDialog(post, status)}
-                            className="cursor-pointer"
+                    {/* Add to roadmap dropdown - only show for Open posts */}
+                    {post.status === "Open" ? (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button 
+                            variant="default" 
+                            size="sm" 
+                            className="h-8 text-xs gap-1.5 bg-primary hover:bg-primary/90"
+                            disabled={updatingId === post.id}
                           >
-                            <span className={`w-2 h-2 rounded-full ${statusConfig[status].dot} mr-2`} />
-                            {statusConfig[status].label}
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                            <Sparkles className="w-3.5 h-3.5" />
+                            Add to Roadmap
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48">
+                          <div className="px-2 py-1.5 text-xs text-muted-foreground">
+                            Choose a status:
+                          </div>
+                          {(["Planned", "In Progress", "Complete"] as const).map((status) => (
+                            <DropdownMenuItem
+                              key={status}
+                              onClick={() => openPromoteDialog(post, status)}
+                              className="cursor-pointer"
+                            >
+                              <span className={`w-2 h-2 rounded-full ${statusConfig[status].dot} mr-2`} />
+                              {statusConfig[status].label}
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    ) : (
+                      <Badge variant="outline" className="h-8 text-xs gap-1.5 border-border text-muted-foreground">
+                        On Roadmap
+                      </Badge>
+                    )}
 
                     {/* Actions */}
                     <DropdownMenu>

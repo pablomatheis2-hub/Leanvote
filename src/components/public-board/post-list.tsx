@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select";
 import { toggleVote, submitFeedback } from "@/lib/actions/posts";
 import { cn } from "@/lib/utils";
-import type { PostWithDetails, Category } from "@/types/database";
+import type { PostWithDetails, Category, Status } from "@/types/database";
 
 interface PublicPostListProps {
   posts: PostWithDetails[];
@@ -38,6 +38,12 @@ const categoryStyles: Record<Category, string> = {
   Feature: "bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/50 dark:text-purple-300 dark:border-purple-800",
   Bug: "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/50 dark:text-red-300 dark:border-red-800",
   Integration: "bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-950/50 dark:text-cyan-300 dark:border-cyan-800",
+};
+
+const statusConfig: Record<Exclude<Status, "Open">, { label: string; dot: string; badge: string }> = {
+  Planned: { label: "Planned", dot: "bg-blue-500", badge: "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800" },
+  "In Progress": { label: "In Progress", dot: "bg-amber-500", badge: "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800" },
+  Complete: { label: "Complete", dot: "bg-emerald-500", badge: "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800" },
 };
 
 export function PublicPostList({ posts, userVotes, isLoggedIn, boardOwnerId, slug }: PublicPostListProps) {
@@ -248,10 +254,17 @@ export function PublicPostList({ posts, userVotes, isLoggedIn, boardOwnerId, slu
                       {post.description && (
                         <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{post.description}</p>
                       )}
-                      <div className="flex items-center gap-2 mt-2">
+                      <div className="flex items-center gap-2 mt-2 flex-wrap">
                         <Badge variant="outline" className={`text-xs ${categoryStyles[post.category]}`}>
                           {post.category}
                         </Badge>
+                        {/* Show status badge for posts on roadmap */}
+                        {post.status !== "Open" && (
+                          <Badge variant="outline" className={`text-xs ${statusConfig[post.status].badge}`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${statusConfig[post.status].dot} mr-1.5`} />
+                            {statusConfig[post.status].label}
+                          </Badge>
+                        )}
                       </div>
                     </div>
                     <Link 
