@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BoardSwitcher } from "./board-switcher";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { signOut } from "@/lib/actions/auth";
 import { cn } from "@/lib/utils";
 import type { User } from "@supabase/supabase-js";
@@ -122,8 +121,6 @@ export function PublicBoardHeader({ boardOwner, user, profile }: PublicBoardHead
         </div>
 
         <div className="flex items-center gap-3">
-          <ThemeToggle />
-          
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

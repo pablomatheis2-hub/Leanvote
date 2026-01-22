@@ -5,7 +5,6 @@ import { MessageSquare, ArrowRight, Check, Zap } from "lucide-react";
 import { Typewriter } from "@/components/typewriter";
 import { DashboardPreview } from "@/components/dashboard-preview";
 import { FAQSchema, landingPageFAQs } from "@/components/seo/faq-schema";
-import { ThemeToggle } from "@/components/theme-toggle";
 
 const rotatingTexts = [
   "Collect feedback",
@@ -42,7 +41,6 @@ export default function LandingPage() {
             >
               Sign In
             </Link>
-            <ThemeToggle />
             <Link 
               href="/auth/login"
               className="text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
@@ -103,7 +101,7 @@ export default function LandingPage() {
           </div>
 
           {/* Free voting note */}
-          <div className="mt-8 inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-950/50 rounded-full text-emerald-700 dark:text-emerald-400 text-sm">
+          <div className="mt-8 inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 rounded-full text-emerald-700 text-sm">
             <Check className="w-4 h-4" />
             <span><strong>Voting is always free</strong> — only pay if you create your own board</span>
           </div>
@@ -145,7 +143,7 @@ export default function LandingPage() {
                     <span className="text-muted-foreground">$49–$400/month</span>
                   </td>
                   <td className="p-5 text-center bg-secondary/50">
-                    <span className="text-emerald-600 dark:text-emerald-400 font-bold text-lg">$49 once</span>
+                    <span className="text-emerald-600 font-bold text-lg">$49 once</span>
                   </td>
                 </tr>
                 <tr>
@@ -178,10 +176,10 @@ export default function LandingPage() {
                 <tr>
                   <td className="p-5 text-foreground/80 font-medium">Cost after 1 year</td>
                   <td className="p-5 text-center">
-                    <span className="text-red-500 dark:text-red-400 font-semibold">$588+</span>
+                    <span className="text-red-500 font-semibold">$588+</span>
                   </td>
                   <td className="p-5 text-center bg-secondary/50">
-                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">$49</span>
+                    <span className="text-emerald-600 font-bold">$49</span>
                   </td>
                 </tr>
               </tbody>
@@ -403,7 +401,7 @@ export default function LandingPage() {
             <p className="text-lg text-muted-foreground">
               One price, lifetime access. No subscriptions.
             </p>
-            <p className="text-sm text-emerald-600 dark:text-emerald-400 mt-3 font-medium">
+            <p className="text-sm text-emerald-600 mt-3 font-medium">
               ✓ Voting and submitting feedback is always free
             </p>
           </div>
@@ -431,7 +429,7 @@ export default function LandingPage() {
                 "Priority support",
               ].map((feature) => (
                 <li key={feature} className="flex items-center gap-3 text-foreground/80">
-                  <Check className="w-5 h-5 text-emerald-500 dark:text-emerald-400 flex-shrink-0" />
+                  <Check className="w-5 h-5 text-emerald-500 flex-shrink-0" />
                   {feature}
                 </li>
               ))}
@@ -451,12 +449,12 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-6 bg-foreground dark:bg-card">
+      <section className="py-24 px-6 bg-foreground">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="font-heading font-bold text-3xl md:text-4xl text-background dark:text-foreground tracking-tight mb-4">
+          <h2 className="font-heading font-bold text-3xl md:text-4xl text-background tracking-tight mb-4">
             Ready to get started?
           </h2>
-          <p className="text-lg text-background/60 dark:text-muted-foreground mb-8">
+          <p className="text-lg text-background/60 mb-8">
             Create your feedback board in minutes. Upgrade to Lifetime whenever you&apos;re ready.
           </p>
           <div className="flex flex-col items-center gap-3">
@@ -467,7 +465,7 @@ export default function LandingPage() {
               Create Free Board
               <ArrowRight className="w-5 h-5" />
             </Link>
-            <p className="text-sm text-background/40 dark:text-muted-foreground">
+            <p className="text-sm text-background/40">
               No credit card required
             </p>
           </div>

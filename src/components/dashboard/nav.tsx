@@ -12,7 +12,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { signOut } from "@/lib/actions/auth";
 import { cn } from "@/lib/utils";
 import type { User } from "@supabase/supabase-js";
@@ -91,8 +90,6 @@ export function DashboardNav({ user, profile, accessStatus }: DashboardNavProps)
             </Link>
           )}
           
-          <ThemeToggle />
-          
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-9 w-9 rounded-full">
@@ -112,7 +109,7 @@ export function DashboardNav({ user, profile, accessStatus }: DashboardNavProps)
                   )}
                   <p className="text-xs text-muted-foreground">{user.email}</p>
                   {accessStatus.hasLifetimeAccess && (
-                    <span className="inline-flex items-center text-xs text-emerald-600 dark:text-emerald-400 font-medium mt-1">
+                    <span className="inline-flex items-center text-xs text-emerald-600 font-medium mt-1">
                       ✓ Lifetime Access
                     </span>
                   )}
