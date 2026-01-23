@@ -57,6 +57,7 @@ export async function GET(request: NextRequest) {
     .select(`
       id,
       title,
+      description,
       category,
       status,
       created_at,
@@ -69,6 +70,7 @@ export async function GET(request: NextRequest) {
   const formattedPosts = (posts || []).map((post) => ({
     id: post.id,
     title: post.title,
+    description: post.description,
     category: post.category,
     status: post.status,
     votes: Array.isArray(post.votes) ? post.votes.length : 0,
