@@ -264,9 +264,8 @@ export default function DocsPage() {
             Add a feedback widget to your site
           </h1>
           <p className="text-lg text-zinc-500 max-w-2xl mx-auto leading-relaxed">
-            Embed a minimalistic feedback widget on your website. Users can quickly submit 
-            feature requests, bug reports, and improvements — with a link to view the full 
-            feedback board when they need it.
+            Embed a lightweight feedback widget on your website. Show users what others are 
+            requesting and let them easily submit their own feedback on your full board.
           </p>
         </div>
       </section>
@@ -325,54 +324,54 @@ export default function DocsPage() {
 
           <div className="bg-white rounded-2xl border border-zinc-200 p-8 shadow-sm">
             <p className="text-zinc-600 mb-6">
-              The widget provides a clean, minimalistic feedback form that doesn&apos;t overwhelm your users:
+              The widget displays recent feedback from your board and provides a quick way for users to submit their own:
             </p>
             
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <h3 className="font-semibold text-zinc-900">Feedback Form</h3>
+                <h3 className="font-semibold text-zinc-900">Feedback Preview</h3>
                 <ul className="space-y-3 text-sm text-zinc-600">
                   <li className="flex items-start gap-2">
                     <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                       <Check className="w-3 h-3 text-emerald-600" />
                     </div>
-                    <span><strong>Type selector</strong> — Feature Request, Bug Report, or Improvement</span>
+                    <span><strong>Recent posts</strong> — Shows the 5 latest feedback items from your board</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                       <Check className="w-3 h-3 text-emerald-600" />
                     </div>
-                    <span><strong>Title field</strong> — Brief summary of the feedback</span>
+                    <span><strong>Vote counts</strong> — Display how many votes each post has received</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                       <Check className="w-3 h-3 text-emerald-600" />
                     </div>
-                    <span><strong>Description</strong> — Optional detailed explanation</span>
+                    <span><strong>Category badges</strong> — Feature requests, bugs, and improvements</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                       <Check className="w-3 h-3 text-emerald-600" />
                     </div>
-                    <span><strong>Submit button</strong> — Styled with your brand color</span>
+                    <span><strong>Click to view</strong> — Each post links to its detail page</span>
                   </li>
                 </ul>
               </div>
               
               <div className="space-y-4">
-                <h3 className="font-semibold text-zinc-900">Additional Features</h3>
+                <h3 className="font-semibold text-zinc-900">Submit Feedback</h3>
                 <ul className="space-y-3 text-sm text-zinc-600">
                   <li className="flex items-start gap-2">
                     <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                       <ExternalLink className="w-3 h-3 text-blue-600" />
                     </div>
-                    <span><strong>View all feedback</strong> — Link to the full board for users who want to browse or vote</span>
+                    <span><strong>Submit button</strong> — Redirects to your full board where users can add feedback</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                       <Check className="w-3 h-3 text-blue-600" />
                     </div>
-                    <span><strong>Success confirmation</strong> — Clear feedback when submission is complete</span>
+                    <span><strong>Full board access</strong> — Users can browse, vote, and comment on the full board</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">

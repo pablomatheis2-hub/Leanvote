@@ -132,6 +132,13 @@ export default function WidgetTestPage() {
 
   const getPreviewHTML = () => {
     const enabledWidgets = widgets.filter((w) => w.enabled);
+    
+    // Sample posts for preview
+    const samplePosts = [
+      { id: 1, title: "Add dark mode support", votes: 24, category: "feature" },
+      { id: 2, title: "Mobile app crashes on startup", votes: 12, category: "bug" },
+      { id: 3, title: "Improve loading speed", votes: 8, category: "improvement" },
+    ];
 
     return `<!DOCTYPE html>
 <html lang="en">
@@ -141,335 +148,110 @@ export default function WidgetTestPage() {
   <title>Widget Preview</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    .mock-header {
-      background: rgba(255,255,255,0.95);
-      backdrop-filter: blur(10px);
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid rgba(0,0,0,0.1);
-    }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; flex-direction: column; }
+    .mock-header { background: rgba(255,255,255,0.95); padding: 16px 24px; border-bottom: 1px solid rgba(0,0,0,0.1); }
     .mock-logo { font-weight: 700; font-size: 18px; color: #1a1a2e; }
-    .mock-hero {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px;
-      text-align: center;
-      color: white;
-    }
-    .mock-hero h1 { font-size: 42px; font-weight: 800; margin-bottom: 16px; text-shadow: 0 2px 20px rgba(0,0,0,0.2); }
-    .mock-hero p { font-size: 18px; opacity: 0.9; max-width: 500px; line-height: 1.6; }
-    .mock-card {
-      background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(20px);
-      border-radius: 20px;
-      padding: 32px;
-      margin-top: 40px;
-      border: 1px solid rgba(255,255,255,0.2);
-    }
-    .mock-card h3 { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; margin-bottom: 8px; }
-    .mock-card .stat { font-size: 48px; font-weight: 700; }
+    .mock-hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; text-align: center; color: white; }
+    .mock-hero h1 { font-size: 42px; font-weight: 800; margin-bottom: 16px; }
+    .mock-hero p { font-size: 18px; opacity: 0.9; max-width: 500px; }
     
-    /* Widget Styles */
-    .lv-widget-container {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      position: fixed;
-      z-index: 9999;
-    }
-    .lv-widget-container.bottom-right { bottom: 24px; right: 24px; }
-    .lv-widget-container.bottom-left { bottom: 24px; left: 24px; }
-    .lv-widget-container.top-right { top: 24px; right: 24px; }
-    .lv-widget-container.top-left { top: 24px; left: 24px; }
-    
-    .lv-widget-button {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 50px;
-      color: white;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
-      transition: all 0.2s ease;
-    }
-    .lv-widget-button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); }
-    .lv-widget-button svg { width: 18px; height: 18px; }
-    .lv-widget-button.lv-open { border-radius: 12px; padding: 12px; }
-    .lv-widget-button.lv-open span { display: none; }
-    
-    .lv-widget-panel {
-      position: absolute;
-      width: 340px;
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-      overflow: hidden;
-      opacity: 0;
-      visibility: hidden;
-      transform: scale(0.95) translateY(10px);
-      transition: all 0.25s ease;
-    }
-    .lv-widget-container.bottom-right .lv-widget-panel { bottom: 60px; right: 0; transform-origin: bottom right; }
-    .lv-widget-container.bottom-left .lv-widget-panel { bottom: 60px; left: 0; transform-origin: bottom left; }
-    .lv-widget-container.top-right .lv-widget-panel { top: 60px; right: 0; transform-origin: top right; }
-    .lv-widget-container.top-left .lv-widget-panel { top: 60px; left: 0; transform-origin: top left; }
-    .lv-widget-panel.lv-visible { opacity: 1; visibility: visible; transform: scale(1) translateY(0); }
-    
-    .lv-panel-header {
-      padding: 20px;
-      color: white;
-    }
-    .lv-panel-header h3 { margin: 0 0 4px; font-size: 18px; font-weight: 600; }
-    .lv-panel-header p { margin: 0; font-size: 13px; opacity: 0.9; }
-    
-    .lv-panel-content { padding: 20px; }
-    
-    .lv-form-group { margin-bottom: 16px; }
-    .lv-form-group label {
-      display: block;
-      font-size: 13px;
-      font-weight: 500;
-      color: #374151;
-      margin-bottom: 6px;
-    }
-    .lv-form-group input,
-    .lv-form-group textarea,
-    .lv-form-group select {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      font-size: 14px;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      font-family: inherit;
-    }
-    .lv-form-group input:focus,
-    .lv-form-group textarea:focus,
-    .lv-form-group select:focus {
-      outline: none;
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px var(--primary-color-light);
-    }
-    .lv-form-group textarea { resize: vertical; min-height: 80px; }
-    
-    .lv-submit-btn {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      color: white;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-    .lv-submit-btn:hover { opacity: 0.9; }
-    
-    .lv-panel-footer {
-      padding: 12px 20px;
-      background: #f9fafb;
-      border-top: 1px solid #e5e7eb;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .lv-panel-footer a {
-      font-size: 12px;
-      color: #6b7280;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .lv-panel-footer a:hover { color: #374151; }
-    .lv-panel-footer svg { width: 14px; height: 14px; }
-    
-    .lv-view-all {
-      font-size: 12px;
-      font-weight: 500;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .lv-view-all:hover { opacity: 0.8; }
-    
-    .lv-success-msg {
-      text-align: center;
-      padding: 30px 20px;
-    }
-    .lv-success-msg .icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px;
-    }
-    .lv-success-msg h4 { margin: 0 0 8px; font-size: 16px; color: #111827; }
-    .lv-success-msg p { margin: 0; font-size: 13px; color: #6b7280; }
+    .lv-widget { font-family: inherit; position: fixed; z-index: 9999; }
+    .lv-widget.bottom-right { bottom: 24px; right: 24px; }
+    .lv-widget.bottom-left { bottom: 24px; left: 24px; }
+    .lv-widget.top-right { top: 24px; right: 24px; }
+    .lv-widget.top-left { top: 24px; left: 24px; }
+    .lv-btn { display: flex; align-items: center; gap: 8px; padding: 12px 20px; border: none; border-radius: 50px; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,0.15); transition: all 0.2s; }
+    .lv-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+    .lv-btn.open { border-radius: 12px; padding: 12px; }
+    .lv-btn.open span { display: none; }
+    .lv-btn svg { width: 18px; height: 18px; }
+    .lv-panel { position: absolute; width: 360px; max-height: 480px; background: #fff; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); overflow: hidden; opacity: 0; visibility: hidden; transform: scale(0.95) translateY(10px); transition: all 0.2s; display: flex; flex-direction: column; }
+    .lv-widget.bottom-right .lv-panel { bottom: 56px; right: 0; transform-origin: bottom right; }
+    .lv-widget.bottom-left .lv-panel { bottom: 56px; left: 0; transform-origin: bottom left; }
+    .lv-widget.top-right .lv-panel { top: 56px; right: 0; transform-origin: top right; }
+    .lv-widget.top-left .lv-panel { top: 56px; left: 0; transform-origin: top left; }
+    .lv-panel.visible { opacity: 1; visibility: visible; transform: scale(1) translateY(0); }
+    .lv-header { padding: 20px; color: #fff; }
+    .lv-header h3 { margin: 0 0 4px; font-size: 18px; font-weight: 600; }
+    .lv-header p { margin: 0; font-size: 13px; opacity: 0.9; }
+    .lv-body { flex: 1; overflow-y: auto; padding: 16px; }
+    .lv-post { background: #f9fafb; border-radius: 10px; padding: 14px; margin-bottom: 10px; cursor: pointer; transition: background 0.2s; }
+    .lv-post:hover { background: #f3f4f6; }
+    .lv-post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .lv-post-votes { display: flex; flex-direction: column; align-items: center; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 6px 10px; min-width: 44px; }
+    .lv-post-votes span { font-size: 16px; font-weight: 700; color: #111827; }
+    .lv-post-votes small { font-size: 9px; color: #9ca3af; text-transform: uppercase; }
+    .lv-post-title { font-size: 14px; font-weight: 600; color: #111827; flex: 1; }
+    .lv-badge { font-size: 10px; font-weight: 500; padding: 3px 8px; border-radius: 20px; }
+    .lv-badge.feature { background: #dbeafe; color: #1d4ed8; }
+    .lv-badge.bug { background: #fee2e2; color: #dc2626; }
+    .lv-badge.improvement { background: #d1fae5; color: #059669; }
+    .lv-footer { padding: 16px; background: #fff; border-top: 1px solid #e5e7eb; }
+    .lv-submit-link { display: block; width: 100%; padding: 12px; border: none; border-radius: 8px; color: #fff; font-size: 14px; font-weight: 600; text-align: center; text-decoration: none; }
+    .lv-submit-link:hover { opacity: 0.9; }
+    .lv-powered { display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 12px; font-size: 11px; color: #9ca3af; text-decoration: none; }
+    .lv-powered svg { width: 12px; height: 12px; }
   </style>
 </head>
 <body>
-  <header class="mock-header">
-    <div class="mock-logo">YourApp</div>
-  </header>
-  
+  <header class="mock-header"><div class="mock-logo">YourApp</div></header>
   <main class="mock-hero">
     <h1>Welcome to YourApp</h1>
     <p>This is a preview of how the LeanVote widget will appear on your website. Click the button(s) to test.</p>
-    
-    <div class="mock-card">
-      <h3>Active Widgets</h3>
-      <div class="stat">${enabledWidgets.length}</div>
-    </div>
   </main>
-
   <script>
     const BASE_URL = '${baseUrl}';
-    const widgetConfigs = ${JSON.stringify(enabledWidgets)};
+    const configs = ${JSON.stringify(enabledWidgets)};
+    const posts = ${JSON.stringify(samplePosts)};
     
-    widgetConfigs.forEach((config) => {
-      const container = document.createElement('div');
-      container.className = 'lv-widget-container ' + config.position;
-      container.style.zIndex = config.zIndex;
-      
-      const button = document.createElement('button');
-      button.className = 'lv-widget-button';
-      button.style.backgroundColor = config.primaryColor;
-      button.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg><span>' + config.buttonText + '</span>';
-      
-      let isOpen = false;
-      let panel = null;
-      let submitted = false;
-      
-      function showSuccess() {
-        const content = panel.querySelector('.lv-panel-content');
-        content.innerHTML = \`
-          <div class="lv-success-msg">
-            <div class="icon" style="background: \${config.primaryColor}20;">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="\${config.primaryColor}" stroke-width="2">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-            </div>
-            <h4>Thank you!</h4>
-            <p>Your feedback has been submitted successfully.</p>
+    configs.forEach(cfg => {
+      const w = document.createElement('div');
+      w.className = 'lv-widget ' + cfg.position;
+      w.innerHTML = \`
+        <div class="lv-panel">
+          <div class="lv-header" style="background:linear-gradient(135deg,\${cfg.primaryColor} 0%,\${cfg.primaryColor}dd 100%)">
+            <h3>Feedback</h3>
+            <p>See what others are requesting</p>
           </div>
-        \`;
-        submitted = true;
-      }
+          <div class="lv-body">
+            \${posts.map(p => \`
+              <div class="lv-post">
+                <div class="lv-post-header">
+                  <div class="lv-post-votes"><span>\${p.votes}</span><small>votes</small></div>
+                  <div class="lv-post-title">\${p.title}</div>
+                </div>
+                <span class="lv-badge \${p.category}">\${p.category}</span>
+              </div>
+            \`).join('')}
+          </div>
+          <div class="lv-footer">
+            <a href="\${BASE_URL}/b/\${cfg.boardSlug}" class="lv-submit-link" style="background:\${cfg.primaryColor}">Submit Feedback</a>
+            <a href="\${BASE_URL}" class="lv-powered">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Powered by LeanVote
+            </a>
+          </div>
+        </div>
+        <button class="lv-btn" style="background:\${cfg.primaryColor}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>\${cfg.buttonText}</span>
+        </button>
+      \`;
       
-      button.onclick = function() {
-        isOpen = !isOpen;
-        if (isOpen) {
-          if (!panel) {
-            panel = document.createElement('div');
-            panel.className = 'lv-widget-panel';
-            panel.style.setProperty('--primary-color', config.primaryColor);
-            panel.style.setProperty('--primary-color-light', config.primaryColor + '20');
-            panel.innerHTML = \`
-              <div class="lv-panel-header" style="background: linear-gradient(135deg, \${config.primaryColor} 0%, \${config.primaryColor}cc 100%);">
-                <h3>Share your feedback</h3>
-                <p>Help us improve by sharing your thoughts</p>
-              </div>
-              <div class="lv-panel-content">
-                <div class="lv-form-group">
-                  <label>Type</label>
-                  <select>
-                    <option value="feature">Feature Request</option>
-                    <option value="bug">Bug Report</option>
-                    <option value="improvement">Improvement</option>
-                  </select>
-                </div>
-                <div class="lv-form-group">
-                  <label>Title</label>
-                  <input type="text" placeholder="Brief summary of your feedback">
-                </div>
-                <div class="lv-form-group">
-                  <label>Description <span style="color: #9ca3af; font-weight: 400;">(optional)</span></label>
-                  <textarea placeholder="Tell us more details..."></textarea>
-                </div>
-                <button class="lv-submit-btn" style="background: \${config.primaryColor};" onclick="event.preventDefault();">
-                  Submit Feedback
-                </button>
-              </div>
-              <div class="lv-panel-footer">
-                <a href="\${BASE_URL}" target="_blank">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                  Powered by LeanVote
-                </a>
-                <a href="\${BASE_URL}/b/\${config.boardSlug}" target="_blank" class="lv-view-all" style="color: \${config.primaryColor};">
-                  View all feedback
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                </a>
-              </div>
-            \`;
-            
-            // Add submit handler
-            const submitBtn = panel.querySelector('.lv-submit-btn');
-            submitBtn.addEventListener('click', function(e) {
-              e.preventDefault();
-              showSuccess();
-            });
-            
-            container.insertBefore(panel, button);
-          } else if (submitted) {
-            // Reset form if reopening after submission
-            submitted = false;
-            panel.querySelector('.lv-panel-content').innerHTML = \`
-              <div class="lv-form-group">
-                <label>Type</label>
-                <select>
-                  <option value="feature">Feature Request</option>
-                  <option value="bug">Bug Report</option>
-                  <option value="improvement">Improvement</option>
-                </select>
-              </div>
-              <div class="lv-form-group">
-                <label>Title</label>
-                <input type="text" placeholder="Brief summary of your feedback">
-              </div>
-              <div class="lv-form-group">
-                <label>Description <span style="color: #9ca3af; font-weight: 400;">(optional)</span></label>
-                <textarea placeholder="Tell us more details..."></textarea>
-              </div>
-              <button class="lv-submit-btn" style="background: \${config.primaryColor};" onclick="event.preventDefault();">
-                Submit Feedback
-              </button>
-            \`;
-            const newSubmitBtn = panel.querySelector('.lv-submit-btn');
-            newSubmitBtn.addEventListener('click', function(e) {
-              e.preventDefault();
-              showSuccess();
-            });
-          }
-          panel.classList.add('lv-visible');
-          button.classList.add('lv-open');
-          button.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
-        } else {
-          if (panel) panel.classList.remove('lv-visible');
-          button.classList.remove('lv-open');
-          button.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg><span>' + config.buttonText + '</span>';
-        }
+      const btn = w.querySelector('.lv-btn');
+      const panel = w.querySelector('.lv-panel');
+      let open = false;
+      
+      btn.onclick = () => {
+        open = !open;
+        panel.classList.toggle('visible', open);
+        btn.classList.toggle('open', open);
+        btn.innerHTML = open 
+          ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+          : \`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>\${cfg.buttonText}</span>\`;
       };
       
-      container.appendChild(button);
-      document.body.appendChild(container);
+      document.body.appendChild(w);
     });
   </script>
 </body>
