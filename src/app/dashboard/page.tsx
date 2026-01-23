@@ -3,7 +3,7 @@ import { DashboardPostList } from "@/components/dashboard/post-list";
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { CopyButton } from "@/components/copy-button";
-import type { PostWithDetails, Profile } from "@/types/database";
+import type { PostWithDetails, Profile, Project } from "@/types/database";
 
 export const revalidate = 0;
 
@@ -18,11 +18,22 @@ async function getProfile(userId: string): Promise<Profile | null> {
   return data;
 }
 
-async function getPosts(boardOwnerId: string): Promise<PostWithDetails[]> {
+async function getProjects(userId: string): Promise<Project[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("projects")
+    .select("*")
+    .eq("owner_id", userId)
+    .order("created_at", { ascending: true });
+
+  return data || [];
+}
+
+async function getPosts(boardOwnerId: string, projectId?: string): Promise<PostWithDetails[]> {
   const supabase = await createClient();
   
   // Fetch all posts (including those promoted to roadmap) to show them with status badges
-  const { data, error } = await supabase
+  let query = supabase
     .from("posts")
     .select(`
       *,
@@ -34,8 +45,14 @@ async function getPosts(boardOwnerId: string): Promise<PostWithDetails[]> {
         id
       )
     `)
-    .eq("board_owner_id", boardOwnerId)
-    .order("created_at", { ascending: false });
+    .eq("board_owner_id", boardOwnerId);
+
+  // Filter by project_id if specified
+  if (projectId) {
+    query = query.eq("project_id", projectId);
+  }
+
+  const { data, error } = await query.order("created_at", { ascending: false });
 
   if (error) {
     console.error("Error fetching posts:", error);
@@ -50,18 +67,30 @@ async function getPosts(boardOwnerId: string): Promise<PostWithDetails[]> {
   }));
 }
 
-export default async function DashboardPage() {
+interface PageProps {
+  searchParams: Promise<{ project?: string }>;
+}
+
+export default async function DashboardPage({ searchParams }: PageProps) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) return null;
 
-  const [profile, posts] = await Promise.all([
+  const params = await searchParams;
+  const [profile, projects] = await Promise.all([
     getProfile(user.id),
-    getPosts(user.id),
+    getProjects(user.id),
   ]);
 
-  const publicUrl = `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/b/${profile?.board_slug}`;
+  // Determine current project
+  const currentProject = params.project 
+    ? projects.find(p => p.id === params.project)
+    : projects.find(p => p.is_default) || projects[0];
+  
+  const posts = await getPosts(user.id, currentProject?.id);
+
+  const publicUrl = `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/b/${currentProject?.slug || profile?.board_slug}`;
 
   const openCount = posts.filter(p => p.status === "Open").length;
   const roadmapCount = posts.filter(p => p.status !== "Open" && p.status !== "Complete").length;

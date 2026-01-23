@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { MessageSquare, LayoutDashboard, Map, Settings, ExternalLink, BookOpen, Menu, X, ChevronDown, FolderOpen, Check, Crown, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,13 +29,20 @@ interface DashboardNavProps {
 export function DashboardNav({ user, profile, accessStatus, projects = [], currentProjectId }: DashboardNavProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const initials = profile?.full_name
     ?.split(" ")
     .map((n) => n[0])
     .join("")
     .toUpperCase() || user?.email?.[0].toUpperCase() || "?";
 
-  const currentProject = projects.find(p => p.id === currentProjectId) || projects.find(p => p.is_default) || projects[0];
+  // Get project from URL or use provided currentProjectId
+  const projectIdFromUrl = searchParams.get("project");
+  const effectiveProjectId = projectIdFromUrl || currentProjectId;
+  const currentProject = projects.find(p => p.id === effectiveProjectId) || projects.find(p => p.is_default) || projects[0];
+  
+  // Build query string for navigation links
+  const projectParam = effectiveProjectId ? `?project=${effectiveProjectId}` : "";
 
   const navItems = [
     { href: "/dashboard", label: "Feedback", icon: LayoutDashboard },
@@ -69,19 +76,25 @@ export function DashboardNav({ user, profile, accessStatus, projects = [], curre
                 <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
                   Switch Project
                 </div>
-                {projects.map((project) => (
-                  <DropdownMenuItem key={project.id} asChild>
-                    <Link 
-                      href={`/dashboard?project=${project.id}`}
-                      className="flex items-center justify-between cursor-pointer"
-                    >
-                      <span className="truncate">{project.name}</span>
-                      {project.id === currentProject.id && (
-                        <Check className="w-4 h-4 text-primary" />
-                      )}
-                    </Link>
-                  </DropdownMenuItem>
-                ))}
+                {projects.map((project) => {
+                  // Stay on current page, just switch project (settings page doesn't need project param)
+                  const switchHref = pathname === "/dashboard/settings" 
+                    ? pathname 
+                    : `${pathname}?project=${project.id}`;
+                  return (
+                    <DropdownMenuItem key={project.id} asChild>
+                      <Link 
+                        href={switchHref}
+                        className="flex items-center justify-between cursor-pointer"
+                      >
+                        <span className="truncate">{project.name}</span>
+                        {project.id === currentProject.id && (
+                          <Check className="w-4 h-4 text-primary" />
+                        )}
+                      </Link>
+                    </DropdownMenuItem>
+                  );
+                })}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard/settings" className="cursor-pointer text-muted-foreground">
@@ -96,10 +109,12 @@ export function DashboardNav({ user, profile, accessStatus, projects = [], curre
           <nav className="hidden md:flex items-center gap-1">
             {navItems.map((item) => {
               const Icon = item.icon;
+              // Settings page doesn't need project param
+              const href = item.href === "/dashboard/settings" ? item.href : `${item.href}${projectParam}`;
               return (
                 <Link
                   key={item.href}
-                  href={item.href}
+                  href={href}
                   className={cn(
                     "flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-lg transition-colors",
                     pathname === item.href
@@ -125,9 +140,9 @@ export function DashboardNav({ user, profile, accessStatus, projects = [], curre
             <BookOpen className="w-4 h-4" />
             Docs
           </Link>
-          {profile.board_slug && (
+          {(currentProject?.slug || profile.board_slug) && (
             <Link
-              href={`/b/${profile.board_slug}`}
+              href={`/b/${currentProject?.slug || profile.board_slug}`}
               target="_blank"
               className="hidden sm:flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
@@ -209,7 +224,12 @@ export function DashboardNav({ user, profile, accessStatus, projects = [], curre
                 className="w-full px-3 py-2 border border-border rounded-lg bg-background text-sm"
                 value={currentProject.id}
                 onChange={(e) => {
-                  window.location.href = `/dashboard?project=${e.target.value}`;
+                  // Stay on the current page, just switch project
+                  const basePath = pathname.includes("/dashboard/settings") ? pathname : pathname;
+                  const newPath = basePath === "/dashboard/settings" 
+                    ? basePath 
+                    : `${basePath}?project=${e.target.value}`;
+                  window.location.href = newPath;
                 }}
               >
                 {projects.map((project) => (
@@ -224,10 +244,12 @@ export function DashboardNav({ user, profile, accessStatus, projects = [], curre
           <nav className="px-4 py-3 space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
+              // Settings page doesn't need project param
+              const href = item.href === "/dashboard/settings" ? item.href : `${item.href}${projectParam}`;
               return (
                 <Link
                   key={item.href}
-                  href={item.href}
+                  href={href}
                   onClick={() => setMobileMenuOpen(false)}
                   className={cn(
                     "flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors",
@@ -252,9 +274,9 @@ export function DashboardNav({ user, profile, accessStatus, projects = [], curre
               <BookOpen className="w-4 h-4" />
               Documentation
             </Link>
-            {profile.board_slug && (
+            {(currentProject?.slug || profile.board_slug) && (
               <Link
-                href={`/b/${profile.board_slug}`}
+                href={`/b/${currentProject?.slug || profile.board_slug}`}
                 target="_blank"
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center gap-3 px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-muted/50"
