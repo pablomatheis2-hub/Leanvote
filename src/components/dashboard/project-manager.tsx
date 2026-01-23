@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, FolderOpen, Star, MoreVertical, Trash2, Globe, Edit2, Check, X, ExternalLink } from "lucide-react";
+import { Plus, FolderOpen, Star, MoreVertical, Trash2, Edit2, Check, X, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -131,11 +131,11 @@ export function ProjectManager({ projects, accessStatus }: ProjectManagerProps) 
   };
 
   return (
-    <div className="bg-white rounded-xl border border-zinc-200 p-6">
+    <div className="bg-card rounded-xl border border-border p-5">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h2 className="text-lg font-semibold text-zinc-900">Projects</h2>
-          <p className="text-sm text-zinc-500">
+          <h2 className="text-base font-semibold text-foreground">Projects</h2>
+          <p className="text-sm text-muted-foreground">
             {projects.length} of {accessStatus.projectLimit} projects used
           </p>
         </div>
@@ -152,13 +152,13 @@ export function ProjectManager({ projects, accessStatus }: ProjectManagerProps) 
       </div>
 
       {!canCreateMore && !showNewProject && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4 text-sm text-amber-700">
+        <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-3 mb-4 text-sm text-amber-700 dark:text-amber-300">
           You&apos;ve reached your project limit. Upgrade your subscription to add more projects.
         </div>
       )}
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4 text-sm text-red-700">
+        <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-3 mb-4 text-sm text-red-700 dark:text-red-300">
           {error}
           <button onClick={() => setError(null)} className="ml-2 underline">Dismiss</button>
         </div>
@@ -166,11 +166,11 @@ export function ProjectManager({ projects, accessStatus }: ProjectManagerProps) 
 
       {/* New project form */}
       {showNewProject && (
-        <div className="border border-zinc-200 rounded-lg p-4 mb-4 bg-zinc-50">
-          <h3 className="font-medium text-zinc-900 mb-3">Create New Project</h3>
+        <div className="border border-border rounded-lg p-4 mb-4 bg-muted/50">
+          <h3 className="font-medium text-foreground mb-3">Create New Project</h3>
           <div className="space-y-3">
             <div>
-              <label className="block text-sm text-zinc-600 mb-1">Project Name *</label>
+              <label className="block text-sm text-muted-foreground mb-1">Project Name *</label>
               <Input
                 value={newProject.name}
                 onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
@@ -178,7 +178,7 @@ export function ProjectManager({ projects, accessStatus }: ProjectManagerProps) 
               />
             </div>
             <div>
-              <label className="block text-sm text-zinc-600 mb-1">Description</label>
+              <label className="block text-sm text-muted-foreground mb-1">Description</label>
               <Textarea
                 value={newProject.description}
                 onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
@@ -188,7 +188,7 @@ export function ProjectManager({ projects, accessStatus }: ProjectManagerProps) 
               />
             </div>
             <div>
-              <label className="block text-sm text-zinc-600 mb-1">Website URL</label>
+              <label className="block text-sm text-muted-foreground mb-1">Website URL</label>
               <Input
                 value={newProject.companyUrl}
                 onChange={(e) => setNewProject({ ...newProject, companyUrl: e.target.value })}
@@ -226,22 +226,22 @@ export function ProjectManager({ projects, accessStatus }: ProjectManagerProps) 
           <div
             key={project.id}
             className={cn(
-              "border rounded-lg p-4 transition-colors",
-              project.is_default ? "border-[#f97352] bg-[#fff5f2]" : "border-zinc-200 hover:border-zinc-300"
+              "border rounded-lg p-3 transition-colors",
+              project.is_default ? "border-primary bg-primary/5" : "border-border hover:border-muted-foreground/30"
             )}
           >
             {editingProject === project.id ? (
               // Edit mode
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm text-zinc-600 mb-1">Project Name</label>
+                  <label className="block text-sm text-muted-foreground mb-1">Project Name</label>
                   <Input
                     value={editForm.name}
                     onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-zinc-600 mb-1">Company Name</label>
+                  <label className="block text-sm text-muted-foreground mb-1">Company Name</label>
                   <Input
                     value={editForm.company_name}
                     onChange={(e) => setEditForm({ ...editForm, company_name: e.target.value })}
@@ -249,7 +249,7 @@ export function ProjectManager({ projects, accessStatus }: ProjectManagerProps) 
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-zinc-600 mb-1">Description</label>
+                  <label className="block text-sm text-muted-foreground mb-1">Description</label>
                   <Textarea
                     value={editForm.description}
                     onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
@@ -258,7 +258,7 @@ export function ProjectManager({ projects, accessStatus }: ProjectManagerProps) 
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-zinc-600 mb-1">Website URL</label>
+                  <label className="block text-sm text-muted-foreground mb-1">Website URL</label>
                   <Input
                     value={editForm.company_url}
                     onChange={(e) => setEditForm({ ...editForm, company_url: e.target.value })}
@@ -285,42 +285,36 @@ export function ProjectManager({ projects, accessStatus }: ProjectManagerProps) 
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-3 flex-1 min-w-0">
                   <div className={cn(
-                    "w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0",
-                    project.is_default ? "bg-[#f97352]" : "bg-zinc-100"
+                    "w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0",
+                    project.is_default ? "bg-primary" : "bg-muted"
                   )}>
                     <FolderOpen className={cn(
-                      "w-5 h-5",
-                      project.is_default ? "text-white" : "text-zinc-500"
+                      "w-4 h-4",
+                      project.is_default ? "text-primary-foreground" : "text-muted-foreground"
                     )} />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-medium text-zinc-900 truncate">{project.name}</h3>
+                      <h3 className="font-medium text-foreground truncate text-sm">{project.name}</h3>
                       {project.is_default && (
-                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-[#f97352] text-white text-xs font-medium rounded">
+                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-primary text-primary-foreground text-xs font-medium rounded">
                           <Star className="w-3 h-3" />
                           Default
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-2 mt-1">
-                      <code className="text-sm text-zinc-500 bg-zinc-100 px-1.5 py-0.5 rounded">/b/{project.slug}</code>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <code className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">/b/{project.slug}</code>
                       <Link 
                         href={`/b/${project.slug}`} 
                         target="_blank"
-                        className="text-zinc-400 hover:text-zinc-600"
+                        className="text-muted-foreground hover:text-foreground"
                       >
-                        <ExternalLink className="w-3.5 h-3.5" />
+                        <ExternalLink className="w-3 h-3" />
                       </Link>
                     </div>
                     {project.description && (
-                      <p className="text-sm text-zinc-600 mt-1 line-clamp-2">{project.description}</p>
-                    )}
-                    {project.company_url && (
-                      <p className="text-xs text-zinc-400 mt-1 flex items-center gap-1">
-                        <Globe className="w-3 h-3" />
-                        {project.company_url}
-                      </p>
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{project.description}</p>
                     )}
                   </div>
                 </div>
@@ -328,16 +322,16 @@ export function ProjectManager({ projects, accessStatus }: ProjectManagerProps) 
                 <div className="relative ml-2">
                   <button
                     onClick={() => setMenuOpen(menuOpen === project.id ? null : project.id)}
-                    className="p-1 hover:bg-zinc-100 rounded"
+                    className="p-1 hover:bg-muted rounded"
                   >
-                    <MoreVertical className="w-5 h-5 text-zinc-400" />
+                    <MoreVertical className="w-4 h-4 text-muted-foreground" />
                   </button>
                   
                   {menuOpen === project.id && (
-                    <div className="absolute right-0 top-8 bg-white border border-zinc-200 rounded-lg shadow-lg py-1 z-10 min-w-[140px]">
+                    <div className="absolute right-0 top-8 bg-popover border border-border rounded-lg shadow-lg py-1 z-10 min-w-[140px]">
                       <button
                         onClick={() => handleStartEdit(project)}
-                        className="w-full px-3 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50 flex items-center gap-2"
+                        className="w-full px-3 py-2 text-left text-sm text-foreground hover:bg-muted flex items-center gap-2"
                       >
                         <Edit2 className="w-4 h-4" />
                         Edit
@@ -347,7 +341,7 @@ export function ProjectManager({ projects, accessStatus }: ProjectManagerProps) 
                           <button
                             onClick={() => handleSetDefault(project.id)}
                             disabled={loading}
-                            className="w-full px-3 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50 flex items-center gap-2 disabled:opacity-50"
+                            className="w-full px-3 py-2 text-left text-sm text-foreground hover:bg-muted flex items-center gap-2 disabled:opacity-50"
                           >
                             <Star className="w-4 h-4" />
                             Set as Default
@@ -355,7 +349,7 @@ export function ProjectManager({ projects, accessStatus }: ProjectManagerProps) 
                           <button
                             onClick={() => handleDeleteProject(project.id)}
                             disabled={loading}
-                            className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 disabled:opacity-50"
+                            className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 flex items-center gap-2 disabled:opacity-50"
                           >
                             <Trash2 className="w-4 h-4" />
                             Delete
@@ -371,10 +365,10 @@ export function ProjectManager({ projects, accessStatus }: ProjectManagerProps) 
         ))}
 
         {projects.length === 0 && !showNewProject && (
-          <div className="text-center py-8 text-zinc-500">
-            <FolderOpen className="w-12 h-12 mx-auto mb-3 text-zinc-300" />
-            <p>No projects yet</p>
-            <p className="text-sm">Create your first project to get started</p>
+          <div className="text-center py-6 text-muted-foreground">
+            <FolderOpen className="w-10 h-10 mx-auto mb-2 text-muted-foreground/50" />
+            <p className="text-sm">No projects yet</p>
+            <p className="text-xs">Create your first project to get started</p>
           </div>
         )}
       </div>

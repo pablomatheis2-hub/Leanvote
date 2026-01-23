@@ -4,6 +4,7 @@ import { ProfileSettingsForm } from "@/components/dashboard/profile-settings-for
 import { SubscriptionCard } from "@/components/dashboard/subscription-card";
 import { WidgetSettings } from "@/components/dashboard/widget-settings";
 import { ProjectManager } from "@/components/dashboard/project-manager";
+import { SettingsNav } from "@/components/dashboard/settings-nav";
 import { getAccessStatus } from "@/lib/access";
 import type { Profile, Project } from "@/types/database";
 
@@ -44,50 +45,66 @@ export default async function DashboardSettingsPage() {
 
   const accessStatus = getAccessStatus(profile);
 
+  const sections = [
+    { id: "profile", label: "Profile" },
+    { id: "projects", label: "Projects & Billing" },
+    { id: "board", label: "Board Settings" },
+    { id: "widget", label: "Embed Widget" },
+  ];
+
   return (
-    <div className="max-w-2xl">
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-zinc-900 tracking-tight">
-          Settings
-        </h1>
-        <p className="text-zinc-500 mt-1">
-          Manage your board settings and subscription
-        </p>
-      </div>
+    <div className="flex gap-8">
+      {/* Sticky Sidebar Navigation */}
+      <SettingsNav sections={sections} accessStatus={accessStatus} />
 
-      <div className="space-y-8">
-        {/* Profile Settings */}
-        <div className="bg-white rounded-xl border border-zinc-200 p-6">
-          <h2 className="text-lg font-semibold text-zinc-900 mb-1">
-            Your Profile
-          </h2>
-          <p className="text-sm text-zinc-500 mb-4">
-            Customize how you appear when commenting on posts
-          </p>
-          <ProfileSettingsForm profile={profile} />
+      {/* Main Content */}
+      <div className="flex-1 min-w-0 max-w-2xl">
+        <div className="mb-6">
+          <h1 className="text-xl font-semibold text-foreground tracking-tight">
+            Settings
+          </h1>
         </div>
 
-        {/* Project Manager */}
-        <ProjectManager projects={projects} accessStatus={accessStatus} />
+        <div className="space-y-6">
+          {/* Profile Settings */}
+          <section id="profile" className="scroll-mt-24">
+            <div className="bg-card rounded-xl border border-border p-5">
+              <h2 className="text-base font-semibold text-foreground mb-1">
+                Your Profile
+              </h2>
+              <p className="text-sm text-muted-foreground mb-4">
+                Customize how you appear when commenting on posts
+              </p>
+              <ProfileSettingsForm profile={profile} />
+            </div>
+          </section>
 
-        {/* Board Settings */}
-        <div className="bg-white rounded-xl border border-zinc-200 p-6">
-          <h2 className="text-lg font-semibold text-zinc-900 mb-4">
-            Board Settings
-          </h2>
-          <SettingsForm profile={profile} />
+          {/* Projects & Billing - Combined Section */}
+          <section id="projects" className="scroll-mt-24 space-y-4">
+            <ProjectManager projects={projects} accessStatus={accessStatus} />
+            <SubscriptionCard accessStatus={accessStatus} />
+          </section>
+
+          {/* Board Settings */}
+          <section id="board" className="scroll-mt-24">
+            <div className="bg-card rounded-xl border border-border p-5">
+              <h2 className="text-base font-semibold text-foreground mb-4">
+                Board Settings
+              </h2>
+              <SettingsForm profile={profile} />
+            </div>
+          </section>
+
+          {/* Widget Embed */}
+          <section id="widget" className="scroll-mt-24">
+            <div className="bg-card rounded-xl border border-border p-5">
+              <h2 className="text-base font-semibold text-foreground mb-4">
+                Embed Widget
+              </h2>
+              <WidgetSettings profile={profile} />
+            </div>
+          </section>
         </div>
-
-        {/* Widget Embed */}
-        <div className="bg-white rounded-xl border border-zinc-200 p-6">
-          <h2 className="text-lg font-semibold text-zinc-900 mb-4">
-            Embed Widget
-          </h2>
-          <WidgetSettings profile={profile} />
-        </div>
-
-        {/* Subscription */}
-        <SubscriptionCard accessStatus={accessStatus} />
       </div>
     </div>
   );

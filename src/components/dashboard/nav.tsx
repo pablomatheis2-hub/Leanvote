@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MessageSquare, LayoutDashboard, Map, Settings, ExternalLink, BookOpen, Menu, X, ChevronDown, FolderOpen, Check, Crown } from "lucide-react";
+import { MessageSquare, LayoutDashboard, Map, Settings, ExternalLink, BookOpen, Menu, X, ChevronDown, FolderOpen, Check, Crown, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -40,6 +40,7 @@ export function DashboardNav({ user, profile, accessStatus, projects = [], curre
   const navItems = [
     { href: "/dashboard", label: "Feedback", icon: LayoutDashboard },
     { href: "/dashboard/roadmap", label: "Roadmap", icon: Map },
+    { href: "/dashboard/changelog", label: "Changelog", icon: History },
     { href: "/dashboard/settings", label: "Settings", icon: Settings },
   ];
 

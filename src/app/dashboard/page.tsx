@@ -63,62 +63,38 @@ export default async function DashboardPage() {
 
   const publicUrl = `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/b/${profile?.board_slug}`;
 
-  return (
-    <div>
-      {/* Header */}
-      <div className="flex items-start justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-semibold text-foreground tracking-tight">
-            Feedback Board
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Manage feedback and feature requests submitted by your users
-          </p>
-        </div>
-      </div>
+  const openCount = posts.filter(p => p.status === "Open").length;
+  const roadmapCount = posts.filter(p => p.status !== "Open" && p.status !== "Complete").length;
+  const completeCount = posts.filter(p => p.status === "Complete").length;
 
-      {/* Public link card */}
-      <div className="bg-card rounded-xl border border-border p-4 mb-8">
-        <div className="flex items-center justify-between">
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-foreground mb-1">
-              Share your feedback board
-            </p>
-            <div className="flex items-center gap-2">
-              <code className="text-sm text-muted-foreground bg-muted px-2 py-1 rounded truncate">
-                {publicUrl}
-              </code>
-              <CopyButton text={publicUrl} />
-            </div>
+  return (
+    <div className="space-y-6">
+      {/* Compact Header with Share Link */}
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <div className="flex items-center gap-3">
+          <h1 className="text-xl font-semibold text-foreground tracking-tight">
+            Feedback
+          </h1>
+          <div className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground">
+            <span className="px-2 py-0.5 bg-muted rounded-full">{posts.length} total</span>
+            <span className="px-2 py-0.5 bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 rounded-full">{openCount} open</span>
+            <span className="px-2 py-0.5 bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 rounded-full">{roadmapCount} in progress</span>
+            <span className="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 rounded-full">{completeCount} done</span>
           </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <code className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded hidden sm:block truncate max-w-[200px]">
+            {publicUrl}
+          </code>
+          <CopyButton text={publicUrl} />
           <Link
             href={`/b/${profile?.board_slug}`}
             target="_blank"
-            className="ml-4 flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 font-medium"
+            className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 font-medium px-2 py-1 rounded hover:bg-muted transition-colors"
           >
-            <ExternalLink className="w-4 h-4" />
-            Preview
+            <ExternalLink className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Preview</span>
           </Link>
-        </div>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-        <div className="bg-card rounded-xl border border-border p-4">
-          <p className="text-sm text-muted-foreground">Total Feedback</p>
-          <p className="text-2xl font-semibold text-foreground mt-1">{posts.length}</p>
-        </div>
-        <div className="bg-card rounded-xl border border-border p-4">
-          <p className="text-sm text-muted-foreground">Open</p>
-          <p className="text-2xl font-semibold text-foreground mt-1">{posts.filter(p => p.status === "Open").length}</p>
-        </div>
-        <div className="bg-card rounded-xl border border-border p-4">
-          <p className="text-sm text-muted-foreground">On Roadmap</p>
-          <p className="text-2xl font-semibold text-foreground mt-1">{posts.filter(p => p.status !== "Open" && p.status !== "Complete").length}</p>
-        </div>
-        <div className="bg-card rounded-xl border border-border p-4">
-          <p className="text-sm text-muted-foreground">Complete</p>
-          <p className="text-2xl font-semibold text-foreground mt-1">{posts.filter(p => p.status === "Complete").length}</p>
         </div>
       </div>
 

@@ -93,16 +93,16 @@ export function SubscriptionCard({ accessStatus }: SubscriptionCardProps) {
   // Lifetime access view (kept for existing lifetime users)
   if (accessStatus.hasLifetimeAccess) {
     return (
-      <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border border-emerald-200 p-6">
-        <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
-            <Check className="w-6 h-6 text-emerald-600" />
+      <div className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 rounded-xl border border-emerald-200 dark:border-emerald-800 p-5">
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center flex-shrink-0">
+            <Check className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-zinc-900">
+            <h2 className="text-base font-semibold text-foreground">
               Lifetime Access
             </h2>
-            <p className="text-zinc-600 mt-1">
+            <p className="text-muted-foreground text-sm mt-1">
               You have lifetime access to all LeanVote features. Thank you for your support!
             </p>
           </div>
@@ -116,23 +116,23 @@ export function SubscriptionCard({ accessStatus }: SubscriptionCardProps) {
     const currentPricing = getSubscriptionPrice(accessStatus.projectLimit);
     
     return (
-      <div className="bg-white rounded-xl border border-zinc-200 p-6">
+      <div className="bg-card rounded-xl border border-border p-5">
         <div className="flex items-start justify-between mb-4">
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-lg font-semibold text-zinc-900">
+              <h2 className="text-base font-semibold text-foreground">
                 Pro Subscription
               </h2>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-xs font-medium rounded-full">
                 <Check className="w-3 h-3" />
                 Active
               </span>
             </div>
-            <p className="text-zinc-500 mt-1">
+            <p className="text-muted-foreground text-sm mt-1">
               {accessStatus.projectLimit} {accessStatus.projectLimit === 1 ? "project" : "projects"} • ${currentPricing.total.toFixed(2)}/month
             </p>
             {accessStatus.subscriptionEndsAt && (
-              <p className="text-xs text-zinc-400 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Renews on {accessStatus.subscriptionEndsAt.toLocaleDateString()}
               </p>
             )}
@@ -141,32 +141,32 @@ export function SubscriptionCard({ accessStatus }: SubscriptionCardProps) {
 
         {/* Project count editor */}
         {showProjectEditor ? (
-          <div className="bg-zinc-50 rounded-lg p-4 mb-4">
-            <label className="block text-sm font-medium text-zinc-700 mb-3">
+          <div className="bg-muted/50 rounded-lg p-4 mb-4">
+            <label className="block text-sm font-medium text-foreground mb-3">
               Update project limit
             </label>
             <div className="flex items-center gap-4 mb-4">
               <button
                 onClick={() => setProjectCount(Math.max(1, projectCount - 1))}
                 disabled={projectCount <= 1}
-                className="w-8 h-8 rounded-lg border border-zinc-200 flex items-center justify-center text-zinc-600 hover:bg-white disabled:opacity-50"
+                className="w-8 h-8 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:bg-background disabled:opacity-50"
               >
                 <Minus className="w-4 h-4" />
               </button>
               <div className="text-center">
-                <span className="text-2xl font-bold text-zinc-900">{projectCount}</span>
-                <p className="text-xs text-zinc-500">{projectCount === 1 ? "project" : "projects"}</p>
+                <span className="text-2xl font-bold text-foreground">{projectCount}</span>
+                <p className="text-xs text-muted-foreground">{projectCount === 1 ? "project" : "projects"}</p>
               </div>
               <button
                 onClick={() => setProjectCount(projectCount + 1)}
-                className="w-8 h-8 rounded-lg border border-zinc-200 flex items-center justify-center text-zinc-600 hover:bg-white"
+                className="w-8 h-8 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:bg-background"
               >
                 <Plus className="w-4 h-4" />
               </button>
             </div>
             <div className="flex justify-between text-sm mb-3">
-              <span className="text-zinc-600">New monthly total</span>
-              <span className="font-semibold text-zinc-900">${pricing.total.toFixed(2)}/mo</span>
+              <span className="text-muted-foreground">New monthly total</span>
+              <span className="font-semibold text-foreground">${pricing.total.toFixed(2)}/mo</span>
             </div>
             <div className="flex gap-2">
               <Button
@@ -184,7 +184,6 @@ export function SubscriptionCard({ accessStatus }: SubscriptionCardProps) {
                 onClick={handleUpdateProjectCount}
                 size="sm"
                 disabled={upgradeLoading || projectCount === accessStatus.projectLimit}
-                className="bg-[#f97352] hover:bg-[#e8634a]"
               >
                 {upgradeLoading ? "Updating..." : "Update Plan"}
               </Button>
@@ -213,7 +212,7 @@ export function SubscriptionCard({ accessStatus }: SubscriptionCardProps) {
           </div>
         )}
 
-        <p className="text-xs text-zinc-400">
+        <p className="text-xs text-muted-foreground">
           Manage billing, payment method, and cancel anytime from Stripe portal.
         </p>
       </div>
@@ -222,25 +221,25 @@ export function SubscriptionCard({ accessStatus }: SubscriptionCardProps) {
 
   // Trial or expired - show subscription options
   return (
-    <div className="bg-white rounded-xl border border-zinc-200 p-6">
+    <div className="bg-card rounded-xl border border-border p-5">
       <div className="flex items-start justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-lg font-semibold text-zinc-900">
+            <h2 className="text-base font-semibold text-foreground">
               Subscription
             </h2>
             {accessStatus.isInTrial && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 text-xs font-medium rounded-full">
                 <Clock className="w-3 h-3" />
                 Trial
               </span>
             )}
           </div>
-          <p className="text-zinc-500 mt-1">
+          <p className="text-muted-foreground text-sm mt-1">
             {accessStatus.isInTrial ? (
               <>
                 Your free trial ends in{" "}
-                <span className="font-semibold text-zinc-700">
+                <span className="font-semibold text-foreground">
                   {accessStatus.daysRemaining} {accessStatus.daysRemaining === 1 ? "day" : "days"}
                 </span>
               </>
@@ -251,26 +250,26 @@ export function SubscriptionCard({ accessStatus }: SubscriptionCardProps) {
         </div>
       </div>
 
-      <div className="mt-6 pt-6 border-t border-zinc-100">
+      <div className="mt-5 pt-5 border-t border-border">
         {/* Project counter */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-zinc-700 mb-2">
+          <label className="block text-sm font-medium text-foreground mb-2">
             How many projects do you need?
           </label>
           <div className="flex items-center gap-3">
             <button
               onClick={() => setProjectCount(Math.max(1, projectCount - 1))}
               disabled={projectCount <= 1}
-              className="w-8 h-8 rounded-lg border border-zinc-200 flex items-center justify-center text-zinc-600 hover:bg-zinc-50 disabled:opacity-50"
+              className="w-8 h-8 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:bg-muted disabled:opacity-50"
             >
               <Minus className="w-4 h-4" />
             </button>
             <div className="text-center min-w-[60px]">
-              <span className="text-2xl font-bold text-zinc-900">{projectCount}</span>
+              <span className="text-2xl font-bold text-foreground">{projectCount}</span>
             </div>
             <button
               onClick={() => setProjectCount(projectCount + 1)}
-              className="w-8 h-8 rounded-lg border border-zinc-200 flex items-center justify-center text-zinc-600 hover:bg-zinc-50"
+              className="w-8 h-8 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:bg-muted"
             >
               <Plus className="w-4 h-4" />
             </button>
@@ -278,30 +277,30 @@ export function SubscriptionCard({ accessStatus }: SubscriptionCardProps) {
         </div>
 
         {/* Pricing breakdown */}
-        <div className="bg-zinc-50 rounded-lg p-3 mb-4">
+        <div className="bg-muted/50 rounded-lg p-3 mb-4">
           <div className="space-y-1 text-sm">
             <div className="flex justify-between">
-              <span className="text-zinc-600">Base plan (1 project)</span>
-              <span className="text-zinc-900">${pricing.base.toFixed(2)}/mo</span>
+              <span className="text-muted-foreground">Base plan (1 project)</span>
+              <span className="text-foreground">${pricing.base.toFixed(2)}/mo</span>
             </div>
             {projectCount > 1 && (
               <div className="flex justify-between">
-                <span className="text-zinc-600">{projectCount - 1} extra {projectCount - 1 === 1 ? "project" : "projects"}</span>
-                <span className="text-zinc-900">${pricing.addon.toFixed(2)}/mo</span>
+                <span className="text-muted-foreground">{projectCount - 1} extra {projectCount - 1 === 1 ? "project" : "projects"}</span>
+                <span className="text-foreground">${pricing.addon.toFixed(2)}/mo</span>
               </div>
             )}
-            <div className="flex justify-between pt-1 border-t border-zinc-200 font-semibold">
-              <span className="text-zinc-900">Total</span>
-              <span className="text-[#f97352]">${pricing.total.toFixed(2)}/mo</span>
+            <div className="flex justify-between pt-1 border-t border-border font-semibold">
+              <span className="text-foreground">Total</span>
+              <span className="text-primary">${pricing.total.toFixed(2)}/mo</span>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 mb-4">
-          <Zap className="w-4 h-4 text-[#f97352]" />
-          <span className="text-sm font-medium text-zinc-900">Pro Plan Includes:</span>
+        <div className="flex items-center gap-2 mb-3">
+          <Zap className="w-4 h-4 text-primary" />
+          <span className="text-sm font-medium text-foreground">Pro Plan Includes:</span>
         </div>
-        <ul className="grid grid-cols-2 gap-2 text-sm text-zinc-600 mb-6">
+        <ul className="grid grid-cols-2 gap-1.5 text-sm text-muted-foreground mb-5">
           {[
             "Unlimited feedback posts",
             "Public voting board",
@@ -311,7 +310,7 @@ export function SubscriptionCard({ accessStatus }: SubscriptionCardProps) {
             "Priority support",
           ].map((feature) => (
             <li key={feature} className="flex items-center gap-2">
-              <Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+              <Check className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
               {feature}
             </li>
           ))}
@@ -320,11 +319,11 @@ export function SubscriptionCard({ accessStatus }: SubscriptionCardProps) {
         <Button
           onClick={handleSubscribe}
           disabled={loading}
-          className="w-full h-11 bg-[#f97352] hover:bg-[#e8634a] text-white font-semibold"
+          className="w-full h-10"
         >
           {loading ? (
             <span className="flex items-center gap-2">
-              <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+              <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
               </svg>
@@ -337,7 +336,7 @@ export function SubscriptionCard({ accessStatus }: SubscriptionCardProps) {
             </span>
           )}
         </Button>
-        <p className="text-xs text-zinc-400 text-center mt-2">
+        <p className="text-xs text-muted-foreground text-center mt-2">
           7-day free trial included. Cancel anytime.
         </p>
       </div>

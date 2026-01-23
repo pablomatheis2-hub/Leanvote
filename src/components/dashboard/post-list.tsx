@@ -91,24 +91,6 @@ export function DashboardPostList({ posts, boardSlug }: DashboardPostListProps) 
 
   return (
     <div>
-      {/* Helpful tip banner */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border border-amber-200 dark:border-amber-800 rounded-xl p-4 mb-6">
-        <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900 flex items-center justify-center flex-shrink-0">
-            <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
-              Turn feedback into roadmap items
-            </p>
-            <p className="text-sm text-amber-700 dark:text-amber-300 mt-0.5">
-              Click &quot;Add to Roadmap&quot; on any feedback to move it to your public roadmap. 
-              You can edit the title and description to clarify what you&apos;re building.
-            </p>
-          </div>
-        </div>
-      </div>
-
       {/* Posts */}
       <div className="bg-card rounded-xl border border-border divide-y divide-border">
         {posts.length === 0 ? (
