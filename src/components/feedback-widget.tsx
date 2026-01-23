@@ -11,6 +11,7 @@ export function FeedbackWidget() {
     script.src = "/widget.js";
     script.async = true;
     script.onload = () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).LeanVoteWidget?.init({
         boardSlug: "leanvote",
         primaryColor: "#f97352",
