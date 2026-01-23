@@ -36,13 +36,18 @@ export async function GET(request: NextRequest) {
     .eq("slug", normalizedQuery)
     .single();
 
-  if (projectSlugMatch?.profiles?.board_slug) {
-    return NextResponse.json({ 
-      exists: true, 
-      slug: projectSlugMatch.profiles.board_slug,
-      projectSlug: projectSlugMatch.slug,
-      companyName: projectSlugMatch.company_name || projectSlugMatch.name
-    });
+  if (projectSlugMatch) {
+    const projectProfile = Array.isArray(projectSlugMatch.profiles) 
+      ? projectSlugMatch.profiles[0] 
+      : projectSlugMatch.profiles;
+    if (projectProfile?.board_slug) {
+      return NextResponse.json({ 
+        exists: true, 
+        slug: projectProfile.board_slug,
+        projectSlug: projectSlugMatch.slug,
+        companyName: projectSlugMatch.company_name || projectSlugMatch.name
+      });
+    }
   }
 
   // Try to find by project name (case insensitive)
@@ -62,13 +67,18 @@ export async function GET(request: NextRequest) {
     .limit(1)
     .single();
 
-  if (projectNameMatch?.profiles?.board_slug) {
-    return NextResponse.json({ 
-      exists: true, 
-      slug: projectNameMatch.profiles.board_slug,
-      projectSlug: projectNameMatch.slug,
-      companyName: projectNameMatch.company_name || projectNameMatch.name
-    });
+  if (projectNameMatch) {
+    const nameProfile = Array.isArray(projectNameMatch.profiles) 
+      ? projectNameMatch.profiles[0] 
+      : projectNameMatch.profiles;
+    if (nameProfile?.board_slug) {
+      return NextResponse.json({ 
+        exists: true, 
+        slug: nameProfile.board_slug,
+        projectSlug: projectNameMatch.slug,
+        companyName: projectNameMatch.company_name || projectNameMatch.name
+      });
+    }
   }
 
   // Try to find by company_name (case insensitive)
@@ -88,13 +98,18 @@ export async function GET(request: NextRequest) {
     .limit(1)
     .single();
 
-  if (companyNameMatch?.profiles?.board_slug) {
-    return NextResponse.json({ 
-      exists: true, 
-      slug: companyNameMatch.profiles.board_slug,
-      projectSlug: companyNameMatch.slug,
-      companyName: companyNameMatch.company_name || companyNameMatch.name
-    });
+  if (companyNameMatch) {
+    const companyProfile = Array.isArray(companyNameMatch.profiles) 
+      ? companyNameMatch.profiles[0] 
+      : companyNameMatch.profiles;
+    if (companyProfile?.board_slug) {
+      return NextResponse.json({ 
+        exists: true, 
+        slug: companyProfile.board_slug,
+        projectSlug: companyNameMatch.slug,
+        companyName: companyNameMatch.company_name || companyNameMatch.name
+      });
+    }
   }
 
   // Try to find by exact company_url (normalized)
@@ -116,13 +131,18 @@ export async function GET(request: NextRequest) {
     .limit(1)
     .single();
 
-  if (urlMatch?.profiles?.board_slug) {
-    return NextResponse.json({ 
-      exists: true, 
-      slug: urlMatch.profiles.board_slug,
-      projectSlug: urlMatch.slug,
-      companyName: urlMatch.company_name || urlMatch.name
-    });
+  if (urlMatch) {
+    const urlProfile = Array.isArray(urlMatch.profiles) 
+      ? urlMatch.profiles[0] 
+      : urlMatch.profiles;
+    if (urlProfile?.board_slug) {
+      return NextResponse.json({ 
+        exists: true, 
+        slug: urlProfile.board_slug,
+        projectSlug: urlMatch.slug,
+        companyName: urlMatch.company_name || urlMatch.name
+      });
+    }
   }
 
   // Try partial match on company_url
@@ -143,13 +163,18 @@ export async function GET(request: NextRequest) {
     .limit(1)
     .single();
 
-  if (partialUrlMatch?.profiles?.board_slug) {
-    return NextResponse.json({ 
-      exists: true, 
-      slug: partialUrlMatch.profiles.board_slug,
-      projectSlug: partialUrlMatch.slug,
-      companyName: partialUrlMatch.company_name || partialUrlMatch.name
-    });
+  if (partialUrlMatch) {
+    const partialProfile = Array.isArray(partialUrlMatch.profiles) 
+      ? partialUrlMatch.profiles[0] 
+      : partialUrlMatch.profiles;
+    if (partialProfile?.board_slug) {
+      return NextResponse.json({ 
+        exists: true, 
+        slug: partialProfile.board_slug,
+        projectSlug: partialUrlMatch.slug,
+        companyName: partialUrlMatch.company_name || partialUrlMatch.name
+      });
+    }
   }
 
   // Fallback: Try to find by board_slug in profiles (for backwards compatibility)

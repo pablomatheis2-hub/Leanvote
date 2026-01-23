@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Outfit, DM_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { ThemeProvider } from "@/components/theme-provider";
+import { FeedbackWidget } from "@/components/feedback-widget";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -195,6 +196,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <FeedbackWidget />
         </ThemeProvider>
         <Analytics />
       </body>

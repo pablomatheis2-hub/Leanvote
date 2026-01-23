@@ -36,15 +36,20 @@ export async function GET(request: NextRequest) {
 
   // Transform results to include the board slug for navigation
   const results = (projects || [])
-    .filter(p => p.profiles?.board_slug)
-    .map(project => ({
-      id: project.id,
-      name: project.name,
-      companyName: project.company_name,
-      companyUrl: project.company_url,
-      projectSlug: project.slug,
-      boardSlug: project.profiles?.board_slug,
-    }));
+    .map(project => {
+      const profile = Array.isArray(project.profiles) 
+        ? project.profiles[0] 
+        : project.profiles;
+      return {
+        id: project.id,
+        name: project.name,
+        companyName: project.company_name,
+        companyUrl: project.company_url,
+        projectSlug: project.slug,
+        boardSlug: profile?.board_slug,
+      };
+    })
+    .filter(p => p.boardSlug);
 
   return NextResponse.json({ results });
 }

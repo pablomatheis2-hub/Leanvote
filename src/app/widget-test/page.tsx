@@ -71,8 +71,6 @@ export default function WidgetTestPage() {
     setMounted(true);
   }, []);
 
-  const selectedWidget = widgets.find((w) => w.id === selectedWidgetId);
-
   const addWidget = () => {
     const newId = `widget-${Date.now()}`;
     const newWidget: WidgetConfig = {
