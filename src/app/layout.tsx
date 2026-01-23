@@ -17,7 +17,7 @@ const dmSans = DM_Sans({
   display: "swap",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://leanvote.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://leanvote.com";
 
 export const viewport: Viewport = {
   width: "device-width",

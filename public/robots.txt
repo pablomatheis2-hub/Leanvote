@@ -17,7 +17,7 @@ Disallow: /post/*
 Allow: /b/*
 
 # Sitemap location
-Sitemap: https://leanvote.app/sitemap.xml
+Sitemap: https://leanvote.com/sitemap.xml
 
 # Crawl delay for polite crawling
 Crawl-delay: 1

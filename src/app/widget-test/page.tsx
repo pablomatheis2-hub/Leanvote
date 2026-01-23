@@ -62,7 +62,7 @@ export default function WidgetTestPage() {
   const [selectedWidgetId, setSelectedWidgetId] = useState<string>("widget-1");
   const [previewKey, setPreviewKey] = useState(0);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
-  const [baseUrl, setBaseUrl] = useState<string>("https://leanvote.app");
+  const [baseUrl, setBaseUrl] = useState<string>("https://leanvote.com");
   const [mounted, setMounted] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
 

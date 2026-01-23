@@ -5,7 +5,7 @@
   if (window.LeanVoteWidget) return;
 
   const WIDGET_VERSION = '1.0.0';
-  const BASE_URL = window.LEANVOTE_BASE_URL || 'https://leanvote.app';
+  const BASE_URL = window.LEANVOTE_BASE_URL || 'https://leanvote.com';
 
   // Widget configuration
   let config = {

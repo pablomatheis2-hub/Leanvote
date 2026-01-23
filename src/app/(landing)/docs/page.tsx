@@ -21,14 +21,14 @@ import {
 
 const codeExamples = {
   basic: `<!-- Add this before closing </body> tag -->
-<script src="https://leanvote.app/widget.js"></script>
+<script src="https://leanvote.com/widget.js"></script>
 <script>
   LeanVoteWidget.init({
     boardSlug: 'YOUR_BOARD_SLUG'
   });
 </script>`,
   
-  customized: `<script src="https://leanvote.app/widget.js"></script>
+  customized: `<script src="https://leanvote.com/widget.js"></script>
 <script>
   LeanVoteWidget.init({
     boardSlug: 'YOUR_BOARD_SLUG',
@@ -68,7 +68,7 @@ interface WidgetConfig {
 export function FeedbackWidget({ boardSlug }: { boardSlug: string }) {
   useEffect(() => {
     const script = document.createElement('script');
-    script.src = 'https://leanvote.app/widget.js';
+    script.src = 'https://leanvote.com/widget.js';
     script.async = true;
     
     script.onload = () => {
@@ -110,7 +110,7 @@ let script: HTMLScriptElement | null = null;
 
 onMounted(() => {
   script = document.createElement('script');
-  script.src = 'https://leanvote.app/widget.js';
+  script.src = 'https://leanvote.com/widget.js';
   script.async = true;
   
   script.onload = () => {

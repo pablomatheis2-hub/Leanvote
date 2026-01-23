@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 import { createClient } from "@supabase/supabase-js";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://leanvote.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://leanvote.com";
 
 // Force dynamic rendering since this queries the database
 export const dynamic = "force-dynamic";

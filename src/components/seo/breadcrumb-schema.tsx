@@ -8,7 +8,7 @@ interface BreadcrumbSchemaProps {
 }
 
 export function BreadcrumbSchema({ items }: BreadcrumbSchemaProps) {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://leanvote.app";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://leanvote.com";
 
   const jsonLd = {
     "@context": "https://schema.org",

@@ -35,7 +35,7 @@ export function WidgetSettings({ profile }: WidgetSettingsProps) {
   const boardSlug = profile.board_slug || "your-board-slug";
   const baseUrl = typeof window !== "undefined" 
     ? window.location.origin 
-    : "https://leanvote.app";
+    : "https://leanvote.com";
 
   const embedCode = `<script src="${baseUrl}/widget.js"></script>
 <script>
