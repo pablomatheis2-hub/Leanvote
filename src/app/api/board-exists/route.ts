@@ -18,51 +18,152 @@ export async function GET(request: NextRequest) {
   }
 
   const supabase = await createClient();
+  const normalizedQuery = query.toLowerCase().trim();
   
-  // First, try to find by exact board_slug match
-  const { data: slugMatch } = await supabase
-    .from("profiles")
-    .select("id, board_slug, company_name")
-    .eq("board_slug", query.toLowerCase())
+  // First, try to find by exact project slug match
+  const { data: projectSlugMatch } = await supabase
+    .from("projects")
+    .select(`
+      id,
+      slug,
+      name,
+      company_name,
+      owner_id,
+      profiles:owner_id (
+        board_slug
+      )
+    `)
+    .eq("slug", normalizedQuery)
     .single();
 
-  if (slugMatch) {
+  if (projectSlugMatch?.profiles?.board_slug) {
     return NextResponse.json({ 
       exists: true, 
-      slug: slugMatch.board_slug,
-      companyName: slugMatch.company_name
+      slug: projectSlugMatch.profiles.board_slug,
+      projectSlug: projectSlugMatch.slug,
+      companyName: projectSlugMatch.company_name || projectSlugMatch.name
     });
   }
 
-  // Next, try to find by company_url (normalized)
-  const normalizedQuery = normalizeUrl(query);
-  const { data: urlMatch } = await supabase
-    .from("profiles")
-    .select("id, board_slug, company_name, company_url")
-    .eq("company_url", normalizedQuery)
-    .single();
-
-  if (urlMatch) {
-    return NextResponse.json({ 
-      exists: true, 
-      slug: urlMatch.board_slug,
-      companyName: urlMatch.company_name
-    });
-  }
-
-  // Finally, try partial match on company_url (for cases like "acme.com" matching "acme.com/feedback")
-  const { data: partialMatch } = await supabase
-    .from("profiles")
-    .select("id, board_slug, company_name, company_url")
-    .ilike("company_url", `%${normalizedQuery}%`)
+  // Try to find by project name (case insensitive)
+  const { data: projectNameMatch } = await supabase
+    .from("projects")
+    .select(`
+      id,
+      slug,
+      name,
+      company_name,
+      owner_id,
+      profiles:owner_id (
+        board_slug
+      )
+    `)
+    .ilike("name", normalizedQuery)
     .limit(1)
     .single();
 
-  if (partialMatch) {
+  if (projectNameMatch?.profiles?.board_slug) {
     return NextResponse.json({ 
       exists: true, 
-      slug: partialMatch.board_slug,
-      companyName: partialMatch.company_name
+      slug: projectNameMatch.profiles.board_slug,
+      projectSlug: projectNameMatch.slug,
+      companyName: projectNameMatch.company_name || projectNameMatch.name
+    });
+  }
+
+  // Try to find by company_name (case insensitive)
+  const { data: companyNameMatch } = await supabase
+    .from("projects")
+    .select(`
+      id,
+      slug,
+      name,
+      company_name,
+      owner_id,
+      profiles:owner_id (
+        board_slug
+      )
+    `)
+    .ilike("company_name", normalizedQuery)
+    .limit(1)
+    .single();
+
+  if (companyNameMatch?.profiles?.board_slug) {
+    return NextResponse.json({ 
+      exists: true, 
+      slug: companyNameMatch.profiles.board_slug,
+      projectSlug: companyNameMatch.slug,
+      companyName: companyNameMatch.company_name || companyNameMatch.name
+    });
+  }
+
+  // Try to find by exact company_url (normalized)
+  const normalizedUrl = normalizeUrl(query);
+  const { data: urlMatch } = await supabase
+    .from("projects")
+    .select(`
+      id,
+      slug,
+      name,
+      company_name,
+      company_url,
+      owner_id,
+      profiles:owner_id (
+        board_slug
+      )
+    `)
+    .eq("company_url", normalizedUrl)
+    .limit(1)
+    .single();
+
+  if (urlMatch?.profiles?.board_slug) {
+    return NextResponse.json({ 
+      exists: true, 
+      slug: urlMatch.profiles.board_slug,
+      projectSlug: urlMatch.slug,
+      companyName: urlMatch.company_name || urlMatch.name
+    });
+  }
+
+  // Try partial match on company_url
+  const { data: partialUrlMatch } = await supabase
+    .from("projects")
+    .select(`
+      id,
+      slug,
+      name,
+      company_name,
+      company_url,
+      owner_id,
+      profiles:owner_id (
+        board_slug
+      )
+    `)
+    .ilike("company_url", `%${normalizedUrl}%`)
+    .limit(1)
+    .single();
+
+  if (partialUrlMatch?.profiles?.board_slug) {
+    return NextResponse.json({ 
+      exists: true, 
+      slug: partialUrlMatch.profiles.board_slug,
+      projectSlug: partialUrlMatch.slug,
+      companyName: partialUrlMatch.company_name || partialUrlMatch.name
+    });
+  }
+
+  // Fallback: Try to find by board_slug in profiles (for backwards compatibility)
+  const { data: profileMatch } = await supabase
+    .from("profiles")
+    .select("id, board_slug, board_name")
+    .eq("board_slug", normalizedQuery)
+    .single();
+
+  if (profileMatch?.board_slug) {
+    return NextResponse.json({ 
+      exists: true, 
+      slug: profileMatch.board_slug,
+      companyName: profileMatch.board_name
     });
   }
 

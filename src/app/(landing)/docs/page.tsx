@@ -15,7 +15,8 @@ import {
   ChevronRight,
   BookOpen,
   Rocket,
-  Wrench
+  Wrench,
+  Eye
 } from "lucide-react";
 
 const codeExamples = {
@@ -263,8 +264,9 @@ export default function DocsPage() {
             Add a feedback widget to your site
           </h1>
           <p className="text-lg text-zinc-500 max-w-2xl mx-auto leading-relaxed">
-            Embed the LeanVote widget on your website to collect feedback, share your roadmap, 
-            and keep users updated with your changelog — all without leaving your app.
+            Embed a minimalistic feedback widget on your website. Users can quickly submit 
+            feature requests, bug reports, and improvements — with a link to view the full 
+            feedback board when they need it.
           </p>
         </div>
       </section>
@@ -288,11 +290,98 @@ export default function DocsPage() {
 
             <div className="mt-6 p-4 bg-amber-50 rounded-xl border border-amber-200">
               <p className="text-sm text-amber-800">
-                <strong>💡 Tip:</strong> Replace <code className="px-1.5 py-0.5 bg-amber-100 rounded font-mono">YOUR_BOARD_SLUG</code> with your actual board slug from the{" "}
+                <strong>Tip:</strong> Replace <code className="px-1.5 py-0.5 bg-amber-100 rounded font-mono">YOUR_BOARD_SLUG</code> with your actual board slug from the{" "}
                 <Link href="/dashboard/settings" className="underline hover:text-amber-900">
                   dashboard settings
                 </Link>.
               </p>
+            </div>
+
+            <div className="mt-6 flex items-center gap-4">
+              <Link 
+                href="/widget-test"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-900 text-white text-sm font-medium rounded-lg hover:bg-zinc-800 transition-colors"
+              >
+                <Eye className="w-4 h-4" />
+                Try the Widget Test Lab
+              </Link>
+              <span className="text-sm text-zinc-500">
+                Configure and preview widgets before embedding
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Widget Features */}
+      <section className="pb-16 px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-10 h-10 rounded-xl bg-[#fff5f2] flex items-center justify-center">
+              <MessageSquare className="w-5 h-5 text-[#f97352]" />
+            </div>
+            <h2 className="font-heading font-bold text-2xl text-zinc-900">What Users See</h2>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-zinc-200 p-8 shadow-sm">
+            <p className="text-zinc-600 mb-6">
+              The widget provides a clean, minimalistic feedback form that doesn&apos;t overwhelm your users:
+            </p>
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <h3 className="font-semibold text-zinc-900">Feedback Form</h3>
+                <ul className="space-y-3 text-sm text-zinc-600">
+                  <li className="flex items-start gap-2">
+                    <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Check className="w-3 h-3 text-emerald-600" />
+                    </div>
+                    <span><strong>Type selector</strong> — Feature Request, Bug Report, or Improvement</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Check className="w-3 h-3 text-emerald-600" />
+                    </div>
+                    <span><strong>Title field</strong> — Brief summary of the feedback</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Check className="w-3 h-3 text-emerald-600" />
+                    </div>
+                    <span><strong>Description</strong> — Optional detailed explanation</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Check className="w-3 h-3 text-emerald-600" />
+                    </div>
+                    <span><strong>Submit button</strong> — Styled with your brand color</span>
+                  </li>
+                </ul>
+              </div>
+              
+              <div className="space-y-4">
+                <h3 className="font-semibold text-zinc-900">Additional Features</h3>
+                <ul className="space-y-3 text-sm text-zinc-600">
+                  <li className="flex items-start gap-2">
+                    <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <ExternalLink className="w-3 h-3 text-blue-600" />
+                    </div>
+                    <span><strong>View all feedback</strong> — Link to the full board for users who want to browse or vote</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Check className="w-3 h-3 text-blue-600" />
+                    </div>
+                    <span><strong>Success confirmation</strong> — Clear feedback when submission is complete</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Check className="w-3 h-3 text-blue-600" />
+                    </div>
+                    <span><strong>Powered by LeanVote</strong> — Subtle branding in the footer</span>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
