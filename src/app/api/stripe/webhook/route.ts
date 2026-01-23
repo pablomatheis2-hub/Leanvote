@@ -70,16 +70,19 @@ export async function POST(request: NextRequest) {
 
       // Handle subscription created
       case "customer.subscription.created": {
-        const subscription = event.data.object as Stripe.Subscription;
+        const subscription = event.data.object as unknown as SubscriptionData;
         const userId = subscription.metadata?.user_id;
         const projectCount = parseInt(subscription.metadata?.project_count || "1", 10);
 
         if (!userId) {
           // Try to find user by customer ID
+          const customerId = typeof subscription.customer === 'string' 
+            ? subscription.customer 
+            : subscription.customer.id;
           const { data: profile } = await supabaseAdmin
             .from("profiles")
             .select("id")
-            .eq("stripe_customer_id", subscription.customer as string)
+            .eq("stripe_customer_id", customerId)
             .single();
 
           if (!profile) {
@@ -98,7 +101,7 @@ export async function POST(request: NextRequest) {
 
       // Handle subscription updated
       case "customer.subscription.updated": {
-        const subscription = event.data.object as Stripe.Subscription;
+        const subscription = event.data.object as unknown as SubscriptionData;
         
         // Find user by customer ID or metadata
         const userId = subscription.metadata?.user_id;
@@ -107,10 +110,13 @@ export async function POST(request: NextRequest) {
         if (userId) {
           await updateSubscriptionStatus(userId, subscription, projectCount);
         } else {
+          const customerId = typeof subscription.customer === 'string' 
+            ? subscription.customer 
+            : subscription.customer.id;
           const { data: profile } = await supabaseAdmin
             .from("profiles")
             .select("id")
-            .eq("stripe_customer_id", subscription.customer as string)
+            .eq("stripe_customer_id", customerId)
             .single();
 
           if (profile) {
@@ -124,7 +130,7 @@ export async function POST(request: NextRequest) {
 
       // Handle subscription deleted/canceled
       case "customer.subscription.deleted": {
-        const subscription = event.data.object as Stripe.Subscription;
+        const subscription = event.data.object as { id: string };
         
         const { data: profile } = await supabaseAdmin
           .from("profiles")
@@ -149,25 +155,30 @@ export async function POST(request: NextRequest) {
 
       // Handle invoice payment succeeded (subscription renewal)
       case "invoice.payment_succeeded": {
-        const invoice = event.data.object as Stripe.Invoice;
+        const invoice = event.data.object;
+        // Access subscription from the raw object since Stripe types may not include it
+        const invoiceData = invoice as { subscription?: string | { id: string } | null; billing_reason?: string; customer?: string | { id: string }; amount_paid?: number; currency?: string };
+        const subscriptionId = typeof invoiceData.subscription === 'string' 
+          ? invoiceData.subscription 
+          : invoiceData.subscription?.id;
         
-        if (invoice.subscription && invoice.billing_reason === "subscription_cycle") {
+        if (subscriptionId && invoiceData.billing_reason === "subscription_cycle") {
           const { data: profile } = await supabaseAdmin
             .from("profiles")
             .select("id")
-            .eq("stripe_subscription_id", invoice.subscription as string)
+            .eq("stripe_subscription_id", subscriptionId)
             .single();
 
           if (profile) {
             // Create purchase record for renewal
             await supabaseAdmin.from("purchases").insert({
               user_id: profile.id,
-              stripe_customer_id: invoice.customer as string,
-              stripe_subscription_id: invoice.subscription as string,
+              stripe_customer_id: typeof invoiceData.customer === 'string' ? invoiceData.customer : invoiceData.customer?.id,
+              stripe_subscription_id: subscriptionId,
               plan_type: "subscription",
               status: "active",
-              amount: invoice.amount_paid,
-              currency: invoice.currency,
+              amount: invoiceData.amount_paid,
+              currency: invoiceData.currency,
             });
 
             console.log(`Subscription renewed for user ${profile.id}`);
@@ -178,13 +189,18 @@ export async function POST(request: NextRequest) {
 
       // Handle invoice payment failed
       case "invoice.payment_failed": {
-        const invoice = event.data.object as Stripe.Invoice;
+        const invoice = event.data.object;
+        // Access subscription from the raw object since Stripe types may not include it
+        const invoiceData = invoice as { subscription?: string | { id: string } | null };
+        const subscriptionId = typeof invoiceData.subscription === 'string' 
+          ? invoiceData.subscription 
+          : invoiceData.subscription?.id;
         
-        if (invoice.subscription) {
+        if (subscriptionId) {
           const { data: profile } = await supabaseAdmin
             .from("profiles")
             .select("id")
-            .eq("stripe_subscription_id", invoice.subscription as string)
+            .eq("stripe_subscription_id", subscriptionId)
             .single();
 
           if (profile) {
@@ -239,9 +255,17 @@ export async function POST(request: NextRequest) {
   }
 }
 
+interface SubscriptionData {
+  id: string;
+  customer: string | { id: string };
+  status: string;
+  current_period_end: number;
+  metadata?: { user_id?: string; project_count?: string };
+}
+
 async function updateSubscriptionStatus(
   userId: string, 
-  subscription: Stripe.Subscription,
+  subscription: SubscriptionData,
   projectCount: number
 ) {
   let status: "none" | "active" | "past_due" | "canceled" | "trialing" = "none";
@@ -264,11 +288,15 @@ async function updateSubscriptionStatus(
       status = "none";
   }
 
+  const customerId = typeof subscription.customer === 'string' 
+    ? subscription.customer 
+    : subscription.customer.id;
+
   await supabaseAdmin
     .from("profiles")
     .update({
       stripe_subscription_id: subscription.id,
-      stripe_customer_id: subscription.customer as string,
+      stripe_customer_id: customerId,
       subscription_status: status,
       subscription_current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
       project_limit: projectCount,

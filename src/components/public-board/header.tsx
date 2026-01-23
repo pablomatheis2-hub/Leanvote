@@ -21,16 +21,18 @@ import type { Profile } from "@/types/database";
 
 interface PublicBoardHeaderProps {
   boardOwner: Profile;
+  boardName: string;
   user: User | null;
   profile: Profile | null;
 }
 
-export function PublicBoardHeader({ boardOwner, user, profile }: PublicBoardHeaderProps) {
+export function PublicBoardHeader({ boardOwner, boardName, user, profile }: PublicBoardHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isWidget = searchParams.get("widget") === "true";
   const slug = boardOwner.board_slug;
+  const displayName = boardName || boardOwner.board_name || "Feedback";
   
   const initials = profile?.full_name
     ?.split(" ")
@@ -58,7 +60,7 @@ export function PublicBoardHeader({ boardOwner, user, profile }: PublicBoardHead
                 <MessageSquare className="w-3 h-3 text-primary-foreground" />
               </div>
               <span className="font-heading font-semibold text-sm text-foreground">
-                {boardOwner.company_name || boardOwner.board_name || "Feedback"}
+                {displayName}
               </span>
             </div>
           </div>
@@ -93,7 +95,7 @@ export function PublicBoardHeader({ boardOwner, user, profile }: PublicBoardHead
               <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary-foreground" />
             </div>
             <span className="font-heading font-bold text-lg sm:text-xl text-foreground truncate max-w-[120px] sm:max-w-none">
-              {boardOwner.company_name || boardOwner.board_name || "Feedback"}
+              {displayName}
             </span>
           </Link>
           
@@ -119,7 +121,7 @@ export function PublicBoardHeader({ boardOwner, user, profile }: PublicBoardHead
           
           <div className="hidden md:block">
             <BoardSwitcher 
-              currentBoardName={boardOwner.company_name || boardOwner.board_name || "Feedback"}
+              currentBoardName={displayName}
               currentSlug={slug || ""}
             />
           </div>
@@ -216,7 +218,7 @@ export function PublicBoardHeader({ boardOwner, user, profile }: PublicBoardHead
           </nav>
           <div className="px-4 pb-3 border-t border-border pt-3">
             <BoardSwitcher 
-              currentBoardName={boardOwner.company_name || boardOwner.board_name || "Feedback"}
+              currentBoardName={displayName}
               currentSlug={slug || ""}
             />
           </div>

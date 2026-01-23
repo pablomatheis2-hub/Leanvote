@@ -7,7 +7,7 @@ import { Comments } from "@/components/public-board/comments";
 import { Badge } from "@/components/ui/badge";
 import { getComments } from "@/lib/actions/comments";
 import type { Metadata } from "next";
-import type { PostWithDetails, Profile } from "@/types/database";
+import type { PostWithDetails, Profile, Project } from "@/types/database";
 
 export const revalidate = 0;
 
@@ -15,7 +15,29 @@ interface PageProps {
   params: Promise<{ slug: string; postId: string }>;
 }
 
-async function getBoardOwner(slug: string): Promise<Profile | null> {
+async function getProject(slug: string): Promise<Project | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("projects")
+    .select("*")
+    .eq("slug", slug)
+    .single();
+
+  return data;
+}
+
+async function getBoardOwnerById(ownerId: string): Promise<Profile | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", ownerId)
+    .single();
+
+  return data;
+}
+
+async function getBoardOwnerBySlug(slug: string): Promise<Profile | null> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("profiles")
@@ -98,19 +120,27 @@ const categoryStyles: Record<string, string> = {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug, postId } = await params;
-  const [boardOwner, post] = await Promise.all([
-    getBoardOwner(slug),
-    getPost(postId),
-  ]);
+  
+  const project = await getProject(slug);
+  let boardName: string;
 
-  if (!boardOwner || !post) {
-    return {
-      title: "Post Not Found - LeanVote",
-    };
+  if (project) {
+    boardName = project.company_name || project.name;
+  } else {
+    const boardOwner = await getBoardOwnerBySlug(slug);
+    if (!boardOwner) {
+      return { title: "Post Not Found - LeanVote" };
+    }
+    boardName = boardOwner.board_name || "Feedback Board";
+  }
+
+  const post = await getPost(postId);
+  if (!post) {
+    return { title: "Post Not Found - LeanVote" };
   }
 
   return {
-    title: `${post.title} - ${boardOwner.board_name || "Feedback Board"}`,
+    title: `${post.title} - ${boardName}`,
     description: post.description || `View feedback and comments for ${post.title}`,
     openGraph: {
       title: post.title,
@@ -122,7 +152,19 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function PostDetailPage({ params }: PageProps) {
   const { slug, postId } = await params;
-  const boardOwner = await getBoardOwner(slug);
+  
+  const project = await getProject(slug);
+  
+  let boardOwner: Profile | null = null;
+  let displayName: string;
+  
+  if (project) {
+    boardOwner = await getBoardOwnerById(project.owner_id);
+    displayName = project.company_name || project.name;
+  } else {
+    boardOwner = await getBoardOwnerBySlug(slug);
+    displayName = boardOwner?.board_name || "Feedback Board";
+  }
 
   if (!boardOwner) {
     notFound();
@@ -153,6 +195,7 @@ export default async function PostDetailPage({ params }: PageProps) {
     <div className="min-h-screen bg-zinc-50">
       <PublicBoardHeader
         boardOwner={boardOwner}
+        boardName={displayName}
         user={user}
         profile={currentUserProfile}
       />

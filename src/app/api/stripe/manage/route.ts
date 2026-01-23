@@ -3,7 +3,7 @@ import { stripe } from "@/lib/stripe/server";
 import { NextRequest, NextResponse } from "next/server";
 
 // Create a portal session for managing subscription
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();

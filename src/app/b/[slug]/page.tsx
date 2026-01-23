@@ -211,7 +211,8 @@ export default async function PublicBoardPage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-zinc-50">
       <PublicBoardHeader 
-        boardOwner={boardOwner} 
+        boardOwner={boardOwner}
+        boardName={displayName}
         user={user} 
         profile={currentUserProfile} 
       />

@@ -1,4 +1,4 @@
-import type { Profile, AccessStatus, SubscriptionStatus } from "@/types/database";
+import type { Profile, AccessStatus } from "@/types/database";
 
 export function getAccessStatus(profile: Profile | null): AccessStatus {
   if (!profile) {
