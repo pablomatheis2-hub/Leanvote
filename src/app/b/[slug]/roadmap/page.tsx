@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { PublicBoardHeader } from "@/components/public-board/header";
 import { PublicRoadmapBoard } from "@/components/public-board/roadmap-board";
 import type { Metadata } from "next";
-import type { PostWithDetails, Profile } from "@/types/database";
+import type { PostWithDetails, Profile, Project } from "@/types/database";
 
 export const revalidate = 0;
 
@@ -11,7 +11,29 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-async function getBoardOwner(slug: string): Promise<Profile | null> {
+async function getProject(slug: string): Promise<Project | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("projects")
+    .select("*")
+    .eq("slug", slug)
+    .single();
+
+  return data;
+}
+
+async function getBoardOwner(ownerId: string): Promise<Profile | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", ownerId)
+    .single();
+
+  return data;
+}
+
+async function getBoardOwnerBySlug(slug: string): Promise<Profile | null> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("profiles")
@@ -22,10 +44,10 @@ async function getBoardOwner(slug: string): Promise<Profile | null> {
   return data;
 }
 
-async function getPosts(boardOwnerId: string): Promise<PostWithDetails[]> {
+async function getPosts(boardOwnerId: string, projectId?: string): Promise<PostWithDetails[]> {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("posts")
     .select(`
       *,
@@ -40,6 +62,12 @@ async function getPosts(boardOwnerId: string): Promise<PostWithDetails[]> {
     .eq("board_owner_id", boardOwnerId)
     .in("status", ["Planned", "In Progress", "Complete"])
     .order("created_at", { ascending: false });
+
+  if (projectId) {
+    query = query.eq("project_id", projectId);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error("Error fetching posts:", error);
@@ -81,25 +109,30 @@ async function getUserVotes(userId: string | null): Promise<Set<string>> {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const boardOwner = await getBoardOwner(slug);
+  
+  const project = await getProject(slug);
+  let boardName: string;
 
-  if (!boardOwner) {
-    return {
-      title: "Board Not Found - LeanVote",
-      robots: { index: false, follow: false },
-    };
+  if (project) {
+    boardName = project.company_name || project.name;
+  } else {
+    const boardOwner = await getBoardOwnerBySlug(slug);
+    if (!boardOwner) {
+      return {
+        title: "Board Not Found - LeanVote",
+        robots: { index: false, follow: false },
+      };
+    }
+    boardName = boardOwner.board_name || "Product";
   }
 
-  const boardName = boardOwner.board_name || boardOwner.company_name || "Product";
   const title = `${boardName} Product Roadmap`;
   const description = `See what's planned, in progress, and completed for ${boardName}. Track feature development and upcoming releases.`;
 
   return {
     title,
     description,
-    alternates: {
-      canonical: `/b/${slug}/roadmap`,
-    },
+    alternates: { canonical: `/b/${slug}/roadmap` },
     openGraph: {
       title: `${boardName} Product Roadmap`,
       description,
@@ -112,16 +145,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: `${boardName} Product Roadmap`,
       description,
     },
-    robots: {
-      index: true,
-      follow: true,
-    },
+    robots: { index: true, follow: true },
   };
 }
 
 export default async function PublicRoadmapPage({ params }: PageProps) {
   const { slug } = await params;
-  const boardOwner = await getBoardOwner(slug);
+  
+  const project = await getProject(slug);
+  
+  let boardOwner: Profile | null = null;
+  let displayName: string;
+  
+  if (project) {
+    boardOwner = await getBoardOwner(project.owner_id);
+    displayName = project.company_name || project.name;
+  } else {
+    boardOwner = await getBoardOwnerBySlug(slug);
+    displayName = boardOwner?.board_name || "our product";
+  }
 
   if (!boardOwner) {
     notFound();
@@ -131,7 +173,7 @@ export default async function PublicRoadmapPage({ params }: PageProps) {
   const { data: { user } } = await supabase.auth.getUser();
 
   const [posts, currentUserProfile, userVotes] = await Promise.all([
-    getPosts(boardOwner.id),
+    getPosts(boardOwner.id, project?.id),
     getCurrentUserProfile(user?.id || null),
     getUserVotes(user?.id || null),
   ]);
@@ -150,7 +192,7 @@ export default async function PublicRoadmapPage({ params }: PageProps) {
             Product Roadmap
           </h1>
           <p className="text-lg text-zinc-500 max-w-md mx-auto">
-            See what&apos;s coming next for {boardOwner.board_name || "our product"}.
+            See what&apos;s coming next for {displayName}.
           </p>
         </header>
 

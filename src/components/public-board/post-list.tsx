@@ -32,6 +32,7 @@ interface PublicPostListProps {
   isLoggedIn: boolean;
   boardOwnerId: string;
   slug: string;
+  projectId?: string;
 }
 
 const categoryStyles: Record<Category, string> = {
@@ -46,7 +47,7 @@ const statusConfig: Record<Exclude<Status, "Open">, { label: string; dot: string
   Complete: { label: "Complete", dot: "bg-emerald-500", badge: "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800" },
 };
 
-export function PublicPostList({ posts, userVotes, isLoggedIn, boardOwnerId, slug }: PublicPostListProps) {
+export function PublicPostList({ posts, userVotes, isLoggedIn, boardOwnerId, slug, projectId }: PublicPostListProps) {
   const [votingId, setVotingId] = useState<string | null>(null);
   const [localVotes, setLocalVotes] = useState(userVotes);
   const [localVoteCounts, setLocalVoteCounts] = useState<Record<string, number>>(
@@ -108,7 +109,7 @@ export function PublicPostList({ posts, userVotes, isLoggedIn, boardOwnerId, slu
     setError(null);
 
     const formData = new FormData(e.currentTarget);
-    const result = await submitFeedback(boardOwnerId, formData);
+    const result = await submitFeedback(boardOwnerId, formData, projectId);
 
     if (result.error) {
       setError(result.error);
@@ -224,44 +225,44 @@ export function PublicPostList({ posts, userVotes, isLoggedIn, boardOwnerId, slu
             return (
               <div
                 key={post.id}
-                className="bg-card rounded-xl border border-border p-4 flex items-start gap-4 hover:border-primary/30 transition-colors"
+                className="bg-card rounded-xl border border-border p-3 sm:p-4 flex items-start gap-3 sm:gap-4 hover:border-primary/30 transition-colors"
               >
                 {/* Vote button */}
                 <button
                   onClick={() => handleVote(post.id)}
                   disabled={votingId === post.id}
                   className={cn(
-                    "flex flex-col items-center min-w-[56px] py-2 px-3 rounded-lg border transition-all",
+                    "flex flex-col items-center min-w-[48px] sm:min-w-[56px] py-1.5 sm:py-2 px-2 sm:px-3 rounded-lg border transition-all shrink-0",
                     isVoted 
                       ? "bg-secondary border-primary text-primary" 
                       : "bg-muted border-border text-muted-foreground hover:border-border/80 hover:bg-muted/80"
                   )}
                 >
-                  <ChevronUp className={cn("w-5 h-5", isVoted && "text-primary")} />
-                  <span className="text-lg font-semibold">{voteCount}</span>
+                  <ChevronUp className={cn("w-4 h-4 sm:w-5 sm:h-5", isVoted && "text-primary")} />
+                  <span className="text-base sm:text-lg font-semibold">{voteCount}</span>
                 </button>
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4">
+                    <div className="flex-1 min-w-0">
                       <Link 
                         href={`/b/${slug}/post/${post.id}`}
-                        className="font-medium text-foreground hover:text-primary transition-colors"
+                        className="font-medium text-sm sm:text-base text-foreground hover:text-primary transition-colors line-clamp-2"
                       >
                         {post.title}
                       </Link>
                       {post.description && (
-                        <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{post.description}</p>
+                        <p className="text-xs sm:text-sm text-muted-foreground mt-1 line-clamp-2">{post.description}</p>
                       )}
-                      <div className="flex items-center gap-2 mt-2 flex-wrap">
-                        <Badge variant="outline" className={`text-xs ${categoryStyles[post.category]}`}>
+                      <div className="flex items-center gap-1.5 sm:gap-2 mt-2 flex-wrap">
+                        <Badge variant="outline" className={`text-[10px] sm:text-xs ${categoryStyles[post.category]}`}>
                           {post.category}
                         </Badge>
                         {/* Show status badge for posts on roadmap */}
                         {post.status !== "Open" && (
-                          <Badge variant="outline" className={`text-xs ${statusConfig[post.status].badge}`}>
-                            <span className={`w-1.5 h-1.5 rounded-full ${statusConfig[post.status].dot} mr-1.5`} />
+                          <Badge variant="outline" className={`text-[10px] sm:text-xs ${statusConfig[post.status].badge}`}>
+                            <span className={`w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full ${statusConfig[post.status].dot} mr-1 sm:mr-1.5`} />
                             {statusConfig[post.status].label}
                           </Badge>
                         )}
@@ -269,11 +270,11 @@ export function PublicPostList({ posts, userVotes, isLoggedIn, boardOwnerId, slu
                     </div>
                     <Link 
                       href={`/b/${slug}/post/${post.id}`}
-                      className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      className="flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors shrink-0"
                       title="View comments"
                     >
-                      <MessageCircle className="w-4 h-4" />
-                      <span>Comments</span>
+                      <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                      <span className="hidden sm:inline">Comments</span>
                     </Link>
                   </div>
                 </div>

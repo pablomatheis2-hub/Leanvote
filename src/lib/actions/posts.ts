@@ -54,7 +54,7 @@ export async function createPost(formData: FormData) {
   return { success: true };
 }
 
-export async function submitFeedback(boardOwnerId: string, formData: FormData) {
+export async function submitFeedback(boardOwnerId: string, formData: FormData, projectId?: string) {
   const supabase = await createClient();
   
   const { data: { user } } = await supabase.auth.getUser();
@@ -84,6 +84,7 @@ export async function submitFeedback(boardOwnerId: string, formData: FormData) {
   const { error } = await supabase.from("posts").insert({
     user_id: user.id,
     board_owner_id: boardOwnerId,
+    project_id: projectId || null,
     title: title.trim(),
     description: description?.trim() || null,
     category,

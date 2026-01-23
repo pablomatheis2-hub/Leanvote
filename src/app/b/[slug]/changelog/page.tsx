@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { PublicBoardHeader } from "@/components/public-board/header";
 import { Badge } from "@/components/ui/badge";
 import type { Metadata } from "next";
-import type { PostWithDetails, Profile } from "@/types/database";
+import type { PostWithDetails, Profile, Project } from "@/types/database";
 
 export const revalidate = 0;
 
@@ -16,7 +16,29 @@ interface GroupedChangelog {
   posts: PostWithDetails[];
 }
 
-async function getBoardOwner(slug: string): Promise<Profile | null> {
+async function getProject(slug: string): Promise<Project | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("projects")
+    .select("*")
+    .eq("slug", slug)
+    .single();
+
+  return data;
+}
+
+async function getBoardOwner(ownerId: string): Promise<Profile | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", ownerId)
+    .single();
+
+  return data;
+}
+
+async function getBoardOwnerBySlug(slug: string): Promise<Profile | null> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("profiles")
@@ -27,10 +49,10 @@ async function getBoardOwner(slug: string): Promise<Profile | null> {
   return data;
 }
 
-async function getCompletedPosts(boardOwnerId: string): Promise<PostWithDetails[]> {
+async function getCompletedPosts(boardOwnerId: string, projectId?: string): Promise<PostWithDetails[]> {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("posts")
     .select(`
       *,
@@ -45,6 +67,12 @@ async function getCompletedPosts(boardOwnerId: string): Promise<PostWithDetails[
     .eq("board_owner_id", boardOwnerId)
     .eq("status", "Complete")
     .order("updated_at", { ascending: false });
+
+  if (projectId) {
+    query = query.eq("project_id", projectId);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error("Error fetching completed posts:", error);
@@ -109,25 +137,30 @@ const categoryStyles: Record<string, string> = {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const boardOwner = await getBoardOwner(slug);
+  
+  const project = await getProject(slug);
+  let boardName: string;
 
-  if (!boardOwner) {
-    return {
-      title: "Board Not Found - LeanVote",
-      robots: { index: false, follow: false },
-    };
+  if (project) {
+    boardName = project.company_name || project.name;
+  } else {
+    const boardOwner = await getBoardOwnerBySlug(slug);
+    if (!boardOwner) {
+      return {
+        title: "Board Not Found - LeanVote",
+        robots: { index: false, follow: false },
+      };
+    }
+    boardName = boardOwner.board_name || "Product";
   }
 
-  const boardName = boardOwner.board_name || boardOwner.company_name || "Product";
   const title = `${boardName} Changelog & Release Notes`;
   const description = `See all the features, bug fixes, and improvements shipped for ${boardName}. Stay updated on the latest releases.`;
 
   return {
     title,
     description,
-    alternates: {
-      canonical: `/b/${slug}/changelog`,
-    },
+    alternates: { canonical: `/b/${slug}/changelog` },
     openGraph: {
       title: `${boardName} Changelog & Release Notes`,
       description,
@@ -140,16 +173,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: `${boardName} Changelog & Release Notes`,
       description,
     },
-    robots: {
-      index: true,
-      follow: true,
-    },
+    robots: { index: true, follow: true },
   };
 }
 
 export default async function PublicChangelogPage({ params }: PageProps) {
   const { slug } = await params;
-  const boardOwner = await getBoardOwner(slug);
+  
+  const project = await getProject(slug);
+  
+  let boardOwner: Profile | null = null;
+  let displayName: string;
+  
+  if (project) {
+    boardOwner = await getBoardOwner(project.owner_id);
+    displayName = project.company_name || project.name;
+  } else {
+    boardOwner = await getBoardOwnerBySlug(slug);
+    displayName = boardOwner?.board_name || "our product";
+  }
 
   if (!boardOwner) {
     notFound();
@@ -159,7 +201,7 @@ export default async function PublicChangelogPage({ params }: PageProps) {
   const { data: { user } } = await supabase.auth.getUser();
 
   const [posts, currentUserProfile] = await Promise.all([
-    getCompletedPosts(boardOwner.id),
+    getCompletedPosts(boardOwner.id, project?.id),
     getCurrentUserProfile(user?.id || null),
   ]);
 
@@ -179,7 +221,7 @@ export default async function PublicChangelogPage({ params }: PageProps) {
             Changelog
           </h1>
           <p className="text-lg text-zinc-500 max-w-md mx-auto">
-            New updates and improvements to {boardOwner.board_name || "our product"}.
+            New updates and improvements to {displayName}.
           </p>
         </header>
 

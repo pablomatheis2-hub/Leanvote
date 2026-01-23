@@ -3,8 +3,9 @@ import { SettingsForm } from "@/components/dashboard/settings-form";
 import { ProfileSettingsForm } from "@/components/dashboard/profile-settings-form";
 import { SubscriptionCard } from "@/components/dashboard/subscription-card";
 import { WidgetSettings } from "@/components/dashboard/widget-settings";
+import { ProjectManager } from "@/components/dashboard/project-manager";
 import { getAccessStatus } from "@/lib/access";
-import type { Profile } from "@/types/database";
+import type { Profile, Project } from "@/types/database";
 
 async function getProfile(userId: string): Promise<Profile | null> {
   const supabase = await createClient();
@@ -17,13 +18,27 @@ async function getProfile(userId: string): Promise<Profile | null> {
   return data;
 }
 
+async function getProjects(userId: string): Promise<Project[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("projects")
+    .select("*")
+    .eq("owner_id", userId)
+    .order("created_at", { ascending: true });
+
+  return data || [];
+}
+
 export default async function DashboardSettingsPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) return null;
 
-  const profile = await getProfile(user.id);
+  const [profile, projects] = await Promise.all([
+    getProfile(user.id),
+    getProjects(user.id),
+  ]);
   
   if (!profile) return null;
 
@@ -51,6 +66,9 @@ export default async function DashboardSettingsPage() {
           </p>
           <ProfileSettingsForm profile={profile} />
         </div>
+
+        {/* Project Manager */}
+        <ProjectManager projects={projects} accessStatus={accessStatus} />
 
         {/* Board Settings */}
         <div className="bg-white rounded-xl border border-zinc-200 p-6">

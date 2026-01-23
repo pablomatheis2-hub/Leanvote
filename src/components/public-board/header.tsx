@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -25,6 +26,7 @@ interface PublicBoardHeaderProps {
 }
 
 export function PublicBoardHeader({ boardOwner, user, profile }: PublicBoardHeaderProps) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isWidget = searchParams.get("widget") === "true";
@@ -84,18 +86,19 @@ export function PublicBoardHeader({ boardOwner, user, profile }: PublicBoardHead
 
   return (
     <header className="border-b border-border bg-background sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-8">
-          <Link href={getHref(`/b/${slug}`)} className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center">
-              <MessageSquare className="w-4 h-4 text-primary-foreground" />
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
+        <div className="flex items-center gap-4 sm:gap-8">
+          <Link href={getHref(`/b/${slug}`)} className="flex items-center gap-2">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-primary flex items-center justify-center">
+              <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary-foreground" />
             </div>
-            <span className="font-heading font-bold text-xl text-foreground">
+            <span className="font-heading font-bold text-lg sm:text-xl text-foreground truncate max-w-[120px] sm:max-w-none">
               {boardOwner.company_name || boardOwner.board_name || "Feedback"}
             </span>
           </Link>
           
-          <nav className="flex items-center gap-1">
+          {/* Desktop navigation */}
+          <nav className="hidden md:flex items-center gap-1">
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -112,22 +115,24 @@ export function PublicBoardHeader({ boardOwner, user, profile }: PublicBoardHead
             ))}
           </nav>
 
-          <div className="h-6 w-px bg-border" />
+          <div className="hidden md:block h-6 w-px bg-border" />
           
-          <BoardSwitcher 
-            currentBoardName={boardOwner.company_name || boardOwner.board_name || "Feedback"}
-            currentSlug={slug || ""}
-          />
+          <div className="hidden md:block">
+            <BoardSwitcher 
+              currentBoardName={boardOwner.company_name || boardOwner.board_name || "Feedback"}
+              currentSlug={slug || ""}
+            />
+          </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                  <Avatar className="h-9 w-9">
+                <Button variant="ghost" className="relative h-8 w-8 sm:h-9 sm:w-9 rounded-full">
+                  <Avatar className="h-8 w-8 sm:h-9 sm:w-9">
                     <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.full_name || "User"} />
-                    <AvatarFallback className="bg-secondary text-secondary-foreground text-sm font-medium">
+                    <AvatarFallback className="bg-secondary text-secondary-foreground text-xs sm:text-sm font-medium">
                       {initials}
                     </AvatarFallback>
                   </Avatar>
@@ -173,13 +178,50 @@ export function PublicBoardHeader({ boardOwner, user, profile }: PublicBoardHead
             </DropdownMenu>
           ) : (
             <Link href={`/auth/login?redirect=/b/${slug}`}>
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                Sign in to vote
+              <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4">
+                Sign in
               </Button>
             </Link>
           )}
+
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
       </div>
+
+      {/* Mobile menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t border-border bg-background">
+          <nav className="px-4 py-3 space-y-1">
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={getHref(item.href)}
+                onClick={() => setMobileMenuOpen(false)}
+                className={cn(
+                  "block px-3 py-2.5 text-sm font-medium rounded-lg transition-colors",
+                  pathname === item.href
+                    ? "bg-muted text-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                )}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+          <div className="px-4 pb-3 border-t border-border pt-3">
+            <BoardSwitcher 
+              currentBoardName={boardOwner.company_name || boardOwner.board_name || "Feedback"}
+              currentSlug={slug || ""}
+            />
+          </div>
+        </div>
+      )}
     </header>
   );
 }

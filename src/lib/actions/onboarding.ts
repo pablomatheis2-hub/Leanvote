@@ -43,20 +43,19 @@ export async function completeOnboardingAsAdmin(
     return { error: "Company name is required" };
   }
 
-  // Generate board slug from company name
+  // Generate slug from company name
   const baseSlug = companyName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   
-  // Check for slug uniqueness and append number if needed
+  // Check for slug uniqueness against PROJECTS table (globally unique)
   let finalSlug = baseSlug;
   let counter = 0;
   
   while (true) {
     const checkSlug = counter > 0 ? `${baseSlug}-${counter}` : baseSlug;
     const { data: existing } = await supabase
-      .from("profiles")
+      .from("projects")
       .select("id")
-      .eq("board_slug", checkSlug)
-      .neq("id", user.id)
+      .eq("slug", checkSlug)
       .single();
     
     if (!existing) {
@@ -66,34 +65,60 @@ export async function completeOnboardingAsAdmin(
     counter++;
   }
 
-  // Board name is the company name + Feedback
-  const boardName = companyName.trim() + " Feedback";
-  const trialEndsAt = new Date();
-  trialEndsAt.setDate(trialEndsAt.getDate() + 7);
-
-  // Normalize company URL for searching
+  // Normalize company URL
   let normalizedUrl = companyUrl;
   if (normalizedUrl) {
-    // Remove protocol and www for consistent storage
     normalizedUrl = normalizedUrl.replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/$/, "");
   }
 
-  const { error } = await supabase
+  // Set up trial period
+  const trialEndsAt = new Date();
+  trialEndsAt.setDate(trialEndsAt.getDate() + 7);
+  const boardName = companyName.trim() + " Feedback";
+
+  // First update profile to admin with trial
+  const { error: profileError } = await supabase
     .from("profiles")
     .update({
       user_type: "admin",
       board_slug: finalSlug,
       board_name: boardName,
-      company_name: companyName.trim(),
-      company_url: normalizedUrl || null,
-      company_description: companyDescription?.trim() || null,
       trial_ends_at: trialEndsAt.toISOString(),
       onboarding_completed: true,
     })
     .eq("id", user.id);
 
-  if (error) {
-    return { error: error.message };
+  if (profileError) {
+    return { error: profileError.message };
+  }
+
+  // Create the default project (this is the source of truth for company info)
+  const { error: projectError } = await supabase
+    .from("projects")
+    .insert({
+      owner_id: user.id,
+      name: companyName.trim(),
+      slug: finalSlug,
+      company_name: companyName.trim(),
+      description: companyDescription?.trim() || null,
+      company_url: normalizedUrl || null,
+      is_default: true,
+    });
+
+  if (projectError) {
+    // Rollback profile changes if project creation fails
+    await supabase
+      .from("profiles")
+      .update({
+        user_type: "voter",
+        board_slug: null,
+        board_name: null,
+        trial_ends_at: null,
+        onboarding_completed: false,
+      })
+      .eq("id", user.id);
+    
+    return { error: projectError.message };
   }
 
   revalidatePath("/");

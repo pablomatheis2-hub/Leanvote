@@ -98,7 +98,7 @@ export default function LandingPage() {
               Why switch?
             </h2>
             <p className="text-lg text-muted-foreground">
-              See how LeanVote compares to monthly subscription tools.
+              See how LeanVote compares to other feedback tools.
             </p>
           </div>
           
@@ -113,12 +113,12 @@ export default function LandingPage() {
               </thead>
               <tbody className="divide-y divide-border">
                 <tr>
-                  <td className="p-5 text-foreground/80 font-medium">Pricing</td>
+                  <td className="p-5 text-foreground/80 font-medium">Starting Price</td>
                   <td className="p-5 text-center">
                     <span className="text-muted-foreground">$49–$400/month</span>
                   </td>
                   <td className="p-5 text-center bg-secondary/50">
-                    <span className="text-emerald-600 font-bold text-lg">$49 once</span>
+                    <span className="text-emerald-600 font-bold text-lg">$9.99/month</span>
                   </td>
                 </tr>
                 <tr>
@@ -149,12 +149,12 @@ export default function LandingPage() {
                   </td>
                 </tr>
                 <tr>
-                  <td className="p-5 text-foreground/80 font-medium">Cost after 1 year</td>
+                  <td className="p-5 text-foreground/80 font-medium">Multiple Projects</td>
                   <td className="p-5 text-center">
-                    <span className="text-red-500 font-semibold">$588+</span>
+                    <span className="text-muted-foreground">Higher tier plans</span>
                   </td>
                   <td className="p-5 text-center bg-secondary/50">
-                    <span className="text-emerald-600 font-bold">$49</span>
+                    <span className="text-foreground font-semibold">+$4.99/project</span>
                   </td>
                 </tr>
               </tbody>
@@ -162,7 +162,7 @@ export default function LandingPage() {
           </div>
           
           <p className="text-center text-sm text-muted-foreground mt-6">
-            Stop paying rent. Own your feedback board forever.
+            Simple pricing that scales with your needs.
           </p>
         </div>
       </section>
@@ -194,8 +194,8 @@ export default function LandingPage() {
                 description: "Share your roadmap to keep customers informed and engaged.",
               },
               {
-                title: "Embeddable Widget",
-                description: "Add a feedback button to your site with a simple code snippet.",
+                title: "Multiple Projects",
+                description: "Manage feedback boards for all your products in one place.",
               },
               {
                 title: "Changelog",
@@ -374,7 +374,7 @@ export default function LandingPage() {
               Simple pricing
             </h2>
             <p className="text-lg text-muted-foreground">
-              One price, lifetime access. No subscriptions.
+              Start free, then pay as you grow.
             </p>
             <p className="text-sm text-emerald-600 mt-3 font-medium">
               ✓ Voting and submitting feedback is always free
@@ -384,14 +384,17 @@ export default function LandingPage() {
           <div className="bg-card rounded-2xl border border-border p-8 text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-secondary rounded-full text-secondary-foreground text-sm font-medium mb-4">
               <Zap className="w-4 h-4" />
-              Lifetime Deal
+              Pro Plan
             </div>
             
             <div className="flex items-baseline justify-center gap-1 mb-2">
-              <span className="text-5xl font-bold text-foreground">$49</span>
-              <span className="text-muted-foreground">one-time</span>
+              <span className="text-5xl font-bold text-foreground">$9.99</span>
+              <span className="text-muted-foreground">/month</span>
             </div>
-            <p className="text-muted-foreground mb-8">Pay once, own it forever</p>
+            <p className="text-muted-foreground mb-2">Includes 1 project</p>
+            <p className="text-sm text-primary font-medium mb-8">
+              + $4.99/month per additional project
+            </p>
             
             <ul className="space-y-3 text-left mb-8">
               {[
@@ -414,10 +417,10 @@ export default function LandingPage() {
               href="/auth/login"
               className="block w-full bg-primary text-primary-foreground font-semibold py-4 rounded-xl hover:bg-primary/90 transition-colors text-lg"
             >
-              Create Free Board
+              Start Free Trial
             </Link>
             <p className="text-sm text-muted-foreground mt-3">
-              Start free, upgrade when ready
+              7 days free, then $9.99/month
             </p>
           </div>
         </div>
@@ -430,14 +433,14 @@ export default function LandingPage() {
             Ready to get started?
           </h2>
           <p className="text-lg text-background/60 mb-8">
-            Create your feedback board in minutes. Upgrade to Lifetime whenever you&apos;re ready.
+            Create your feedback board in minutes. Start with a 7-day free trial.
           </p>
           <div className="flex flex-col items-center gap-3">
             <Link 
               href="/auth/login"
               className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold text-lg px-8 py-4 rounded-xl hover:bg-primary/90 transition-all hover:scale-[1.02]"
             >
-              Create Free Board
+              Start Free Trial
               <ArrowRight className="w-5 h-5" />
             </Link>
             <p className="text-sm text-background/40">

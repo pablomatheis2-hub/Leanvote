@@ -1,17 +1,26 @@
 "use client";
 
 import { useState } from "react";
-import { Lock, Check, Zap } from "lucide-react";
+import { Lock, Check, Zap, Minus, Plus, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getSubscriptionPrice } from "@/lib/access";
 
 export function PaywallGate() {
   const [loading, setLoading] = useState(false);
+  const [projectCount, setProjectCount] = useState(1);
+
+  const pricing = getSubscriptionPrice(projectCount);
 
   const handleUpgrade = async () => {
     setLoading(true);
     try {
       const response = await fetch("/api/stripe/checkout", {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          projectCount,
+          type: "subscription"
+        }),
       });
       const data = await response.json();
       
@@ -46,7 +55,7 @@ export function PaywallGate() {
           Your free trial has ended
         </h1>
         <p className="text-zinc-500">
-          Upgrade to lifetime access to continue using LeanVote
+          Subscribe to continue using LeanVote
         </p>
       </div>
 
@@ -55,16 +64,46 @@ export function PaywallGate() {
           <div className="flex items-center justify-center gap-2 mb-2">
             <Zap className="w-5 h-5 text-[#f97352]" />
             <span className="text-sm font-semibold text-[#f97352] uppercase tracking-wide">
-              Lifetime Deal
+              Pro Plan
             </span>
           </div>
           <div className="flex items-baseline justify-center gap-1">
-            <span className="text-4xl font-bold text-zinc-900">$49</span>
-            <span className="text-zinc-500">one-time</span>
+            <span className="text-4xl font-bold text-zinc-900">${pricing.total.toFixed(2)}</span>
+            <span className="text-zinc-500">/month</span>
           </div>
           <p className="text-sm text-zinc-500 mt-1">
-            Pay once, own it forever
+            Cancel anytime
           </p>
+        </div>
+
+        {/* Project counter */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-zinc-700 mb-2 text-center">
+            How many projects do you need?
+          </label>
+          <div className="flex items-center justify-center gap-3">
+            <button
+              onClick={() => setProjectCount(Math.max(1, projectCount - 1))}
+              disabled={projectCount <= 1}
+              className="w-8 h-8 rounded-lg border border-zinc-200 flex items-center justify-center text-zinc-600 hover:bg-zinc-50 disabled:opacity-50"
+            >
+              <Minus className="w-4 h-4" />
+            </button>
+            <div className="text-center min-w-[60px]">
+              <span className="text-2xl font-bold text-zinc-900">{projectCount}</span>
+            </div>
+            <button
+              onClick={() => setProjectCount(projectCount + 1)}
+              className="w-8 h-8 rounded-lg border border-zinc-200 flex items-center justify-center text-zinc-600 hover:bg-zinc-50"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
+          </div>
+          {projectCount > 1 && (
+            <p className="text-xs text-center text-zinc-500 mt-2">
+              Base $9.99 + {projectCount - 1} extra project{projectCount > 2 ? "s" : ""} × $4.99
+            </p>
+          )}
         </div>
 
         <ul className="space-y-3 mb-8">
@@ -90,12 +129,15 @@ export function PaywallGate() {
               Processing...
             </span>
           ) : (
-            "Get Lifetime Access"
+            <span className="flex items-center gap-2">
+              <CreditCard className="w-4 h-4" />
+              Subscribe — ${pricing.total.toFixed(2)}/mo
+            </span>
           )}
         </Button>
 
         <p className="text-xs text-center text-zinc-400 mt-4">
-          Secure payment powered by Stripe
+          Secure payment powered by Stripe • Cancel anytime
         </p>
       </div>
     </div>
