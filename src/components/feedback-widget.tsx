@@ -7,6 +7,10 @@ export function FeedbackWidget() {
     // Skip on widget-test and board pages
     if (window.location.pathname.includes("/widget-test") || window.location.pathname.startsWith("/b/")) return;
 
+    // Set the base URL based on current environment
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).LEANVOTE_BASE_URL = window.location.origin;
+
     const script = document.createElement("script");
     script.src = "/widget.js";
     script.async = true;

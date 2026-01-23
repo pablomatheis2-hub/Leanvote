@@ -20,36 +20,38 @@ export async function GET(request: NextRequest) {
 
   const supabase = await createClient();
 
-  // Find the profile by board_slug
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("board_slug", boardSlug)
+  let boardOwnerId: string | null = null;
+
+  // First, try to find project by slug (primary method)
+  const { data: project } = await supabase
+    .from("projects")
+    .select("id, owner_id")
+    .eq("slug", boardSlug)
     .single();
 
-  if (!profile) {
+  if (project) {
+    boardOwnerId = project.owner_id;
+  } else {
+    // Fallback: find profile by board_slug (backwards compatibility)
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("board_slug", boardSlug)
+      .single();
+
+    if (profile) {
+      boardOwnerId = profile.id;
+    }
+  }
+
+  if (!boardOwnerId) {
     return NextResponse.json(
       { error: "Board not found", posts: [] },
       { status: 404, headers: corsHeaders }
     );
   }
 
-  // Find the project for this user
-  const { data: project } = await supabase
-    .from("projects")
-    .select("id")
-    .eq("owner_id", profile.id)
-    .limit(1)
-    .single();
-
-  if (!project) {
-    return NextResponse.json(
-      { error: "Project not found", posts: [] },
-      { status: 404, headers: corsHeaders }
-    );
-  }
-
-  // Get recent posts with vote counts
+  // Get recent posts with vote counts using board_owner_id
   const { data: posts } = await supabase
     .from("posts")
     .select(`
@@ -58,9 +60,9 @@ export async function GET(request: NextRequest) {
       category,
       status,
       created_at,
-      votes:post_votes(count)
+      votes (id)
     `)
-    .eq("project_id", project.id)
+    .eq("board_owner_id", boardOwnerId)
     .order("created_at", { ascending: false })
     .limit(5);
 
@@ -69,7 +71,7 @@ export async function GET(request: NextRequest) {
     title: post.title,
     category: post.category,
     status: post.status,
-    votes: post.votes?.[0]?.count || 0,
+    votes: Array.isArray(post.votes) ? post.votes.length : 0,
   }));
 
   return NextResponse.json(

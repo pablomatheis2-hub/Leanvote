@@ -61,6 +61,16 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: [{ url: "/apple-icon", sizes: "180x180" }],
+    shortcut: "/favicon.ico",
+  },
   alternates: {
     canonical: "/",
   },
@@ -149,7 +159,7 @@ const jsonLd = {
       operatingSystem: "Web",
       offers: {
         "@type": "Offer",
-        price: "49",
+        price: "9.99",
         priceCurrency: "USD",
         priceValidUntil: "2027-12-31",
         availability: "https://schema.org/InStock",
@@ -170,6 +180,37 @@ const jsonLd = {
         "Changelog generation",
         "Embeddable widget",
         "Custom board URLs",
+      ],
+    },
+    {
+      "@type": "SiteNavigationElement",
+      "@id": `${siteUrl}/#navigation`,
+      name: "Main Navigation",
+      hasPart: [
+        {
+          "@type": "SiteNavigationElement",
+          name: "Documentation",
+          description: "Learn how to set up and use LeanVote feedback boards",
+          url: `${siteUrl}/docs`,
+        },
+        {
+          "@type": "SiteNavigationElement",
+          name: "Widget Demo",
+          description: "Test the embeddable feedback widget",
+          url: `${siteUrl}/widget-test`,
+        },
+        {
+          "@type": "SiteNavigationElement",
+          name: "Find Board",
+          description: "Search for existing feedback boards",
+          url: `${siteUrl}/find-board`,
+        },
+        {
+          "@type": "SiteNavigationElement",
+          name: "Sign In",
+          description: "Log in to your LeanVote dashboard",
+          url: `${siteUrl}/auth/login`,
+        },
       ],
     },
   ],
