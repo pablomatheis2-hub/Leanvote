@@ -232,8 +232,8 @@ export default function RootLayout({
       <body className={`${outfit.variable} ${dmSans.variable} font-sans antialiased`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="light"
+          forcedTheme="light"
           disableTransitionOnChange
         >
           {children}

@@ -5,6 +5,8 @@ import Link from "next/link";
 import { CopyButton } from "@/components/copy-button";
 import type { PostWithDetails, Profile, Project } from "@/types/database";
 
+export const revalidate = 0;
+
 async function getProfile(userId: string): Promise<Profile | null> {
   const supabase = await createClient();
   const { data } = await supabase
