@@ -15,17 +15,7 @@ export async function GET(request: NextRequest) {
   // Search projects by name, slug, company_name, or company_url
   const { data: projects, error } = await supabase
     .from("projects")
-    .select(`
-      id,
-      slug,
-      name,
-      company_name,
-      company_url,
-      owner_id,
-      profiles:owner_id (
-        board_slug
-      )
-    `)
+    .select("id, slug, name, company_name, company_url")
     .or(`name.ilike.%${normalizedQuery}%,slug.ilike.%${normalizedQuery}%,company_name.ilike.%${normalizedQuery}%,company_url.ilike.%${normalizedQuery}%`)
     .limit(5);
 
@@ -34,22 +24,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ results: [] });
   }
 
-  // Transform results to include the board slug for navigation
-  const results = (projects || [])
-    .map(project => {
-      const profile = Array.isArray(project.profiles) 
-        ? project.profiles[0] 
-        : project.profiles;
-      return {
-        id: project.id,
-        name: project.name,
-        companyName: project.company_name,
-        companyUrl: project.company_url,
-        projectSlug: project.slug,
-        boardSlug: profile?.board_slug,
-      };
-    })
-    .filter(p => p.boardSlug);
+  // Transform results - now using project slug directly for navigation
+  const results = (projects || []).map(project => ({
+    id: project.id,
+    name: project.name,
+    companyName: project.company_name,
+    companyUrl: project.company_url,
+    slug: project.slug,
+  }));
 
   return NextResponse.json({ results });
 }

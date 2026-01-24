@@ -33,18 +33,6 @@ async function getBoardOwner(ownerId: string): Promise<Profile | null> {
   return data;
 }
 
-// Fallback: Find by board_slug on profile (for backwards compatibility)
-async function getBoardOwnerBySlug(slug: string): Promise<Profile | null> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("board_slug", slug)
-    .single();
-
-  return data;
-}
-
 async function getPosts(boardOwnerId: string, projectId?: string): Promise<PostWithDetails[]> {
   const supabase = await createClient();
   
@@ -110,49 +98,19 @@ async function getCurrentUserProfile(userId: string | null): Promise<Profile | n
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  
-  // Try to find project first
   const project = await getProject(slug);
   
-  if (project) {
-    const boardName = project.company_name || project.name;
-    const title = `${boardName} Feedback Board`;
-    const description = project.description 
-      || `Share your ideas, report bugs, and vote on what matters most for ${boardName}. Help shape the product roadmap.`;
-
-    return {
-      title,
-      description,
-      alternates: { canonical: `/b/${slug}` },
-      openGraph: {
-        title: `${boardName} - Customer Feedback Board`,
-        description,
-        url: `/b/${slug}`,
-        type: "website",
-        siteName: "LeanVote",
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: `${boardName} - Customer Feedback Board`,
-        description,
-      },
-      robots: { index: true, follow: true },
-    };
-  }
-
-  // Fallback: Try profile lookup (backwards compatibility)
-  const boardOwner = await getBoardOwnerBySlug(slug);
-
-  if (!boardOwner) {
+  if (!project) {
     return {
       title: "Board Not Found - LeanVote",
       robots: { index: false, follow: false },
     };
   }
 
-  const boardName = boardOwner.board_name || "Feedback Board";
-  const title = `${boardName}`;
-  const description = `Share your ideas, report bugs, and vote on what matters most for ${boardName}.`;
+  const boardName = project.company_name || project.name;
+  const title = `${boardName} Feedback Board`;
+  const description = project.description 
+    || `Share your ideas, report bugs, and vote on what matters most for ${boardName}. Help shape the product roadmap.`;
 
   return {
     title,
@@ -176,34 +134,26 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function PublicBoardPage({ params }: PageProps) {
   const { slug } = await params;
-  
-  // Try to find project first (new way)
   const project = await getProject(slug);
   
-  let boardOwner: Profile | null = null;
-  let displayName: string;
-  let displayDescription: string;
-  
-  if (project) {
-    boardOwner = await getBoardOwner(project.owner_id);
-    displayName = project.company_name || project.name;
-    displayDescription = project.description || "Share your ideas, report bugs, and vote on what matters most.";
-  } else {
-    // Fallback: Try profile lookup (backwards compatibility)
-    boardOwner = await getBoardOwnerBySlug(slug);
-    displayName = boardOwner?.board_name || "Feedback Board";
-    displayDescription = "Share your ideas, report bugs, and vote on what matters most.";
+  if (!project) {
+    notFound();
   }
 
+  const boardOwner = await getBoardOwner(project.owner_id);
+  
   if (!boardOwner) {
     notFound();
   }
+
+  const displayName = project.company_name || project.name;
+  const displayDescription = project.description || "Share your ideas, report bugs, and vote on what matters most.";
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   const [posts, userVotes, currentUserProfile] = await Promise.all([
-    getPosts(boardOwner.id, project?.id),
+    getPosts(boardOwner.id, project.id),
     getUserVotes(user?.id || null),
     getCurrentUserProfile(user?.id || null),
   ]);
@@ -211,8 +161,7 @@ export default async function PublicBoardPage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-zinc-50">
       <PublicBoardHeader 
-        boardOwner={boardOwner}
-        boardName={displayName}
+        project={project}
         user={user} 
         profile={currentUserProfile} 
       />
@@ -233,7 +182,7 @@ export default async function PublicBoardPage({ params }: PageProps) {
           isLoggedIn={!!user}
           boardOwnerId={boardOwner.id}
           slug={slug}
-          projectId={project?.id}
+          projectId={project.id}
         />
       </main>
     </div>

@@ -37,17 +37,6 @@ async function getBoardOwnerById(ownerId: string): Promise<Profile | null> {
   return data;
 }
 
-async function getBoardOwnerBySlug(slug: string): Promise<Profile | null> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("board_slug", slug)
-    .single();
-
-  return data;
-}
-
 async function getPost(postId: string): Promise<PostWithDetails | null> {
   const supabase = await createClient();
 
@@ -120,21 +109,15 @@ const categoryStyles: Record<string, string> = {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug, postId } = await params;
-  
   const project = await getProject(slug);
-  let boardName: string;
 
-  if (project) {
-    boardName = project.company_name || project.name;
-  } else {
-    const boardOwner = await getBoardOwnerBySlug(slug);
-    if (!boardOwner) {
-      return { title: "Post Not Found - LeanVote" };
-    }
-    boardName = boardOwner.board_name || "Feedback Board";
+  if (!project) {
+    return { title: "Post Not Found - LeanVote" };
   }
 
+  const boardName = project.company_name || project.name;
   const post = await getPost(postId);
+  
   if (!post) {
     return { title: "Post Not Found - LeanVote" };
   }
@@ -152,20 +135,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function PostDetailPage({ params }: PageProps) {
   const { slug, postId } = await params;
-  
   const project = await getProject(slug);
   
-  let boardOwner: Profile | null = null;
-  let displayName: string;
-  
-  if (project) {
-    boardOwner = await getBoardOwnerById(project.owner_id);
-    displayName = project.company_name || project.name;
-  } else {
-    boardOwner = await getBoardOwnerBySlug(slug);
-    displayName = boardOwner?.board_name || "Feedback Board";
+  if (!project) {
+    notFound();
   }
 
+  const boardOwner = await getBoardOwnerById(project.owner_id);
+  
   if (!boardOwner) {
     notFound();
   }
@@ -194,8 +171,7 @@ export default async function PostDetailPage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-zinc-50">
       <PublicBoardHeader
-        boardOwner={boardOwner}
-        boardName={displayName}
+        project={project}
         user={user}
         profile={currentUserProfile}
       />

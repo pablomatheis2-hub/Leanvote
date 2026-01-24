@@ -74,15 +74,12 @@ export async function completeOnboardingAsAdmin(
   // Set up trial period
   const trialEndsAt = new Date();
   trialEndsAt.setDate(trialEndsAt.getDate() + 7);
-  const boardName = companyName.trim() + " Feedback";
 
   // First update profile to admin with trial
   const { error: profileError } = await supabase
     .from("profiles")
     .update({
       user_type: "admin",
-      board_slug: finalSlug,
-      board_name: boardName,
       trial_ends_at: trialEndsAt.toISOString(),
       onboarding_completed: true,
     })
@@ -111,8 +108,6 @@ export async function completeOnboardingAsAdmin(
       .from("profiles")
       .update({
         user_type: "voter",
-        board_slug: null,
-        board_name: null,
         trial_ends_at: null,
         onboarding_completed: false,
       })

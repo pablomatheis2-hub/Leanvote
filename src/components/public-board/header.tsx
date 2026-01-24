@@ -17,22 +17,21 @@ import { BoardSwitcher } from "./board-switcher";
 import { signOut } from "@/lib/actions/auth";
 import { cn } from "@/lib/utils";
 import type { User } from "@supabase/supabase-js";
-import type { Profile } from "@/types/database";
+import type { Profile, Project } from "@/types/database";
 
 interface PublicBoardHeaderProps {
-  boardOwner: Profile;
-  boardName: string;
+  project: Project;
   user: User | null;
   profile: Profile | null;
 }
 
-export function PublicBoardHeader({ boardOwner, boardName, user, profile }: PublicBoardHeaderProps) {
+export function PublicBoardHeader({ project, user, profile }: PublicBoardHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isWidget = searchParams.get("widget") === "true";
-  const slug = boardOwner.board_slug;
-  const displayName = boardName || boardOwner.board_name || "Feedback";
+  const slug = project.slug;
+  const displayName = project.company_name || project.name;
   
   const initials = profile?.full_name
     ?.split(" ")

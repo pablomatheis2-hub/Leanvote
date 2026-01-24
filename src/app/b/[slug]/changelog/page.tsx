@@ -38,17 +38,6 @@ async function getBoardOwner(ownerId: string): Promise<Profile | null> {
   return data;
 }
 
-async function getBoardOwnerBySlug(slug: string): Promise<Profile | null> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("board_slug", slug)
-    .single();
-
-  return data;
-}
-
 async function getCompletedPosts(boardOwnerId: string, projectId?: string): Promise<PostWithDetails[]> {
   const supabase = await createClient();
 
@@ -137,23 +126,16 @@ const categoryStyles: Record<string, string> = {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  
   const project = await getProject(slug);
-  let boardName: string;
 
-  if (project) {
-    boardName = project.company_name || project.name;
-  } else {
-    const boardOwner = await getBoardOwnerBySlug(slug);
-    if (!boardOwner) {
-      return {
-        title: "Board Not Found - LeanVote",
-        robots: { index: false, follow: false },
-      };
-    }
-    boardName = boardOwner.board_name || "Product";
+  if (!project) {
+    return {
+      title: "Board Not Found - LeanVote",
+      robots: { index: false, follow: false },
+    };
   }
 
+  const boardName = project.company_name || project.name;
   const title = `${boardName} Changelog & Release Notes`;
   const description = `See all the features, bug fixes, and improvements shipped for ${boardName}. Stay updated on the latest releases.`;
 
@@ -179,29 +161,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function PublicChangelogPage({ params }: PageProps) {
   const { slug } = await params;
-  
   const project = await getProject(slug);
   
-  let boardOwner: Profile | null = null;
-  let displayName: string;
-  
-  if (project) {
-    boardOwner = await getBoardOwner(project.owner_id);
-    displayName = project.company_name || project.name;
-  } else {
-    boardOwner = await getBoardOwnerBySlug(slug);
-    displayName = boardOwner?.board_name || "our product";
+  if (!project) {
+    notFound();
   }
 
+  const boardOwner = await getBoardOwner(project.owner_id);
+  
   if (!boardOwner) {
     notFound();
   }
+
+  const displayName = project.company_name || project.name;
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   const [posts, currentUserProfile] = await Promise.all([
-    getCompletedPosts(boardOwner.id, project?.id),
+    getCompletedPosts(boardOwner.id, project.id),
     getCurrentUserProfile(user?.id || null),
   ]);
 
@@ -210,8 +188,7 @@ export default async function PublicChangelogPage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-zinc-50">
       <PublicBoardHeader 
-        boardOwner={boardOwner}
-        boardName={displayName}
+        project={project}
         user={user} 
         profile={currentUserProfile} 
       />

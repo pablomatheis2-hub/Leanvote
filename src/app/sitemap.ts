@@ -42,7 +42,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // Dynamic board pages
+  // Dynamic board pages from projects table
   let boardPages: MetadataRoute.Sitemap = [];
 
   try {
@@ -52,32 +52,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
     
-    const { data: boards } = await supabase
-      .from("profiles")
-      .select("board_slug, updated_at")
-      .not("board_slug", "is", null)
-      .not("board_slug", "eq", "");
+    const { data: projects } = await supabase
+      .from("projects")
+      .select("slug, updated_at");
 
-    if (boards) {
-      boardPages = boards.map((board) => ({
-        url: `${siteUrl}/b/${board.board_slug}`,
-        lastModified: board.updated_at ? new Date(board.updated_at) : new Date(),
+    if (projects) {
+      boardPages = projects.map((project) => ({
+        url: `${siteUrl}/b/${project.slug}`,
+        lastModified: project.updated_at ? new Date(project.updated_at) : new Date(),
         changeFrequency: "daily" as const,
         priority: 0.6,
       }));
 
-      // Add roadmap pages for each board
-      const roadmapPages: MetadataRoute.Sitemap = boards.map((board) => ({
-        url: `${siteUrl}/b/${board.board_slug}/roadmap`,
-        lastModified: board.updated_at ? new Date(board.updated_at) : new Date(),
+      // Add roadmap pages for each project
+      const roadmapPages: MetadataRoute.Sitemap = projects.map((project) => ({
+        url: `${siteUrl}/b/${project.slug}/roadmap`,
+        lastModified: project.updated_at ? new Date(project.updated_at) : new Date(),
         changeFrequency: "daily" as const,
         priority: 0.5,
       }));
 
-      // Add changelog pages for each board
-      const changelogPages: MetadataRoute.Sitemap = boards.map((board) => ({
-        url: `${siteUrl}/b/${board.board_slug}/changelog`,
-        lastModified: board.updated_at ? new Date(board.updated_at) : new Date(),
+      // Add changelog pages for each project
+      const changelogPages: MetadataRoute.Sitemap = projects.map((project) => ({
+        url: `${siteUrl}/b/${project.slug}/changelog`,
+        lastModified: project.updated_at ? new Date(project.updated_at) : new Date(),
         changeFrequency: "weekly" as const,
         priority: 0.5,
       }));

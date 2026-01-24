@@ -20,38 +20,21 @@ export async function GET(request: NextRequest) {
 
   const supabase = await createClient();
 
-  let boardOwnerId: string | null = null;
-
-  // First, try to find project by slug (primary method)
+  // Find project by slug
   const { data: project } = await supabase
     .from("projects")
     .select("id, owner_id")
     .eq("slug", boardSlug)
     .single();
 
-  if (project) {
-    boardOwnerId = project.owner_id;
-  } else {
-    // Fallback: find profile by board_slug (backwards compatibility)
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("id")
-      .eq("board_slug", boardSlug)
-      .single();
-
-    if (profile) {
-      boardOwnerId = profile.id;
-    }
-  }
-
-  if (!boardOwnerId) {
+  if (!project) {
     return NextResponse.json(
       { error: "Board not found", posts: [] },
       { status: 404, headers: corsHeaders }
     );
   }
 
-  // Get recent posts with vote counts using board_owner_id
+  // Get recent posts with vote counts for this project
   const { data: posts } = await supabase
     .from("posts")
     .select(`
@@ -63,7 +46,7 @@ export async function GET(request: NextRequest) {
       created_at,
       votes (id)
     `)
-    .eq("board_owner_id", boardOwnerId)
+    .eq("project_id", project.id)
     .order("created_at", { ascending: false })
     .limit(5);
 

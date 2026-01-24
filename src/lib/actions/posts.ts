@@ -28,6 +28,7 @@ export async function createPost(formData: FormData) {
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
   const category = formData.get("category") as Category;
+  const projectId = formData.get("projectId") as string | null;
 
   if (!title?.trim()) {
     return { error: "Title is required" };
@@ -40,6 +41,7 @@ export async function createPost(formData: FormData) {
   const { error } = await supabase.from("posts").insert({
     user_id: user.id,
     board_owner_id: user.id,
+    project_id: projectId || null,
     title: title.trim(),
     description: description?.trim() || null,
     category,
@@ -49,8 +51,19 @@ export async function createPost(formData: FormData) {
     return { error: error.message };
   }
 
+  // Revalidate dashboard and project pages
   revalidatePath("/dashboard");
-  revalidatePath(`/b/${profile?.board_slug}`);
+  
+  // Get all user's project slugs for revalidation
+  const { data: projects } = await supabase
+    .from("projects")
+    .select("slug")
+    .eq("owner_id", user.id);
+  
+  for (const project of projects || []) {
+    revalidatePath(`/b/${project.slug}`);
+  }
+  
   return { success: true };
 }
 
@@ -74,13 +87,6 @@ export async function submitFeedback(boardOwnerId: string, formData: FormData, p
     return { error: "Category is required" };
   }
 
-  // Get board owner's slug for revalidation
-  const { data: boardOwner } = await supabase
-    .from("profiles")
-    .select("board_slug")
-    .eq("id", boardOwnerId)
-    .single();
-
   const { error } = await supabase.from("posts").insert({
     user_id: user.id,
     board_owner_id: boardOwnerId,
@@ -94,9 +100,19 @@ export async function submitFeedback(boardOwnerId: string, formData: FormData, p
     return { error: error.message };
   }
 
-  if (boardOwner?.board_slug) {
-    revalidatePath(`/b/${boardOwner.board_slug}`);
+  // Revalidate the project page if we have projectId
+  if (projectId) {
+    const { data: project } = await supabase
+      .from("projects")
+      .select("slug")
+      .eq("id", projectId)
+      .single();
+    
+    if (project) {
+      revalidatePath(`/b/${project.slug}`);
+    }
   }
+  
   return { success: true };
 }
 

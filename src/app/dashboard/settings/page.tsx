@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/server";
-import { SettingsForm } from "@/components/dashboard/settings-form";
 import { ProfileSettingsForm } from "@/components/dashboard/profile-settings-form";
 import { SubscriptionCard } from "@/components/dashboard/subscription-card";
 import { WidgetSettings } from "@/components/dashboard/widget-settings";
@@ -44,11 +43,13 @@ export default async function DashboardSettingsPage() {
   if (!profile) return null;
 
   const accessStatus = getAccessStatus(profile);
+  
+  // Get default project for widget settings
+  const defaultProject = projects.find(p => p.is_default) || projects[0] || null;
 
   const sections = [
     { id: "profile", label: "Profile" },
     { id: "projects", label: "Projects & Billing" },
-    { id: "board", label: "Board Settings" },
     { id: "widget", label: "Embed Widget" },
   ];
 
@@ -85,23 +86,13 @@ export default async function DashboardSettingsPage() {
             <SubscriptionCard accessStatus={accessStatus} />
           </section>
 
-          {/* Board Settings */}
-          <section id="board" className="scroll-mt-24">
-            <div className="bg-card rounded-xl border border-border p-5">
-              <h2 className="text-base font-semibold text-foreground mb-4">
-                Board Settings
-              </h2>
-              <SettingsForm profile={profile} />
-            </div>
-          </section>
-
           {/* Widget Embed */}
           <section id="widget" className="scroll-mt-24">
             <div className="bg-card rounded-xl border border-border p-5">
               <h2 className="text-base font-semibold text-foreground mb-4">
                 Embed Widget
               </h2>
-              <WidgetSettings profile={profile} />
+              <WidgetSettings project={defaultProject} />
             </div>
           </section>
         </div>

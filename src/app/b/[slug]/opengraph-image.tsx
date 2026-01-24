@@ -12,31 +12,33 @@ export const contentType = "image/png";
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
-  // Fetch board data
+  // Fetch project data
   let boardName = "Feedback Board";
   let companyName = "";
   let postCount = 0;
 
   try {
     const supabase = await createClient();
-    const { data: board } = await supabase
-      .from("profiles")
-      .select("board_name, company_name")
-      .eq("board_slug", slug)
+    
+    // Get project by slug
+    const { data: project } = await supabase
+      .from("projects")
+      .select("id, name, company_name, owner_id")
+      .eq("slug", slug)
       .single();
 
-    if (board) {
-      boardName = board.board_name || "Feedback Board";
-      companyName = board.company_name || "";
+    if (project) {
+      boardName = project.company_name || project.name || "Feedback Board";
+      companyName = project.company_name || "";
+
+      // Get post count for this project
+      const { count } = await supabase
+        .from("posts")
+        .select("*", { count: "exact", head: true })
+        .eq("project_id", project.id);
+
+      postCount = count || 0;
     }
-
-    // Get post count
-    const { count } = await supabase
-      .from("posts")
-      .select("*", { count: "exact", head: true })
-      .eq("board_owner_id", slug);
-
-    postCount = count || 0;
   } catch {
     // Use defaults
   }

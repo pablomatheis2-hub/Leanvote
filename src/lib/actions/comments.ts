@@ -71,10 +71,10 @@ export async function addComment(postId: string, content: string) {
     return { error: "Comment cannot be empty" };
   }
 
-  // Get the post
+  // Get the post with project info
   const { data: post } = await supabase
     .from("posts")
-    .select("id, board_owner_id")
+    .select("id, board_owner_id, project_id")
     .eq("id", postId)
     .single();
 
@@ -103,15 +103,17 @@ export async function addComment(postId: string, content: string) {
     return { error: error.message };
   }
 
-  // Get board slug for revalidation
-  const { data: boardOwner } = await supabase
-    .from("profiles")
-    .select("board_slug")
-    .eq("id", post.board_owner_id)
-    .single();
+  // Revalidate using project slug if available
+  if (post.project_id) {
+    const { data: project } = await supabase
+      .from("projects")
+      .select("slug")
+      .eq("id", post.project_id)
+      .single();
 
-  if (boardOwner?.board_slug) {
-    revalidatePath(`/b/${boardOwner.board_slug}/post/${postId}`);
+    if (project) {
+      revalidatePath(`/b/${project.slug}/post/${postId}`);
+    }
   }
 
   return {
@@ -144,10 +146,10 @@ export async function deleteComment(commentId: string) {
     return { error: "Comment not found" };
   }
 
-  // Get the post to check board ownership
+  // Get the post to check board ownership and project
   const { data: post } = await supabase
     .from("posts")
-    .select("board_owner_id")
+    .select("board_owner_id, project_id")
     .eq("id", comment.post_id)
     .single();
 
@@ -171,15 +173,17 @@ export async function deleteComment(commentId: string) {
     return { error: error.message };
   }
 
-  // Get board slug for revalidation
-  const { data: boardOwner } = await supabase
-    .from("profiles")
-    .select("board_slug")
-    .eq("id", post.board_owner_id)
-    .single();
+  // Revalidate using project slug if available
+  if (post.project_id) {
+    const { data: project } = await supabase
+      .from("projects")
+      .select("slug")
+      .eq("id", post.project_id)
+      .single();
 
-  if (boardOwner?.board_slug) {
-    revalidatePath(`/b/${boardOwner.board_slug}/post/${comment.post_id}`);
+    if (project) {
+      revalidatePath(`/b/${project.slug}/post/${comment.post_id}`);
+    }
   }
 
   return { success: true };

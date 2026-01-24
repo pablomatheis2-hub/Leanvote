@@ -2,20 +2,9 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { ExternalLink, ArrowRight, CheckCircle2, Lightbulb } from "lucide-react";
-import type { PostWithDetails, Profile, Project } from "@/types/database";
+import type { PostWithDetails, Project } from "@/types/database";
 
 export const revalidate = 0;
-
-async function getProfile(userId: string): Promise<Profile | null> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", userId)
-    .single();
-
-  return data;
-}
 
 async function getProjects(userId: string): Promise<Project[]> {
   const supabase = await createClient();
@@ -139,10 +128,7 @@ export default async function DashboardChangelogPage({ searchParams }: PageProps
   if (!user) return null;
 
   const params = await searchParams;
-  const [profile, projects] = await Promise.all([
-    getProfile(user.id),
-    getProjects(user.id),
-  ]);
+  const projects = await getProjects(user.id);
 
   // Determine current project
   const currentProject = params.project 
@@ -171,9 +157,9 @@ export default async function DashboardChangelogPage({ searchParams }: PageProps
             {posts.length} shipped
           </span>
         </div>
-        {(currentProject?.slug || profile?.board_slug) && (
+        {currentProject?.slug && (
           <Link
-            href={`/b/${currentProject?.slug || profile?.board_slug}/changelog`}
+            href={`/b/${currentProject.slug}/changelog`}
             target="_blank"
             className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 font-medium px-2 py-1 rounded hover:bg-muted transition-colors"
           >

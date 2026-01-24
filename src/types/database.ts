@@ -10,9 +10,6 @@ export interface Profile {
   full_name: string | null;
   avatar_url: string | null;
   user_type: UserType;
-  // Board slug - AUTO-SYNCED with default project's slug
-  board_slug: string | null;
-  board_name: string | null;
   // Trial and subscription
   trial_ends_at: string | null;
   has_lifetime_access: boolean;

@@ -3,20 +3,9 @@ import { DashboardPostList } from "@/components/dashboard/post-list";
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { CopyButton } from "@/components/copy-button";
-import type { PostWithDetails, Profile, Project } from "@/types/database";
+import type { PostWithDetails, Project } from "@/types/database";
 
 export const revalidate = 0;
-
-async function getProfile(userId: string): Promise<Profile | null> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", userId)
-    .single();
-
-  return data;
-}
 
 async function getProjects(userId: string): Promise<Project[]> {
   const supabase = await createClient();
@@ -68,7 +57,7 @@ async function getPosts(boardOwnerId: string, projectId?: string): Promise<PostW
 }
 
 interface PageProps {
-  searchParams: { project?: string };
+  searchParams: Promise<{ project?: string }>;
 }
 
 export default async function DashboardPage({ searchParams }: PageProps) {
@@ -77,11 +66,8 @@ export default async function DashboardPage({ searchParams }: PageProps) {
 
   if (!user) return null;
 
-  const params = searchParams;
-  const [profile, projects] = await Promise.all([
-    getProfile(user.id),
-    getProjects(user.id),
-  ]);
+  const params = await searchParams;
+  const projects = await getProjects(user.id);
 
   // Determine current project
   const currentProject = params.project
@@ -90,7 +76,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
 
   const posts = await getPosts(user.id, currentProject?.id);
 
-  const publicUrl = `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/b/${currentProject?.slug || profile?.board_slug}`;
+  const publicUrl = `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/b/${currentProject?.slug}`;
 
   const openCount = posts.filter(p => p.status === "Open").length;
   const roadmapCount = posts.filter(p => p.status !== "Open" && p.status !== "Complete").length;
@@ -117,7 +103,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
           </code>
           <CopyButton text={publicUrl} />
           <Link
-            href={`/b/${profile?.board_slug}`}
+            href={`/b/${currentProject?.slug}`}
             target="_blank"
             className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 font-medium px-2 py-1 rounded hover:bg-muted transition-colors"
           >
@@ -128,7 +114,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
       </div>
 
       {/* Posts List */}
-      <DashboardPostList posts={posts} boardSlug={profile?.board_slug || ""} />
+      <DashboardPostList posts={posts} boardSlug={currentProject?.slug || ""} />
     </div>
   );
 }

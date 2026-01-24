@@ -5,6 +5,15 @@ import { revalidatePath } from "next/cache";
 import type { Status, Category } from "@/types/database";
 import { getAccessStatus } from "@/lib/access";
 
+async function getProjectSlugsForUser(supabase: ReturnType<typeof createClient> extends Promise<infer T> ? T : never, userId: string): Promise<string[]> {
+  const { data: projects } = await supabase
+    .from("projects")
+    .select("slug")
+    .eq("owner_id", userId);
+  
+  return (projects || []).map(p => p.slug);
+}
+
 export async function updatePostStatus(postId: string, newStatus: Status) {
   const supabase = await createClient();
 
@@ -36,10 +45,13 @@ export async function updatePostStatus(postId: string, newStatus: Status) {
     return { error: error.message };
   }
 
+  // Revalidate all user's project pages
+  const projectSlugs = await getProjectSlugsForUser(supabase, user.id);
   revalidatePath("/dashboard");
-  if (profile?.board_slug) {
-    revalidatePath(`/b/${profile.board_slug}`);
+  for (const slug of projectSlugs) {
+    revalidatePath(`/b/${slug}`);
   }
+  
   return { success: true };
 }
 
@@ -87,12 +99,15 @@ export async function promoteToRoadmap(
     return { error: error.message };
   }
 
+  // Revalidate all user's project pages
+  const projectSlugs = await getProjectSlugsForUser(supabase, user.id);
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/roadmap");
-  if (profile?.board_slug) {
-    revalidatePath(`/b/${profile.board_slug}`);
-    revalidatePath(`/b/${profile.board_slug}/roadmap`);
+  for (const slug of projectSlugs) {
+    revalidatePath(`/b/${slug}`);
+    revalidatePath(`/b/${slug}/roadmap`);
   }
+  
   return { success: true };
 }
 
@@ -120,6 +135,7 @@ export async function createRoadmapItem(formData: FormData) {
   const description = formData.get("description") as string;
   const category = formData.get("category") as Category;
   const status = formData.get("status") as Status;
+  const projectId = formData.get("projectId") as string | null;
 
   if (!title?.trim()) {
     return { error: "Title is required" };
@@ -133,6 +149,7 @@ export async function createRoadmapItem(formData: FormData) {
   const { data: newPost, error } = await supabase.from("posts").insert({
     user_id: user.id,
     board_owner_id: user.id,
+    project_id: projectId || null,
     title: title.trim(),
     description: description?.trim() || null,
     category,
@@ -152,9 +169,11 @@ export async function createRoadmapItem(formData: FormData) {
     return { error: error.message };
   }
 
+  // Revalidate dashboard and project pages
+  const projectSlugs = await getProjectSlugsForUser(supabase, user.id);
   revalidatePath("/dashboard/roadmap");
-  if (profile?.board_slug) {
-    revalidatePath(`/b/${profile.board_slug}`);
+  for (const slug of projectSlugs) {
+    revalidatePath(`/b/${slug}`);
   }
   
   // Return the created post with proper formatting
@@ -166,59 +185,6 @@ export async function createRoadmapItem(formData: FormData) {
   };
   
   return { success: true, post: formattedPost };
-}
-
-export async function updateBoardSettings(formData: FormData) {
-  const supabase = await createClient();
-
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    return { error: "Unauthorized" };
-  }
-
-  const boardName = formData.get("boardName") as string;
-  const boardSlug = formData.get("boardSlug") as string;
-
-  if (!boardName?.trim()) {
-    return { error: "Board name is required" };
-  }
-
-  if (!boardSlug?.trim()) {
-    return { error: "Board URL is required" };
-  }
-
-  // Validate slug format
-  const slugRegex = /^[a-z0-9-]+$/;
-  if (!slugRegex.test(boardSlug)) {
-    return { error: "Board URL can only contain lowercase letters, numbers, and hyphens" };
-  }
-
-  // Check if slug is already taken by another user
-  const { data: existingProfile } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("board_slug", boardSlug)
-    .neq("id", user.id)
-    .single();
-
-  if (existingProfile) {
-    return { error: "This board URL is already taken" };
-  }
-
-  const { error } = await supabase
-    .from("profiles")
-    .update({
-      board_name: boardName.trim(),
-      board_slug: boardSlug.trim(),
-    })
-    .eq("id", user.id);
-
-  if (error) {
-    return { error: error.message };
-  }
-
-  revalidatePath("/dashboard/settings");
-  return { success: true };
 }
 
 export async function updateProfile(formData: FormData) {
@@ -294,18 +260,14 @@ export async function updateProfile(formData: FormData) {
     return { error: error.message };
   }
 
+  // Revalidate paths
   revalidatePath("/dashboard/settings");
   revalidatePath("/dashboard");
   
-  // Also revalidate public board pages where the admin name/avatar might appear
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("board_slug")
-    .eq("id", user.id)
-    .single();
-
-  if (profile?.board_slug) {
-    revalidatePath(`/b/${profile.board_slug}`);
+  // Revalidate all user's project pages
+  const projectSlugs = await getProjectSlugsForUser(supabase, user.id);
+  for (const slug of projectSlugs) {
+    revalidatePath(`/b/${slug}`);
   }
 
   return { success: true, avatarUrl };

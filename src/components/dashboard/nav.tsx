@@ -55,7 +55,7 @@ export function DashboardNav({ user, profile, accessStatus, projects = [], curre
     <header className="border-b border-border bg-background sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
         <div className="flex items-center gap-4 sm:gap-8">
-          <Link href="/dashboard" className="flex items-center gap-2">
+          <Link href={`/dashboard${projectParam}`} className="flex items-center gap-2">
             <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-primary flex items-center justify-center">
               <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary-foreground" />
             </div>
@@ -141,9 +141,9 @@ export function DashboardNav({ user, profile, accessStatus, projects = [], curre
             <BookOpen className="w-4 h-4" />
             Docs
           </Link>
-          {(currentProject?.slug || profile.board_slug) && (
+          {currentProject?.slug && (
             <Link
-              href={`/b/${currentProject?.slug || profile.board_slug}`}
+              href={`/b/${currentProject.slug}`}
               target="_blank"
               className="hidden sm:flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
@@ -189,7 +189,7 @@ export function DashboardNav({ user, profile, accessStatus, projects = [], curre
               </div>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href="/dashboard/settings" className="cursor-pointer">
+                <Link href={`/dashboard/settings${projectParam}`} className="cursor-pointer">
                   Settings
                 </Link>
               </DropdownMenuItem>
@@ -273,9 +273,9 @@ export function DashboardNav({ user, profile, accessStatus, projects = [], curre
               <BookOpen className="w-4 h-4" />
               Documentation
             </Link>
-            {(currentProject?.slug || profile.board_slug) && (
+            {currentProject?.slug && (
               <Link
-                href={`/b/${currentProject?.slug || profile.board_slug}`}
+                href={`/b/${currentProject.slug}`}
                 target="_blank"
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center gap-3 px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-muted/50"

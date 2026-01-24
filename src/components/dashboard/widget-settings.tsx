@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { Copy, Check, Code2, ExternalLink, Palette, MapPin } from "lucide-react";
 import Link from "next/link";
-import type { Profile } from "@/types/database";
+import type { Project } from "@/types/database";
 
 interface WidgetSettingsProps {
-  profile: Profile;
+  project: Project | null;
 }
 
 const positions = [
@@ -26,13 +26,13 @@ const presetColors = [
   { value: "#171717", label: "Black" },
 ];
 
-export function WidgetSettings({ profile }: WidgetSettingsProps) {
+export function WidgetSettings({ project }: WidgetSettingsProps) {
   const [position, setPosition] = useState("bottom-right");
   const [primaryColor, setPrimaryColor] = useState("#f97352");
   const [buttonText, setButtonText] = useState("Feedback");
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
-  const boardSlug = profile.board_slug || "your-board-slug";
+  const boardSlug = project?.slug || "your-board-slug";
   const baseUrl = typeof window !== "undefined" 
     ? window.location.origin 
     : "https://leanvote.com";
