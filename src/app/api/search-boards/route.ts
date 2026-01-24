@@ -30,7 +30,8 @@ export async function GET(request: NextRequest) {
     name: project.name,
     companyName: project.company_name,
     companyUrl: project.company_url,
-    slug: project.slug,
+    projectSlug: project.slug,
+    boardSlug: project.slug,
   }));
 
   return NextResponse.json({ results });
