@@ -40,7 +40,7 @@ export function DashboardNav({ user, profile, accessStatus, projects = [], curre
   const projectIdFromUrl = searchParams.get("project");
   const effectiveProjectId = projectIdFromUrl || currentProjectId;
   const currentProject = projects.find(p => p.id === effectiveProjectId) || projects.find(p => p.is_default) || projects[0];
-  
+
   // Build query string for navigation links
   const projectParam = effectiveProjectId ? `?project=${effectiveProjectId}` : "";
 
@@ -77,13 +77,14 @@ export function DashboardNav({ user, profile, accessStatus, projects = [], curre
                   Switch Project
                 </div>
                 {projects.map((project) => {
-                  // Stay on current page, just switch project (settings page doesn't need project param)
-                  const switchHref = pathname === "/dashboard/settings" 
-                    ? pathname 
+                  // If on settings page, redirect to dashboard when switching project
+                  // Otherwise stay on current page and update project param
+                  const switchHref = pathname === "/dashboard/settings"
+                    ? `/dashboard?project=${project.id}`
                     : `${pathname}?project=${project.id}`;
                   return (
                     <DropdownMenuItem key={project.id} asChild>
-                      <Link 
+                      <Link
                         href={switchHref}
                         className="flex items-center justify-between cursor-pointer"
                       >
@@ -104,13 +105,13 @@ export function DashboardNav({ user, profile, accessStatus, projects = [], curre
               </DropdownMenuContent>
             </DropdownMenu>
           )}
-          
+
           {/* Desktop navigation */}
           <nav className="hidden md:flex items-center gap-1">
             {navItems.map((item) => {
               const Icon = item.icon;
-              // Settings page doesn't need project param
-              const href = item.href === "/dashboard/settings" ? item.href : `${item.href}${projectParam}`;
+              // Always persist project param to maintain context
+              const href = `${item.href}${projectParam}`;
               return (
                 <Link
                   key={item.href}
@@ -151,7 +152,7 @@ export function DashboardNav({ user, profile, accessStatus, projects = [], curre
               <span className="lg:hidden">Board</span>
             </Link>
           )}
-          
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 sm:h-9 sm:w-9 rounded-full">
@@ -220,15 +221,13 @@ export function DashboardNav({ user, profile, accessStatus, projects = [], curre
           {projects.length > 1 && currentProject && (
             <div className="px-4 py-3 border-b border-border">
               <p className="text-xs text-muted-foreground mb-2">Current Project</p>
-              <select 
+              <select
                 className="w-full px-3 py-2 border border-border rounded-lg bg-background text-sm"
                 value={currentProject.id}
                 onChange={(e) => {
-                  // Stay on the current page, just switch project
-                  const basePath = pathname.includes("/dashboard/settings") ? pathname : pathname;
-                  const newPath = basePath === "/dashboard/settings" 
-                    ? basePath 
-                    : `${basePath}?project=${e.target.value}`;
+                  // If on settings, redirect to dashboard. Otherwise stay on page.
+                  const basePath = pathname === "/dashboard/settings" ? "/dashboard" : pathname;
+                  const newPath = `${basePath}?project=${e.target.value}`;
                   window.location.href = newPath;
                 }}
               >
@@ -240,12 +239,12 @@ export function DashboardNav({ user, profile, accessStatus, projects = [], curre
               </select>
             </div>
           )}
-          
+
           <nav className="px-4 py-3 space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
-              // Settings page doesn't need project param
-              const href = item.href === "/dashboard/settings" ? item.href : `${item.href}${projectParam}`;
+              // Always persist project param
+              const href = `${item.href}${projectParam}`;
               return (
                 <Link
                   key={item.href}

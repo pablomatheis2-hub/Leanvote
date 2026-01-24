@@ -5,8 +5,6 @@ import Link from "next/link";
 import { CopyButton } from "@/components/copy-button";
 import type { PostWithDetails, Profile, Project } from "@/types/database";
 
-export const revalidate = 0;
-
 async function getProfile(userId: string): Promise<Profile | null> {
   const supabase = await createClient();
   const { data } = await supabase
@@ -31,7 +29,7 @@ async function getProjects(userId: string): Promise<Project[]> {
 
 async function getPosts(boardOwnerId: string, projectId?: string): Promise<PostWithDetails[]> {
   const supabase = await createClient();
-  
+
   // Fetch all posts (including those promoted to roadmap) to show them with status badges
   let query = supabase
     .from("posts")
@@ -84,10 +82,10 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   ]);
 
   // Determine current project
-  const currentProject = params.project 
+  const currentProject = params.project
     ? projects.find(p => p.id === params.project)
     : projects.find(p => p.is_default) || projects[0];
-  
+
   const posts = await getPosts(user.id, currentProject?.id);
 
   const publicUrl = `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/b/${currentProject?.slug || profile?.board_slug}`;

@@ -1,4 +1,5 @@
 import type { Profile, AccessStatus } from "@/types/database";
+import { PRICING, LIMITS } from "@/lib/constants";
 
 export function getAccessStatus(profile: Profile | null): AccessStatus {
   if (!profile) {
@@ -10,7 +11,7 @@ export function getAccessStatus(profile: Profile | null): AccessStatus {
       subscriptionStatus: "none",
       trialEndsAt: null,
       daysRemaining: null,
-      projectLimit: 1,
+      projectLimit: LIMITS.PROJECT_COUNT,
       subscriptionEndsAt: null,
     };
   }
@@ -26,17 +27,17 @@ export function getAccessStatus(profile: Profile | null): AccessStatus {
       subscriptionStatus: "none",
       trialEndsAt: null,
       daysRemaining: null,
-      projectLimit: 1,
+      projectLimit: LIMITS.PROJECT_COUNT,
       subscriptionEndsAt: null,
     };
   }
 
   const now = new Date();
   const trialEndsAt = profile.trial_ends_at ? new Date(profile.trial_ends_at) : null;
-  const subscriptionEndsAt = profile.subscription_current_period_end 
-    ? new Date(profile.subscription_current_period_end) 
+  const subscriptionEndsAt = profile.subscription_current_period_end
+    ? new Date(profile.subscription_current_period_end)
     : null;
-  
+
   const hasLifetimeAccess = profile.has_lifetime_access;
   const isInTrial = trialEndsAt ? trialEndsAt > now : false;
   const hasActiveSubscription = profile.subscription_status === "active" || profile.subscription_status === "trialing";
@@ -55,7 +56,7 @@ export function getAccessStatus(profile: Profile | null): AccessStatus {
     subscriptionStatus: profile.subscription_status || "none",
     trialEndsAt,
     daysRemaining,
-    projectLimit: profile.project_limit || 1,
+    projectLimit: profile.project_limit || LIMITS.PROJECT_COUNT,
     subscriptionEndsAt,
   };
 }
@@ -76,13 +77,11 @@ export function isVoter(profile: Profile | null): boolean {
 }
 
 export function getSubscriptionPrice(projectCount: number): { base: number; addon: number; total: number } {
-  const BASE_PRICE = 9.99;
-  const ADDON_PRICE = 4.99;
   const additionalProjects = Math.max(0, projectCount - 1);
-  
+
   return {
-    base: BASE_PRICE,
-    addon: additionalProjects * ADDON_PRICE,
-    total: BASE_PRICE + (additionalProjects * ADDON_PRICE),
+    base: PRICING.BASE,
+    addon: additionalProjects * PRICING.ADDON,
+    total: PRICING.BASE + (additionalProjects * PRICING.ADDON),
   };
 }
