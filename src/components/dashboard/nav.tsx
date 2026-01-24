@@ -39,7 +39,7 @@ export function DashboardNav({ user, profile, accessStatus, projects = [], curre
   // Get project from URL or use provided currentProjectId
   const projectIdFromUrl = searchParams.get("project");
   const effectiveProjectId = projectIdFromUrl || currentProjectId;
-  const currentProject = projects.find(p => p.id === effectiveProjectId) || projects.find(p => p.is_default) || projects[0];
+  const currentProject = projects.find(p => p.id === effectiveProjectId) || projects[0];
 
   // Build query string for navigation links
   const projectParam = effectiveProjectId ? `?project=${effectiveProjectId}` : "";

@@ -69,10 +69,10 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const projects = await getProjects(user.id);
 
-  // Determine current project
+  // Determine current project (use first project if none specified)
   const currentProject = params.project
     ? projects.find(p => p.id === params.project)
-    : projects.find(p => p.is_default) || projects[0];
+    : projects[0];
 
   const posts = await getPosts(user.id, currentProject?.id);
 

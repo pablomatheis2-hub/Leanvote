@@ -33,7 +33,6 @@ export interface Project {
   company_name: string | null;
   description: string | null;
   company_url: string | null;
-  is_default: boolean;
   created_at: string;
   updated_at: string;
 }

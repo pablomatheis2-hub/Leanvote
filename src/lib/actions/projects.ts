@@ -16,7 +16,6 @@ export async function getProjects(): Promise<{ projects: Project[]; error: strin
     .from("projects")
     .select("*")
     .eq("owner_id", user.id)
-    .order("is_default", { ascending: false })
     .order("created_at", { ascending: true });
 
   if (error) {
@@ -139,8 +138,6 @@ export async function createProject(
     normalizedUrl = normalizedUrl.replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/$/, "");
   }
 
-  const isFirstProject = projectCount === 0;
-
   const { data, error } = await supabase
     .from("projects")
     .insert({
@@ -150,7 +147,6 @@ export async function createProject(
       company_name: name.trim(),
       description: description?.trim() || null,
       company_url: normalizedUrl || null,
-      is_default: isFirstProject,
     })
     .select()
     .single();
@@ -158,8 +154,6 @@ export async function createProject(
   if (error) {
     return { project: null, error: error.message };
   }
-
-  // The trigger will automatically sync board_slug if this is the default project
 
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/settings");
@@ -204,8 +198,6 @@ export async function updateProject(
     return { success: false, error: error.message };
   }
 
-  // Trigger will sync to profile if this is the default project
-
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/settings");
   return { success: true, error: null };
@@ -219,68 +211,19 @@ export async function deleteProject(projectId: string): Promise<{ success: boole
     return { success: false, error: "You must be logged in" };
   }
 
-  // Check if it's the default project
-  const { data: project } = await supabase
+  // Check if this is the only project
+  const { count } = await supabase
     .from("projects")
-    .select("is_default")
-    .eq("id", projectId)
-    .eq("owner_id", user.id)
-    .single();
+    .select("*", { count: "exact", head: true })
+    .eq("owner_id", user.id);
 
-  if (!project) {
-    return { success: false, error: "Project not found" };
-  }
-
-  if (project.is_default) {
-    return { success: false, error: "Cannot delete the default project. Set another project as default first." };
+  if (count === 1) {
+    return { success: false, error: "Cannot delete your only project" };
   }
 
   const { error } = await supabase
     .from("projects")
     .delete()
-    .eq("id", projectId)
-    .eq("owner_id", user.id);
-
-  if (error) {
-    return { success: false, error: error.message };
-  }
-
-  revalidatePath("/dashboard");
-  revalidatePath("/dashboard/settings");
-  return { success: true, error: null };
-}
-
-export async function setDefaultProject(projectId: string): Promise<{ success: boolean; error: string | null }> {
-  const supabase = await createClient();
-  
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    return { success: false, error: "You must be logged in" };
-  }
-
-  // Get the project to verify ownership
-  const { data: project } = await supabase
-    .from("projects")
-    .select("id, slug, name")
-    .eq("id", projectId)
-    .eq("owner_id", user.id)
-    .single();
-
-  if (!project) {
-    return { success: false, error: "Project not found" };
-  }
-
-  // Unset current default
-  await supabase
-    .from("projects")
-    .update({ is_default: false })
-    .eq("owner_id", user.id)
-    .eq("is_default", true);
-
-  // Set new default (trigger will sync to profile)
-  const { error } = await supabase
-    .from("projects")
-    .update({ is_default: true })
     .eq("id", projectId)
     .eq("owner_id", user.id);
 

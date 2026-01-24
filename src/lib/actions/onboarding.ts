@@ -89,7 +89,7 @@ export async function completeOnboardingAsAdmin(
     return { error: profileError.message };
   }
 
-  // Create the default project (this is the source of truth for company info)
+  // Create the first project (this is the source of truth for company info)
   const { error: projectError } = await supabase
     .from("projects")
     .insert({
@@ -99,7 +99,6 @@ export async function completeOnboardingAsAdmin(
       company_name: companyName.trim(),
       description: companyDescription?.trim() || null,
       company_url: normalizedUrl || null,
-      is_default: true,
     });
 
   if (projectError) {

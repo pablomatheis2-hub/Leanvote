@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, FolderOpen, Star, MoreVertical, Trash2, Edit2, Check, X, ExternalLink } from "lucide-react";
+import { Plus, FolderOpen, MoreVertical, Trash2, Edit2, Check, X, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { createProject, deleteProject, setDefaultProject, updateProject } from "@/lib/actions/projects";
+import { createProject, deleteProject, updateProject } from "@/lib/actions/projects";
 import type { Project, AccessStatus } from "@/types/database";
-import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 interface ProjectManagerProps {
@@ -75,16 +74,6 @@ export function ProjectManager({ projects, accessStatus }: ProjectManagerProps) 
       setError(result.error);
     }
     
-    setLoading(false);
-    setMenuOpen(null);
-  };
-
-  const handleSetDefault = async (projectId: string) => {
-    setLoading(true);
-    const result = await setDefaultProject(projectId);
-    if (result.error) {
-      setError(result.error);
-    }
     setLoading(false);
     setMenuOpen(null);
   };
@@ -225,10 +214,7 @@ export function ProjectManager({ projects, accessStatus }: ProjectManagerProps) 
         {projects.map((project) => (
           <div
             key={project.id}
-            className={cn(
-              "border rounded-lg p-3 transition-colors",
-              project.is_default ? "border-primary bg-primary/5" : "border-border hover:border-muted-foreground/30"
-            )}
+            className="border rounded-lg p-3 transition-colors border-border hover:border-muted-foreground/30"
           >
             {editingProject === project.id ? (
               // Edit mode
@@ -284,24 +270,12 @@ export function ProjectManager({ projects, accessStatus }: ProjectManagerProps) 
               // Display mode
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-3 flex-1 min-w-0">
-                  <div className={cn(
-                    "w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0",
-                    project.is_default ? "bg-primary" : "bg-muted"
-                  )}>
-                    <FolderOpen className={cn(
-                      "w-4 h-4",
-                      project.is_default ? "text-primary-foreground" : "text-muted-foreground"
-                    )} />
+                  <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 bg-muted">
+                    <FolderOpen className="w-4 h-4 text-muted-foreground" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="font-medium text-foreground truncate text-sm">{project.name}</h3>
-                      {project.is_default && (
-                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-primary text-primary-foreground text-xs font-medium rounded">
-                          <Star className="w-3 h-3" />
-                          Default
-                        </span>
-                      )}
                     </div>
                     <div className="flex items-center gap-2 mt-0.5">
                       <code className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">/b/{project.slug}</code>
@@ -336,25 +310,15 @@ export function ProjectManager({ projects, accessStatus }: ProjectManagerProps) 
                         <Edit2 className="w-4 h-4" />
                         Edit
                       </button>
-                      {!project.is_default && (
-                        <>
-                          <button
-                            onClick={() => handleSetDefault(project.id)}
-                            disabled={loading}
-                            className="w-full px-3 py-2 text-left text-sm text-foreground hover:bg-muted flex items-center gap-2 disabled:opacity-50"
-                          >
-                            <Star className="w-4 h-4" />
-                            Set as Default
-                          </button>
-                          <button
-                            onClick={() => handleDeleteProject(project.id)}
-                            disabled={loading}
-                            className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 flex items-center gap-2 disabled:opacity-50"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                            Delete
-                          </button>
-                        </>
+                      {projects.length > 1 && (
+                        <button
+                          onClick={() => handleDeleteProject(project.id)}
+                          disabled={loading}
+                          className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 flex items-center gap-2 disabled:opacity-50"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                          Delete
+                        </button>
                       )}
                     </div>
                   )}

@@ -44,8 +44,8 @@ export default async function DashboardSettingsPage() {
 
   const accessStatus = getAccessStatus(profile);
   
-  // Get default project for widget settings
-  const defaultProject = projects.find(p => p.is_default) || projects[0] || null;
+  // Get first project for widget settings
+  const defaultProject = projects[0] || null;
 
   const sections = [
     { id: "profile", label: "Profile" },

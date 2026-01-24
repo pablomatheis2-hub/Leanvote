@@ -10,7 +10,7 @@ CREATE TABLE public.comments (
   updated_at timestamp with time zone DEFAULT now(),
   CONSTRAINT comments_pkey PRIMARY KEY (id),
   CONSTRAINT comments_post_id_fkey FOREIGN KEY (post_id) REFERENCES public.posts(id),
-  CONSTRAINT comments_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
+  CONSTRAINT comments_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id)
 );
 CREATE TABLE public.posts (
   id uuid NOT NULL DEFAULT uuid_generate_v4(),
@@ -50,14 +50,14 @@ CREATE TABLE public.projects (
   id uuid NOT NULL DEFAULT uuid_generate_v4(),
   owner_id uuid NOT NULL,
   name text NOT NULL,
-  slug text NOT NULL UNIQUE,
+  slug text NOT NULL,
   description text,
   company_url text,
-  is_default boolean DEFAULT false,
   created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
   updated_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
   company_name text,
   CONSTRAINT projects_pkey PRIMARY KEY (id),
+  CONSTRAINT projects_slug_unique UNIQUE (slug),
   CONSTRAINT projects_owner_id_fkey FOREIGN KEY (owner_id) REFERENCES public.profiles(id)
 );
 CREATE TABLE public.purchases (
@@ -82,6 +82,7 @@ CREATE TABLE public.votes (
   post_id uuid NOT NULL,
   created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
   CONSTRAINT votes_pkey PRIMARY KEY (id),
+  CONSTRAINT votes_user_post_unique UNIQUE (user_id, post_id),
   CONSTRAINT votes_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id),
   CONSTRAINT votes_post_id_fkey FOREIGN KEY (post_id) REFERENCES public.posts(id)
 );
