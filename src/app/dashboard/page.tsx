@@ -68,7 +68,7 @@ async function getPosts(boardOwnerId: string, projectId?: string): Promise<PostW
 }
 
 interface PageProps {
-  searchParams: Promise<{ project?: string }>;
+  searchParams: { project?: string };
 }
 
 export default async function DashboardPage({ searchParams }: PageProps) {
@@ -77,7 +77,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
 
   if (!user) return null;
 
-  const params = await searchParams;
+  const params = searchParams;
   const [profile, projects] = await Promise.all([
     getProfile(user.id),
     getProjects(user.id),
